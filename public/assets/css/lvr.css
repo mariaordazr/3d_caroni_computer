@@ -1,0 +1,2726 @@
+/* ==========================================================================
+   lvr.css — Hoja de estilos del Ciclo 001 (estética Lovable / "lovable-refresh")
+   Enlazada desde app/views/templates/header.php DESPUÉS de styles.css.
+   Reglas del proyecto:
+   - styles.css NUNCA se edita; los conflictos se neutralizan en el bloque 7.
+   - Selectores con prefijo `lvr-` o dentro de scope (.lvr-header/.lvr-home/.lvr-footer).
+   - Sin dependencias externas, sin preprocesadores ni tooling: sólo CSS puro escrito a mano.
+   - Mobile-first (base 375px); sin selectores globales desnudos (body, h1…, a).
+   Orden de bloques: neutralizaciones SIEMPRE al final (ganan por cascada).
+   ========================================================================== */
+
+/* 0. TOKENS — valores oklch literales de Lovable (spec §3 / plan DT-2) */
+:root {
+  --lvr-background: oklch(0.985 0.004 80);
+  --lvr-foreground: oklch(0.18 0.015 260);
+  --lvr-primary: #1B4779;
+  --lvr-primary-foreground: oklch(0.99 0 0);
+  --lvr-primary-on-dark: #85B4E8;
+  --lvr-secondary: oklch(0.2 0.02 260);
+  --lvr-secondary-foreground: oklch(0.97 0 0);
+  --lvr-muted: oklch(0.95 0.006 80);
+  --lvr-accent: oklch(0.94 0.04 60);
+  --lvr-muted-foreground: oklch(0.5 0.015 260);
+  --lvr-success: oklch(0.62 0.15 150);
+  --lvr-success-soft: oklch(0.95 0.05 150);
+  --lvr-offer: oklch(0.6 0.21 25);
+  --lvr-shadow-lift: 0 18px 40px -18px oklch(0.25 0.08 262/0.35);
+  --lvr-accent-foreground: var(--lvr-foreground);
+  --lvr-border: oklch(0.91 0.006 80);
+  --lvr-radius: 0.9rem;
+  --lvr-shadow-card: 0 1px 2px oklch(0 0 0 / 5%), 0 12px 30px -16px oklch(0.2 0.02 260 / 25%);
+  --lvr-font-display: "Sora", sans-serif;
+  --lvr-font-sans: "Manrope", sans-serif;
+  --font-primary: "Manrope", sans-serif;
+  --font-titles: "Sora", sans-serif;
+  --lvr-gutter: 1rem;     /* calle lateral común de todas las zonas; en el hero va como margen */
+}
+
+/* Ultrawide: la calle lateral crece para que el contenido no toque el borde. */
+@media (min-width: 1920px) { :root { --lvr-gutter: 2rem; } }
+
+/* 1. BASE — contenedor y utilidades compartidas por las zonas del ciclo */
+/* Envoltorio del hero a sangre (spec 004 / DER-1 deroga el tope anterior): mide 100% del
+   viewport y es la única caja sin calle lateral — su texto comparte la calle común vía el
+   overlay del hero. */
+.lvr-container {
+  margin-inline: 0;
+  padding-inline: 0;
+}
+
+/* 2. HEADER — topbar · header sticky · logo · buscador pill · CTA WhatsApp · nav pills · dropdown · hamburguesa (T2) */
+
+/* --- Topbar (fila 1): HERMANO ANTERIOR de #header → hace scroll-out (RF-3) --- */
+.lvr-topbar {
+  background: var(--lvr-secondary);
+  color: var(--lvr-secondary-foreground);
+  text-align: center;
+  padding-block: 0.5rem;
+  padding-inline: var(--lvr-gutter);
+  font-size: 0.75rem;
+}
+
+/* --- Scope del header (aditivo: .main-header + #header intactos) --- */
+.lvr-header {
+  font-family: var(--lvr-font-sans);
+  color: rgba(255,255,255,0.85);
+  transition: background-color 0.4s, box-shadow 0.3s;
+}
+
+/* Sombra sutil al hacer scroll (clase .scroll-header la agrega main.js:9-11) */
+.lvr-header.scroll-header {
+  box-shadow: var(--lvr-shadow-card);
+}
+
+/* Contenedor del header sin tope (spec 004 / DER-1 deroga el tope anterior, decisión A8):
+   ancho completo con la calle lateral común; gana a los padding de styles.css por
+   especificidad (0,2,0) y orden. */
+.lvr-header .header-container {
+  margin-inline: auto;
+  padding-inline: var(--lvr-gutter);
+}
+
+.lvr-header .header-top {
+  gap: 1rem;
+  margin-bottom: 0;
+  padding-block: 0.75rem;
+}
+
+/* --- Buscador pill (fila 2) --- */
+.lvr-header .header-search {
+  border: 1px solid var(--lvr-border);
+  border-radius: 9999px;
+  background-color: var(--lvr-background);
+  overflow: hidden;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.lvr-header .header-search:focus-within {
+  border-color: var(--lvr-primary);
+  box-shadow: 0 0 0 3px rgba(27,71,121,0.15);
+}
+
+.lvr-header .header-search__input {
+  padding: 0.625rem 0.5rem 0.625rem 1rem;
+  font-size: 0.875rem;
+  color: var(--lvr-foreground);
+  background-color: transparent;
+}
+
+.lvr-header .header-search__input::placeholder {
+  color: var(--lvr-muted-foreground);
+}
+
+.lvr-header .header-search__button {
+  border-left: 1px solid var(--lvr-border);
+  padding-inline: 1rem;
+  font-size: 1.125rem;
+  color: var(--lvr-muted-foreground);
+  transition: color 0.2s;
+}
+
+.lvr-header .header-search__button:hover {
+  color: var(--lvr-primary);
+}
+
+/* --- CTA WhatsApp (fila 2): oculto <640px, inline-flex ≥640px (P9) --- */
+.lvr-header__wa {
+  display: none;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 9999px;
+  background: var(--lvr-primary);
+  color: var(--lvr-primary-foreground);
+  padding: 0.625rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: opacity 0.2s;
+}
+
+.lvr-header__wa:hover {
+  opacity: 0.9;
+}
+
+.lvr-header__wa i {
+  font-size: 1rem;
+}
+
+@media (min-width: 640px) {
+  .lvr-header__wa {
+    display: inline-flex;
+  }
+}
+
+/* --- Nav pills (fila 3) --- */
+.lvr-header .header-bottom {
+  gap: 1rem;
+  padding-bottom: 0.5rem;
+}
+
+.lvr-header .nav-list {
+  gap: 0.25rem;
+}
+
+.lvr-header .nav-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  border-radius: 9999px;
+  padding: 0.375rem 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: rgba(255,255,255,0.85);
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.lvr-header .nav-link:hover {
+  opacity: 1;
+  background-color: var(--lvr-muted);
+  color: var(--lvr-foreground);
+}
+
+/* Item "Estamos en" ($locationLink/$locationHeader): sólo reestilizado */
+.lvr-header .nav-item--location a {
+  border: 1px solid transparent;
+  border-radius: 9999px;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.85);
+}
+
+.lvr-header .nav-item--location:hover a {
+  border-color: var(--lvr-border);
+  background-color: var(--lvr-muted);
+  color: var(--lvr-foreground);
+}
+
+/* --- Dropdown Categorías (panel claro estilo Lovable) --- */
+.lvr-header .dropdown-menu {
+  background-color: var(--lvr-background);
+  border: 1px solid var(--lvr-border);
+  border-radius: var(--lvr-radius);
+  box-shadow: var(--lvr-shadow-card);
+  padding: 0.5rem;
+  left: 0;
+  min-width: 220px;
+}
+
+.lvr-header .dropdown-menu a {
+  border-radius: 0.5rem;
+  padding: 0.625rem 1rem;
+  font-size: 0.875rem;
+  color: var(--lvr-foreground);
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.lvr-header .dropdown-menu a:hover {
+  background-color: var(--lvr-muted);
+  color: var(--lvr-foreground);
+}
+
+/* --- Foco visible (RF-11) scopeado al header: SPLIT por tipo de superficie (P1 / CA 2.4 /
+       CA 9.5). Base = controles que viven directamente sobre el header OSCURO #11161F → tono
+       claro #85B4E8 (var(--lvr-primary-on-dark)). Ratios transcritos de CA 9.4/CA 2.4 (DT-8:
+       se transcriben, no se recalculan): #85B4E8 sobre #11161F ≈8:1 ✓ (≥3 no-texto / ≥4,5
+       texto) · #1B4779 sobre pill/crema ≈9,1:1 ✓ · #1B4779 sobre #11161F ≈1,9:1 ✗ PROHIBIDO ·
+       #85B4E8 sobre crema ≈2,0:1 ✗ (motivo de la Excepción 2). Cubre nav, "Estamos en",
+       iconos, hamburguesa y el CTA WhatsApp (CA 2.8: ≈4,4:1 contra su propio fondo azul del
+       botón ✓). --- */
+.lvr-header a:focus-visible,
+.lvr-header button:focus-visible,
+.lvr-header input:focus-visible {
+  outline: 2px solid var(--lvr-primary-on-dark);
+  outline-offset: 2px;
+}
+
+/* Excepción 1 (CA 2.4) — pill CLARA del buscador: conserva el tono #1B4779, ratio ≈9,1:1
+   sobre la pill (DT-8); PROHIBIDO #85B4E8 sobre crema (≈2,0:1). Especificidad 0,3,0 > 0,2,1
+   de la base → gana por cascada normal. El border-color de la pill sigue var(--lvr-primary);
+   el ring :focus-within conserva el subtono azul oscuro de T2 (CA 2.5). */
+.lvr-header .header-search__input:focus-visible,
+.lvr-header .header-search__button:focus-visible {
+  outline-color: var(--lvr-primary);
+}
+
+/* Excepción 2 (enmienda Reviewer 2026-10-20; enmienda Coordenador/usuario 2026-10-20) —
+   dropdown SIN media query porque es CLARO en todos los anchos (.dropdown-menu con
+   --lvr-background: desktop y móvil) → #1B4779 ≈9,1:1 ✓. Especificidad 0,3,1 > 0,2,1 de la
+   base → gana por cascada normal. La enmienda acota el nav a ≤900 (evita la fuga desktop de
+   #1B4779 sobre #11161F ≈1,9:1 ✗ PROHIBIDO por CA 9.5) e incluye .nav-item--location a
+   ("Estamos en", sin clase .nav-link). Ratios (DT-8): #1B4779 sobre pill/crema ≈9,1:1 ✓ ·
+   #1B4779 sobre #11161F ≈1,9:1 ✗ PROHIBIDO · #85B4E8 sobre crema ≈2,0:1 ✗. */
+.lvr-header .dropdown-menu a:focus-visible {
+  outline-color: var(--lvr-primary);
+}
+
+/* Excepción 2, panel móvil ≤900: .header-bottom sólo es claro ≤900 → nav (0,4,0) y "Estamos
+   en" (0,4,1) van DENTRO del media; el @media no altera la especificidad y ambas > 0,2,1 de
+   la base → ganan por cascada (≈9,1:1 sobre el crema del panel). Notación del media SIN
+   `screen and`, deliberada: distingue este bloque de los 2 bloques preexistentes que sí usan
+   `screen and` (mismos valores, distinta notación). En desktop, nav y "Estamos en" conservan
+   la base #85B4E8 sobre #11161F (≈8:1 ✓) → #85B4E8 queda reservado a los controles
+   directamente sobre #11161F. */
+@media (max-width: 900px) {
+  .lvr-header .header-bottom .nav-link:focus-visible,
+  .lvr-header .nav-item--location a:focus-visible {
+    outline-color: var(--lvr-primary);
+  }
+}
+
+/* --- Desktop ≥1024px: sin desborde horizontal si no caben los 8 enlaces (D3).
+       Decisión: se usa flex-wrap en vez de overflow-x:auto porque overflow-x con overflow-y
+       computado a auto RECORTARÍA el #categories-dropdown (position:absolute dentro de
+       .header-bottom) y rompería el contrato de apertura del dropdown. --- */
+@media (min-width: 1024px) {
+  .lvr-header .header-bottom {
+    flex-wrap: wrap;
+    row-gap: 0.25rem;
+  }
+
+  .lvr-header .nav-list {
+    flex-wrap: wrap;
+  }
+}
+
+/* --- Panel móvil (≤900px): la apertura la sigue mandando main.js (.is-active);
+       sólo cambia la paleta a --lvr-* (fondo claro en vez de negro) --- */
+@media screen and (max-width: 900px) {
+  .lvr-header .header-bottom,
+  .lvr-header .header-bottom.is-active {
+    background-color: var(--lvr-background);
+    border-top: 1px solid var(--lvr-border);
+    box-shadow: var(--lvr-shadow-card);
+  }
+
+  .lvr-header .nav-item {
+    border-bottom: 1px solid var(--lvr-border);
+  }
+
+  .lvr-header .nav-link {
+    display: block;
+    border-radius: 0;
+    padding: 0.875rem 1.25rem;
+    color: var(--lvr-foreground);
+  }
+
+  .lvr-header .nav-link:hover {
+    background-color: var(--lvr-muted);
+  }
+
+  .lvr-header .nav-item--location a {
+    border: none;
+    border-radius: 0;
+    padding: 0.875rem 1.25rem;
+    color: var(--lvr-muted-foreground);
+  }
+
+  .lvr-header .dropdown-menu {
+    background-color: var(--lvr-background);
+    border: none;
+    border-left: 3px solid var(--lvr-primary);
+    border-radius: 0;
+    box-shadow: var(--lvr-shadow-card);
+  }
+
+  .lvr-header .dropdown-menu a {
+    border-radius: 0;
+    padding: 0.875rem 1.25rem;
+    color: var(--lvr-foreground);
+    border-bottom: 1px solid var(--lvr-border);
+  }
+
+  .lvr-header .dropdown-menu a:hover {
+    background-color: var(--lvr-muted);
+    color: var(--lvr-foreground);
+  }
+}
+
+/* --- Hamburguesa: pill con borde (el display lo maneja styles.css: block ≤900px) --- */
+.lvr-header .header-mobile-toggle {
+  border: 1px solid var(--lvr-border);
+  border-radius: 9999px;
+  padding: 0.375rem;
+  color: rgba(255,255,255,0.85);
+  transition: background-color 0.2s;
+}
+
+.lvr-header .header-mobile-toggle:hover {
+  background-color: var(--lvr-muted);
+  color: var(--lvr-foreground);
+}
+
+/* 3. HERO — .lvr-hero con margen de calle y esquinas redondeadas · gradiente · .lvr-hero__overlay badge/h1/p/CTAs (T3) */
+
+/* --- Envoltorio del Swiper como tarjeta (spec 004 Enm.11 / DER-7): lleva el margen de calle
+       arriba y a los lados (sin margen inferior) y el radio de la tarjeta. Su recorte interno
+       mantiene slides, overlay y flechas dentro de la esquina redondeada; se conservan el fondo
+       oscuro y el Swiper por dentro INTACTO. --- */
+.lvr-hero {
+  position: relative;
+  margin-block-start: var(--lvr-gutter);
+  margin-inline: var(--lvr-gutter);
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--lvr-secondary);
+}
+
+/* --- Overlay SIEMPRE visible sobre cualquier slide (N1 / RF-4) ---
+   z-index 3 > flechas Swiper (z-index 2, styles.css:619-639); el ::after blanco ya está
+   neutralizado (N3). pointer-events:none deja libres flechas y arrastre; sólo los <a>
+   (CTAs) reactivan eventos => no se tapan las flechas. */
+.lvr-hero__overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 2rem var(--lvr-gutter); /* py-8 de Lovable; horizontal al gutter común (spec 004 / DER-4) */
+  /* Scrim vertical de legibilidad en móvil: texto legible sobre cualquier imagen del admin */
+  background: linear-gradient(180deg, oklch(0.2 0.02 260 / 0.85), oklch(0.2 0.02 260 / 0.45));
+}
+
+.lvr-hero__overlay a {
+  pointer-events: auto;
+}
+
+/* --- Badge pill: bg-primary/20 + texto primary (index.tsx:112) --- */
+.lvr-hero__badge {
+  align-self: flex-start; /* el overlay es flex column: evita que el pill se estire */
+  border-radius: 9999px;
+  background: rgba(27,71,121,0.2);
+  /* T6/a11y (RF-11): texto blanco en vez de --primary — el naranja daba <4.5:1 sobre el
+     pill translúcido cuando el slide del admin es claro (peor caso ≈1.7:1). Blanco mide
+     ≥6.6:1 en todos los casos; el fondo del pill sigue siendo el literal de Lovable. */
+  color: var(--lvr-secondary-foreground);
+  font-size: 11px;
+  font-weight: 500;
+  padding: 0.25rem 0.625rem;
+}
+
+/* --- Único h1 de la página (RF-11): font-display, leading 1.1 (index.tsx:113) --- */
+.lvr-hero__title {
+  margin-top: 0.65rem;
+  max-width: 32rem; /* max-w-lg: el texto queda dentro de la zona del gradiente */
+  font-family: var(--lvr-font-display);
+  font-size: 1.875rem;
+  line-height: 1.1;
+  font-weight: 700;
+  color: var(--lvr-secondary-foreground);
+}
+
+/* --- Subtítulo (index.tsx:114) --- */
+.lvr-hero__subtitle {
+  margin-top: 0.5rem;
+  max-width: 28rem; /* max-w-md */
+  font-size: 0.875rem;
+  color: oklch(0.97 0 0 / 0.75);
+}
+
+/* --- 2 CTAs pill (index.tsx:115-118) --- */
+.lvr-hero__ctas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.625rem;
+  margin-top: 1.25rem;
+}
+
+.lvr-hero__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 9999px;
+  padding: 0.625rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: opacity 0.2s, background-color 0.2s;
+}
+
+.lvr-hero__cta i {
+  font-size: 1rem;
+}
+
+.lvr-hero__cta--primary {
+  background: var(--lvr-primary);
+  color: var(--lvr-primary-foreground);
+}
+
+.lvr-hero__cta--primary:hover {
+  opacity: 0.9;
+}
+
+.lvr-hero__cta--outline {
+  border: 1px solid oklch(0.97 0 0 / 0.3);
+  color: var(--lvr-secondary-foreground);
+}
+
+.lvr-hero__cta--outline:hover {
+  background: oklch(0.97 0 0 / 0.1);
+}
+
+/* --- Foco visible de los CTAs del hero (RF-11): viven sobre el overlay OSCURO del slider →
+       tono claro #85B4E8 / var(--lvr-primary-on-dark) — DT-1 paso 6, fila 11 (RF-9 → CA 9.5
+       hero). Ratio transcrito de CA 9.4 (DT-8: se transcribe, no se recalcula): ≈8,4:1 sobre
+       --lvr-secondary/overlay ✓. El segundo selector (scope .lvr-home) = 0,3,0 > 0,2,1 de la
+       regla genérica del home a/button:focus-visible, que es POSTERIOR en el archivo (sin el
+       scope, la genérica ganaría por orden) → gana por cascada normal. CA 9.7: hovers
+       opacity 0.9 y background 0.1 intactos, sin colores nuevos. --- */
+.lvr-hero__cta:focus-visible,
+.lvr-home .lvr-hero__cta:focus-visible {
+  outline: 2px solid var(--lvr-primary-on-dark);
+  outline-offset: 2px;
+}
+
+/* --- Desktop ≥768px: h1 2.6rem / subtítulo 1rem y gradiente horizontal tipo Lovable --- */
+@media (min-width: 768px) {
+  .lvr-hero__overlay {
+    padding: 2.5rem var(--lvr-gutter); /* py-10 de Lovable; horizontal al gutter (spec 004 / DER-4) */
+    background: linear-gradient(90deg, var(--lvr-secondary) 0%, oklch(0.2 0.02 260 / 0.7) 45%, transparent 80%);
+  }
+
+  .lvr-hero__title {
+    font-size: 2.6rem;
+  }
+
+  .lvr-hero__subtitle {
+    font-size: 1rem;
+  }
+}
+
+/* 4. HOME — categorías · tarjetas de producto (scope .lvr-home) · banner · marcas · ofertas · títulos (T4)
+   Referencia: index.tsx:122-173. TODA regla sobre .product-card (todas sus variantes) e info__meta
+   va SCOPEADA a .lvr-home (RF-13): esas clases se comparten con /productos (products.php) y /producto/{id}. */
+
+/* --- Título de sección de categorías: único h2 de la sección (RF-11); copy literal de Lovable --- */
+.lvr-section-title {
+  font-family: var(--lvr-font-display);
+  font-size: 1.5rem; /* text-2xl */
+  font-weight: 700;
+  color: var(--lvr-foreground);
+  margin-bottom: 1.25rem; /* mt-5 */
+}
+
+/* --- Respiro de las rejillas bajo el título (styles.css:722-725 fija 2rem; Lovable mt-5) --- */
+.lvr-home .category-grid,
+.lvr-home .brand-grid {
+  margin-top: 1.25rem;
+}
+
+/* --- Tiles categoría/marca estilo Lovable (index.tsx:126-129): SIN caja/borde (era card con borde),
+       imagen cuadrada redondeada con zoom al hover y etiqueta debajo (RF-5 / RF-8) --- */
+.lvr-home .category-card,
+.lvr-home .brand-card {
+  position: relative; /* DT-5: el <a> es el posicionado del título absoluto (no la imagen) */
+  background: transparent;
+  border: none;
+  padding: 0;
+  text-align: left;
+  justify-content: flex-start;
+  gap: 0.5rem; /* mt-2 entre imagen y etiqueta */
+}
+
+.lvr-home .category-card:hover,
+.lvr-home .brand-card:hover {
+  transform: none; /* el lift de styles.css:782-786 no aplica: aquí manda el zoom de la imagen */
+  box-shadow: none;
+}
+
+.lvr-home .category-card__image,
+.lvr-home .brand-card__image {
+  border-radius: var(--lvr-radius); /* rounded-2xl */
+  margin-bottom: 0; /* el respiro lo da el gap del tile */
+}
+
+/* T8/RF-6 — Casillas de marca con fondo blanco para unificar logos de distintos tamaños
+   (SÓLO marcas: las fotos de categorías no se rellenan, CA 6.1/6.4). El cuadrado 1:1, el
+   overflow que contiene el zoom y el centrado flex del logo ya los declara styles.css:799-809
+   (sólo lectura, diff vacío) → no hace falta repetirlos aquí. */
+.lvr-home .brand-card__image {
+  background: #fff;
+}
+
+/* T8 — Logo contenido: object-fit contain + respiro 0.5rem (5px de styles.css:819-824 era
+   < 0.5rem — CA 6.2) y banda inferior reservada de 2rem + 8px: deja zona libre bajo el logo
+   para la separación mínima logo↔título (≥8px) que T9 anclará abajo-izquierda (CA 6.3); el
+   overflow:hidden del cuadrado (styles.css:803) garantiza que el zoom de hover no desborde
+   (CA 6.3/7.6). */
+.lvr-home .brand-card__image img {
+  object-fit: contain;
+  padding: 0.5rem 0.5rem calc(2rem + 8px);
+}
+
+.lvr-home .category-card__image img,
+.lvr-home .brand-card__image img {
+  transition: transform 0.5s; /* duration-500 */
+}
+
+.lvr-home .category-card:hover .category-card__image img,
+.lvr-home .brand-card:hover .brand-card__image img {
+  transform: scale(1.1); /* group-hover:scale-110 */
+}
+
+.lvr-home .category-card__title,
+.lvr-home .brand-card__title {
+  position: absolute;
+  inset-inline-start: 0.75rem;
+  inset-inline-end: 0.75rem;
+  bottom: 0.625rem;
+  z-index: 1;
+  display: -webkit-box;
+  line-clamp: 2;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-size: 0.875rem; /* text-sm */
+  font-weight: 500; /* font-medium */
+  line-height: 1.25;
+  color: var(--lvr-foreground);
+  text-align: left;
+}
+
+/* T9/CA 7.3-7.4 — Categorías: texto blanco + scrim de legibilidad AA sobre la foto (gradiente
+   literal DT-4, ≈6:1 en el borde superior del título). El título se ancla a la tarjeta
+   (position: relative del <a>), NO a la imagen → el overflow:hidden del cuadrado no lo
+   recorta: sus coordenadas son respecto a la tarjeta. z-index: 1 y posterior en DOM → el
+   título pinta sobre el ::after. Marcas: SIN scrim y texto oscuro (la caja blanca de T8 ya
+   da ≥10:1 vía la regla compartida — CA 7.5). El scrim vive en ::after de la imagen → el
+   zoom del <img> no lo distorsiona (CA 7.6). Markup intacto en esta tarea (CA 7.7 — los
+   <span> se eliminan en T10). */
+.lvr-home .category-card__title {
+  color: #fff;
+}
+
+.lvr-home .category-card__image {
+  position: relative;
+}
+
+.lvr-home .category-card__image::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(180deg, transparent 40%, rgba(17,22,31,.45) 60%,
+              rgba(17,22,31,.85) 85%, rgba(17,22,31,.92) 100%);
+}
+
+/* --- Títulos de los 2 carruseles: font-display; su markup NO se mueve (contrato home.js intacto) --- */
+.lvr-home .product-carousel-title_new,
+.lvr-home .product-carousel-title_offer {
+  font-family: var(--lvr-font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--lvr-foreground);
+}
+
+/* --- Contenedor de los carruseles: bordes/radio/sombra del sistema Lovable --- */
+.lvr-home .products-container {
+  border: 1px solid var(--lvr-border);
+  border-radius: var(--lvr-radius);
+  box-shadow: var(--lvr-shadow-card);
+}
+
+/* --- Card de producto (index.tsx:156-170) — SCOPE OBLIGATORIO .lvr-home (RF-13) --- */
+.lvr-home .product-card {
+  display: block;
+  width: 100%;
+  min-width: 0; /* CLAVE: Obliga al grid a ignorar el ancho del texto y hacer todas las columnas idénticas */
+  border-radius: 1.25rem;
+  transition: transform 0.2s;
+}
+
+.lvr-home .product-card:hover {
+  transform: translateY(-4px); /* hover:-translate-y-1 */
+}
+
+.lvr-home .product-card__inner {
+  margin: 0;
+  padding: 0; /* Eliminamos el padding para que la imagen toque los bordes superiores */
+  border: 1px solid var(--lvr-border);
+  border-radius: 1.25rem; /* Bordes más curvos y modernos */
+  background: var(--lvr-background);
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.025);
+  position: relative; /* Clave para las etiquetas flotantes */
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden; /* Asegura que la imagen no desborde el radio */
+}
+
+.lvr-home .product-card__image {
+  aspect-ratio: 1/1;
+  width: 100%;
+  background-color: #f8fafc; /* Fondo gris muy tenue para resaltar la foto */
+  border-bottom: 1px solid var(--lvr-border); /* Separador visual */
+  margin-bottom: 0;
+  padding: 1.5rem; /* Respiro interno de la imagen */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0;
+}
+
+.lvr-home .product-card__image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: transform 0.4s ease;
+}
+
+.lvr-home .product-card:hover .product-card__image img {
+  transform: scale(1.05);
+}
+
+.lvr-home .product-card__content {
+  padding: 1.25rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  flex-grow: 1;
+}
+
+.lvr-home .product-card__content > p.info__meta:first-child {
+  width: 100%;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #64748b; /* Tono pizarra 500 */
+  margin-bottom: 0.5rem;
+}
+
+.lvr-home .info__meta {
+  font-size: 11px;
+  letter-spacing: 0.025em; /* tracking-wide de Lovable */
+  text-transform: uppercase;
+  color: var(--lvr-muted-foreground);
+  margin-bottom: 0.25rem;
+}
+
+.lvr-home .product-card__title {
+  width: 100%;
+  display: -webkit-box;
+  line-clamp: 2;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #0f172a;
+  line-height: 1.4;
+  margin-bottom: 0.5rem;
+}
+
+.lvr-home .product-card__price,
+.lvr-home .offer-price {
+  font-family: var(--lvr-font-display);
+  font-size: 1.125rem; /* text-lg */
+  font-weight: 700;
+  color: var(--lvr-foreground);
+}
+
+.lvr-home .product-card__price {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.lvr-home .price-line,
+.lvr-home .offer-line {
+  display: flex;
+  flex-direction: column; /* Apilado de precio tachado y nuevo precio */
+  align-items: flex-start;
+  gap: 0;
+}
+
+
+.lvr-home .price-line > span:first-child,
+.lvr-home .offer-price {
+  font-family: var(--lvr-font-display);
+  font-size: 1.15rem; /* Reducido de 1.5rem a 1.15rem para verse proporcionado */
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: -0.015em;
+}
+
+.lvr-home .original-price {
+  font-size: 0.8rem !important;
+  color: #94a3b8 !important;
+  text-decoration: line-through;
+  margin-bottom: 0.125rem;
+  font-weight: 500 !important;
+}
+
+.lvr-home .product-card__tag {
+  position: absolute !important;
+  top: 1rem !important;
+  right: 1rem !important;
+  border-radius: 9999px !important;
+  font-size: 0.7rem !important;
+  font-weight: 700 !important;
+  padding: 0.35rem 0.75rem !important;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  z-index: 10;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+
+.lvr-home .product-card__discount {
+  display: none !important;
+}
+
+.lvr-home .product-card__tag.discount--new {
+  background-color: #047857 !important; /* Esmeralda 700 */
+  color: #fff !important;
+}
+
+.lvr-home .product-card__tag.discount--offer {
+  background-color: #ef4444 !important; /* Rojo 500 */
+  color: #fff !important;
+}
+
+/* 5. Estado de Stock (Badge con punto) */
+.lvr-home .product-card__content > p.info__meta:last-child {
+  margin: 0;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+/* Oculta la cadena original en mayúsculas sin borrarla del DOM */
+.lvr-home .lvr-badge {
+  font-size: 0;
+  display: inline-flex;
+  align-items: center;
+  border-radius: 9999px;
+  padding: 0.35rem 0.75rem;
+}
+
+/* Estilo DISPONIBLE */
+.lvr-home .lvr-badge--available {
+  background-color: #dcfce7;
+  color: #166534;
+}
+.lvr-home .lvr-badge--available::before {
+  content: "";
+  display: block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #22c55e;
+  margin-right: 6px;
+}
+.lvr-home .lvr-badge--available::after {
+  content: "Disponible"; /* Texto con correcta capitalización inyectado en CSS */
+  font-size: 0.6rem;
+  font-weight: 600;
+}
+
+/* Estilo AGOTADO */
+.lvr-home .lvr-badge--out-of-stock {
+  background-color: #f1f5f9;
+  color: #475569;
+}
+.lvr-home .lvr-badge--out-of-stock::before {
+  content: "";
+  display: block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #64748b;
+  margin-right: 6px;
+}
+.lvr-home .lvr-badge--out-of-stock::after {
+  content: "Agotado";
+  font-size: 0.6rem;
+  font-weight: 600;
+}
+
+
+/* --- Banner (RF-8): el markup PHP queda ÍNTEGRO; sólo radio y borde armónicos --- */
+.lvr-banner {
+  border: 1px solid var(--lvr-border);
+  border-radius: var(--lvr-radius);
+  overflow: hidden;
+}
+
+/* 5. FOOTER — features · columnas · copyright · FABs (T5)
+   Scope .lvr-footer: clase añadida a .features-section, .main-footer y .floating-buttons-container.
+   Look Lovable: features → index.tsx:134-144 · footer → index.tsx:176-184 · FAB → index.tsx:184.
+   Sólo presentación: variables PHP, contratos de main.js (#scrollTopBtn, .show) y scripts intactos. */
+
+/* --- Features de confianza (RF-6): card border/bg/radio + tile de icono 40x40 (copy literal) --- */
+.lvr-footer.features-section {
+  background-color: var(--lvr-background);
+  margin-top: 2.5rem;
+  padding: 2.5rem 0;
+  border-bottom: none;
+}
+
+.lvr-footer .feature-box {
+  flex-direction: row;
+  align-items: center;
+  gap: 0.75rem;
+  text-align: left;
+  padding: 1rem;
+  border: 1px solid var(--lvr-border);
+  border-radius: var(--lvr-radius);
+  background: var(--lvr-background);
+}
+
+.lvr-footer .feature-box__body {
+  min-width: 0;
+}
+
+.lvr-footer .feature-box__icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  margin-bottom: 0;
+  border-radius: calc(var(--lvr-radius) - 0.2rem);
+  background: var(--lvr-accent);
+  color: var(--lvr-foreground);
+  font-size: 1.25rem;
+}
+
+.lvr-footer .feature-box__title {
+  margin-bottom: 0.125rem;
+  font-family: var(--lvr-font-sans);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--lvr-foreground);
+}
+
+.lvr-footer .feature-box__text {
+  font-size: 0.75rem;
+  color: var(--lvr-muted-foreground);
+  line-height: 1.5;
+}
+
+/* --- Footer (RF-9): bg --secondary, py-12, títulos font-display, textos con opacidad 60-70% --- */
+.lvr-footer.main-footer {
+  background-color: var(--lvr-secondary);
+  padding-top: 3rem;
+  color: var(--lvr-secondary-foreground);
+}
+
+.lvr-footer .footer-column__title {
+  margin-bottom: 1rem;
+  font-family: var(--lvr-font-display);
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--lvr-secondary-foreground);
+}
+
+.lvr-footer .footer-column__list li {
+  margin-bottom: 0.625rem;
+  font-size: 0.875rem;
+  color: oklch(0.97 0 0 / 0.7);
+}
+
+.lvr-footer .footer-column__list a {
+  font-family: var(--lvr-font-sans);
+  font-size: 0.85rem;
+  color: oklch(0.97 0 0 / 0.7);
+}
+
+/* Hovers de enlaces del footer → tono claro #85B4E8 (on-dark) — RF-9 → CA 9.5 (hovers):
+   3 reglas (lista de columnas, iconos sociales y ©). Ratios transcritos de CA 9.4 (DT-8:
+   se transcriben, no se recalculan): on-dark ≈8,4:1 sobre --lvr-secondary ✓ · on-dark
+   ≈9,0:1 sobre la barra © ✓ · #1B4779 sobre secondary ≈1,9:1 ✗ PROHIBIDO (motivo del split). */
+.lvr-footer .footer-column__list a:hover {
+  color: var(--lvr-primary-on-dark);
+  text-decoration: underline;
+}
+
+.lvr-footer .footer-logos-container {
+  justify-content: flex-start;
+}
+
+.lvr-footer .footer-social-icons {
+  justify-content: flex-start;
+}
+
+.lvr-footer .footer-social-icons a {
+  color: oklch(0.97 0 0 / 0.85);
+}
+
+.lvr-footer .footer-social-icons a:hover {
+  color: var(--lvr-primary-on-dark);
+  transform: translateY(-2px);
+}
+
+/* Copyright: barra en tono más oscuro que --secondary + borde superior sutil (RF-9) */
+.lvr-footer .footer-copyright {
+  background-color: oklch(0.16 0.02 260);
+  border-top: 1px solid oklch(0.97 0 0 / 0.12);
+  color: oklch(0.97 0 0 / 0.75);
+  font-size: 0.75rem;
+}
+
+.lvr-footer .footer-copyright a {
+  color: oklch(0.97 0 0 / 0.9);
+  text-decoration: underline;
+}
+
+.lvr-footer .footer-copyright a:hover {
+  color: var(--lvr-primary-on-dark);
+}
+
+/* --- FABs (RF-9/F6): rounded-full 56px, WhatsApp --success, scroll-top --foreground, sombra Lovable.
+   La clase .show de main.js:92-94 (aparición a los 300px) y los ids/clases existentes NO se tocan. --- */
+.lvr-footer.floating-buttons-container {
+  bottom: 1.25rem;
+  right: 1.25rem;
+  z-index: 20;
+  gap: 0.75rem;
+}
+
+.lvr-footer .float-btn {
+  width: 56px;
+  height: 56px;
+  border-radius: 9999px;
+  font-size: 1.5rem;
+  box-shadow: var(--lvr-shadow-card);
+}
+
+.lvr-footer .float-btn:hover {
+  transform: scale(1.05);
+  box-shadow: var(--lvr-shadow-card);
+}
+
+.lvr-footer .btn-whatsapp {
+  background-color: var(--lvr-success);
+}
+
+.lvr-footer .btn-scroll-top {
+  background-color: var(--lvr-foreground);
+}
+
+/* --- Foco visible en footer/features/FABs (RF-11) --- */
+.lvr-footer a:focus-visible,
+.lvr-footer button:focus-visible {
+  outline: 2px solid var(--lvr-primary);
+  outline-offset: 2px;
+}
+
+/* Split de foco (RF-9 → CA 9.5 footer; plan DT-1 fila 16): SÓLO .main-footer (el <footer>
+   OSCURO con bg --lvr-secondary, footer.php L36) re-tinta su foco a #85B4E8 (on-dark),
+   ratio ≈8,4:1 sobre secondary ✓; envuelve la barra .footer-copyright (L99) → el © hereda
+   el foco on-dark ≈9,0:1 ✓. Motivo del split: #1B4779 sobre secondary ≈1,9:1 ✗ PROHIBIDO
+   (ratios transcritos de CA 9.4, DT-8). Especificidad 0,3,1 (2 clases + elemento +
+   :focus-visible) > 0,2,1 de la base → gana por cascada normal. La base se queda en
+   #1B4779: features (.features-section, footer.php L2) y FABs (.floating-buttons-container,
+   L110 — fuera de </footer> en L109) NO llevan .main-footer → conservan el tono oscuro
+   sobre superficies claras ≈9,1:1 ✓. */
+.lvr-footer.main-footer a:focus-visible,
+.lvr-footer.main-footer button:focus-visible {
+  outline-color: var(--lvr-primary-on-dark);
+}
+
+/* 6. RESPONSIVE / A11Y TRANSVERSAL (T6) — la base mobile-first vive en los bloques 2–5
+      (@media 640: CTA WhatsApp + grids 4col + features 3col · 768: hero py-10 (horizontal al gutter común) + h1 2.6rem
+      + footer 5col · 1024: nav wrap + grids 7col). Este bloque corrige los desajustes
+      detectados en la auditoría responsive/a11y final (RF-10/RF-11). */
+
+/* --- Alineación de contenedores al eje común (calle lateral) — spec 004 / DER-1 deroga el
+   tope anterior (decisión A8). styles.css usa --container-padding:3rem en
+   footer/carruseles/banner, lo que desalineaba sus bordes con el header/hero. --- */
+.lvr-footer .header-container {
+  margin-inline: auto;
+  padding-inline: var(--lvr-gutter);
+}
+
+/* Categorías (.overlap-container) y marcas (.overlap-container1): sólo se usan en home.php
+   (verificado por grep) → ajuste sin scope, como N4/N5. */
+.overlap-container,
+.overlap-container1 {
+  margin-inline: auto;
+  padding-inline: var(--lvr-gutter);
+}
+
+/* Carruseles de producto: scope .lvr-home OBLIGATORIO (.products-container se comparte con
+   /productos, RF-13). El ancho va con calle lateral en vez de tope — spec 004 / DER-1 deroga
+   el tope anterior (decisión A8); sin width declarado: caja auto + margen ≤ padre. */
+.lvr-home .products-container {
+  margin-inline: var(--lvr-gutter);
+}
+
+/* Banner: scope .lvr-banner (la clase viste la section de home.php; .home-banner-section
+   existe también en admin, que NO carga lvr.css). Ahora va con calle lateral en vez de tope —
+   spec 004 / DER-1 deroga el tope anterior (decisión A8); el margen vertical sigue mandando
+   styles.css (3rem base / 1rem ≤768). */
+.lvr-banner {
+  margin-inline: var(--lvr-gutter);
+}
+
+/* Foco visible en los enlaces/controles del home (RF-11): tiles de categoría/marca, cards de
+   producto y CTAs scopeados a .lvr-home. */
+.lvr-home a:focus-visible,
+.lvr-home button:focus-visible {
+  outline: 2px solid var(--lvr-primary);
+  outline-offset: 2px;
+}
+
+/* Dropdown móvil (≤900px): styles.css lo posiciona como panel lateral DERECHO (right:0,
+   width:55%); la regla base del bloque 2 fija left:0 y, al ser más específica, anulaba
+   left:auto → el panel tapaba los enlaces del nav a la izquierda. Se restaura la hoja derecha. */
+@media screen and (max-width: 900px) {
+  .lvr-header .dropdown-menu {
+    left: auto;
+  }
+}
+
+/* 7. NEUTRALIZACIONES — sobreescriben styles.css SIN editarlo. SIEMPRE AL FINAL del archivo (T2–T6) */
+
+/* N1 — Header Ciclo 1 (styles.css:39-49): oscuro #11161F α0.9, mismo nivel de transparencia
+   que el blanco translúcido anterior tipo Lovable; se CONSERVAN position:sticky / top:0 /
+   z-index:1000 (contrato scroll-header de main.js).
+   NOTA: la spec/plan escriben ".lvr-header .main-header" (descendiente), pero la clase scope
+   va en el MISMO elemento (<header class="main-header lvr-header">), por lo que ese selector
+   no coincidiría con nada; se usa el selector compuesto .lvr-header.main-header (misma
+   especificidad 0,2,0 y mismo alcance defensivo: .main-header sólo vive en header.php). */
+.lvr-header.main-header {
+  background: rgba(17,22,31,0.9);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--lvr-border);
+  padding: 0;
+}
+
+/* N2 — Altura del slider por proporción fija (spec 004 Enmienda 10 / RF-1): cuadrada en móvil y
+   panorámica ≥768, con suelos de seguridad (22rem base / 24rem ≥768) — el contenido del overlay
+   nunca se recorta. La regla de ventana (viewport) con la constante de chrome ya NO existe
+   (Enm.10 la deroga: tokens y medias de chrome eliminados). El bloque de styles.css fija una
+   proporción que queda INERTE (mismo selector, declaraciones definitivas aquí; styles.css intacto;
+   las imágenes conservan object-fit: cover). Sin respiro con el header: el hueco de 1.5rem
+   desaparece por Enm.10/DER-6 (borrado en la tarea siguiente). */
+.home-slider.swiper {
+  aspect-ratio: 1/1;
+  min-height: 22rem;
+}
+@media (min-width: 768px) {
+  .home-slider.swiper {
+    aspect-ratio: 3/1;
+    min-height: 24rem;
+  }
+}
+
+/* N3 — Velo/fade inferior de styles.css:641-656 (z-index:5, por encima del overlay y de las
+   flechas): queda OCULTO para que mande el gradiente de legibilidad de Lovable.
+   styles.css INTACTO. */
+.home-slider.swiper::after {
+  display: none;
+}
+
+/* N4 — styles.css:756-760: .overlap-container{margin-top:-200px} montaba las categorías sobre el
+   slider (D2). Flujo normal tipo Lovable (mt-6 = 24px). styles.css INTACTO. */
+.overlap-container {
+  margin-top: 1.5rem;
+}
+
+/* N5 — styles.css:1026 (@media ≤1024px): margin-top:-150px. Se REAFIRMA el flujo normal dentro del
+   mismo rango de viewport (mismo selector, lvr.css va después → gana). */
+@media (max-width: 1024px) {
+  .overlap-container {
+    margin-top: 1.5rem;
+  }
+}
+
+/* N6 — styles.css:553-557: .home-section{padding-bottom:110px;margin-bottom:-100px} creaba un
+   hueco de ~110px entre slider y categorías (M2). Sin solape ni hueco. */
+.home-section {
+  padding-bottom: 0;
+  margin-bottom: 0;
+}
+
+/* N7 — styles.css:728-736: 7 col fijas con flex-wrap:nowrap + overflow-x:auto (scroll lateral).
+   Ahora wrap con 3 col base → 4 ≥640px → 7 ≥1024px (máximo por breakpoint; TODAS las filas
+   caben porque el grid acepta filas extra = wrap natural). */
+.category-grid,
+.brand-grid {
+  grid-template-columns: repeat(3, 1fr);
+  flex-wrap: wrap;
+  overflow-x: visible;
+  gap: 0.75rem;
+}
+
+@media (min-width: 640px) {
+  .category-grid,
+  .brand-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .category-grid,
+  .brand-grid {
+    grid-template-columns: repeat(7, 1fr);
+  }
+}
+
+/* N8 — styles.css:743-744 OCULTABA categorías/marcas ≥8 (selector idéntico → gana el orden de
+   lvr.css). display:flex restaura el layout interno del card ⇒ TODAS visibles (D2/M1). */
+.category-grid > *:nth-child(n+8),
+.brand-grid > *:nth-child(n+8) {
+  display: flex;
+}
+
+/* T6/DT-3 — Rejillas <640px: fila horizontal scrollable con CSS puro (RF-5). Selectores
+   DESNUDOS dentro del media (mismo patrón que N7): así el margin-top: 1.25rem de
+   .lvr-home .category-grid/.brand-grid (0,2,0) sigue ganando sobre el margin-block negativo
+   (0,1,0) y el respiro título→tiles no desaparece. El emparejado padding-block: 4px +
+   margin-block: -4px compensa el outline sin mover la caja y evita que el contenedor con
+   overflow-x recorte el foco de los tiles (R4/CA 5.3). Barra oculta en ambos motores
+   (scrollbar-width + scrollbar pseudo de WebKit). Snap por proximidad (sin saltos bruscos
+   de mandatory, DT-3). SÓLO vive en este media → ≥640px: N7 (4col/7col) y N8 intactas. */
+@media (max-width: 639.98px) {
+  .category-grid,
+  .brand-grid {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 0.75rem;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+    padding-block: 4px;
+    margin-block: -4px;
+  }
+
+  .category-grid::-webkit-scrollbar,
+  .brand-grid::-webkit-scrollbar {
+    display: none;
+  }
+
+  .category-grid > * {
+    flex: 0 0 140px;
+    width: 140px;
+    scroll-snap-align: start;
+  }
+
+  .brand-grid > * {
+    flex: 0 0 140px;
+    width: 140px;
+    scroll-snap-align: start;
+  }
+}
+
+/* Foco del scroller (CA 5.3/5.4): tono primario — la rejilla es superficie CLARA, el tono
+   para oscuros queda RESERVADO a superficies oscuras (P1); el outline-offset 2px sumado al
+   padding-block del media deja el contenedor enfocable sin recorte del outline ni
+   desplazamiento visible de la caja. */
+.category-grid:focus-visible,
+.brand-grid:focus-visible {
+  outline: 2px solid var(--lvr-primary);
+  outline-offset: 2px;
+}
+
+/* N9 — styles.css:869-872 congelaba los slides en 255x350 (!important). Scope .lvr-home
+   OBLIGATORIO (.products-container/.product-card* se comparten con /productos, RF-13).
+   Ancho explícito 320px porque home.js fija slidesPerView:'auto' → el ancho lo manda el CSS (plan R4).
+   !important SÓLO porque styles.css ya lo usa en esas reglas. */
+.lvr-home .products-container .swiper-slide {
+  width: 320px;
+  max-width: 320px !important;
+  max-height: none !important;
+}
+
+/* N10 — styles.css:883-892: .product-card__inner con max-w/max-h 255x350 !important (contenido
+   recortado). Scope .lvr-home obligatorio (RF-13). */
+.lvr-home .product-card__inner {
+  max-width: none !important;
+  max-height: none !important;
+}
+
+/* N11 — styles.css:979-992: .product-card__tag con max-w/max-h 255x350 !important (herencia rara
+   en los tags NUEVO/OFERTA). Scope .lvr-home obligatorio (RF-13). */
+.lvr-home .product-card__tag {
+  max-width: none !important;
+  max-height: none !important;
+}
+
+/* N12 — Features mobile-first (RF-6/RF-10): styles.css:371-375 fija 3 col + texto centrado en TODOS
+   los anchos, :384 ponía divisor vertical entre cards y :512-520 pasaba a 1 col ≤900px con divisor
+   inferior. Lovable (index.tsx:134): 1 col en base → 3 ≥640px, SIN divisores (cada card ya tiene su
+   propio borde) y texto a la izquierda. styles.css INTACTO. */
+.lvr-footer .features-grid {
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+  text-align: left;
+}
+
+.lvr-footer .feature-box:not(:last-child) {
+  border-right: none;
+  border-bottom: none;
+  padding-bottom: 1rem;
+}
+
+@media (min-width: 640px) {
+  .lvr-footer .features-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* N13 — Footer grid (RF-9/RF-10): styles.css:422-427 fija 5 col en TODOS los anchos, :521-528 pasa a
+   2 col ≤900px con .footer-column:last-child en span 2 + centrado y :536-540 a 1 col ≤550px con
+   text-align:center. Lovable: 1 col en base (apiladas a 375px) → 5 ≥768px, alineación a la izquierda.
+   styles.css INTACTO. */
+.lvr-footer .footer-main-grid {
+  grid-template-columns: 1fr;
+  text-align: left;
+}
+
+.lvr-footer .footer-column:last-child {
+  grid-column: auto;
+  text-align: left;
+}
+
+@media (min-width: 768px) {
+  .lvr-footer .footer-main-grid {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+
+/* ==========================================================================
+   REDESIGN SIDEBAR (FILTROS) - RÉPLICA DE DISEÑO LIMPIO
+   ========================================================================== */
+
+/* 1. Contenedor Principal del Sidebar */
+.lvr-home .filter-sidebar {
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0; /* Borde gris muy tenue */
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+}
+
+/* 2. Título principal (Anula el style="color: #2a4786ff" del HTML) */
+.lvr-home .filter-sidebar h3 {
+    color: #0f172a !important; 
+    font-family: var(--lvr-font-sans);
+    font-size: 1.25rem;
+    font-weight: 700;
+    padding: 0 0 1rem 0 !important;
+    margin-bottom: 0.5rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+/* 3. Contenedores de cada Categoría (Acordeones) */
+.lvr-home .filter-group {
+    border-bottom: 1px solid #f1f5f9;
+    margin: 0;
+}
+.lvr-home .filter-group:last-child {
+    border-bottom: none;
+}
+
+/* 4. Cabecera del acordeón (Simulando los títulos grises "CATEGORÍAS", "MARCA") */
+.lvr-home .accordion__header {
+    background-color: transparent !important;
+    color: #475569 !important;
+    padding: 0.5rem 0 !important; /* Cambiado de 1.25rem a 0.75rem */
+    font-size: 0.75rem !important;
+    font-weight: 700 !important;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border: none;
+}
+
+.lvr-home .accordion__header h4 {
+    margin: 0;
+    font-size: inherit;
+    font-weight: inherit;
+}
+
+.lvr-home .accordion__icon {
+    color: #94a3b8;
+    font-size: 1.2rem;
+}
+
+/* Estado Activo/Abierto de la Cabecera */
+.lvr-home .filter-option-header input:checked + .accordion__header,
+.lvr-home .accordion.is-open .accordion__header {
+    background-color: transparent !important;
+    color: #0f172a !important; /* Texto más oscuro al abrir */
+}
+
+.lvr-home .filter-option-header input:checked + .accordion__header .accordion__icon {
+    color: var(--lvr-primary);
+}
+
+/* 5. Contenido de las opciones (Eliminar fondo blanco/gris viejo) */
+.lvr-home .accordion__content {
+    background-color: transparent !important;
+}
+
+.lvr-home .filter-options-list {
+    padding-bottom: 1rem;
+}
+
+.lvr-home .filter-options-list .filter-option {
+    margin-bottom: 0.25rem;
+}
+
+/* 6. Estilos de las Opciones (Textos) */
+.lvr-home .filter-options-list .filter-option label {
+    background-color: transparent !important;
+    border-bottom: none !important;
+    padding: 0.4rem 0.4rem 0.4rem 2rem !important; /* Espacio 2rem para dibujar el checkbox */
+    color: #475569 !important;
+    font-size: 0.9rem !important;
+    font-weight: 400 !important;
+    border-radius: 0.375rem;
+    position: relative;
+    display: flex;
+    align-items: center;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.lvr-home .filter-options-list .filter-option:hover label {
+    background-color: #f8fafc !important;
+    color: #0f172a !important;
+}
+
+/* 7. Truco de Magia: Dibujar el "Checkbox" Falso */
+.lvr-home .filter-options-list .filter-option label::before {
+    content: "";
+    position: absolute;
+    left: 0.25rem;
+    width: 16px;
+    height: 16px;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px; /* Radio de 4px para que parezca checkbox */
+    background-color: #fff;
+    transition: all 0.2s ease-in-out;
+}
+
+/* 8. Estado Seleccionado (Checkbox Marcado) */
+.lvr-home .filter-option input:checked + label {
+    background-color: transparent !important;
+    color: var(--lvr-primary) !important;
+    font-weight: 600 !important;
+}
+
+.lvr-home .filter-option input:checked + label::before {
+    background-color: var(--lvr-primary);
+    border-color: var(--lvr-primary);
+    /* Inyecta un icono de check (SVG) en CSS plano */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E");
+    background-size: 10px;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+/* ===== 8. SPEC 007 — /productos (scope .lvr-products) ===== */
+/* Sub-bloques: 8.1 layout+página · 8.2 toolbar · 8.3 chips · 8.4 sidebar+filtros · 8.5 card ·
+   8.6 precio+pill · 8.7 CTA · 8.8 grid · 8.9 estado vacío · 8.10 mobile · 8.11 foco/a11y.
+   Todo scoped bajo .lvr-products (clase del <main> de products.php, T4) → INERTES hasta entonces.
+   Neutralizaciones al FINAL del archivo (convención de la cabecera: ganan por cascada).
+   !important SÓLO donde el origen ya lo usa, con comentario de anclaje (plan §4.3).
+   Sin selectores fuera del scope de la spec (RF-16: aditividad; sólo .lvr-products). */
+
+/* 8.1 layout+página · grid — neutraliza styles.css:1173 (base 4 col), :1197 (≥1400 5 col),
+   :1204 (≤1280 3 col), :1225 (≤900 3 col), :1241 (≤550 2 col) y :1198/:1203 del layout:
+   especificidad (0,2,0) > (0,1,0) y bloque 8 posterior en cascada → SIN !important (§4.3).
+   R4: el padding de styles.css:1086/:1203 NO se neutraliza (calle global, decisión aprobada). */
+.lvr-products .product-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+@media (min-width: 768px) {
+    .lvr-products .product-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 1280px) {
+    .lvr-products .product-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 1280px) {
+    .lvr-products .products-page-layout {
+        grid-template-columns: 260px minmax(0, 1fr);
+        gap: 2rem;
+    }
+}
+
+/* 8.1b encabezado de página — RF-3/§12(8) (fuente index.tsx:101-107): breadcrumb flex + h1 Sora
+   text-xl → text-2xl ≥640 con border-b pb-4 en el contenedor. Clases nuevas de T4 → SIN
+   competencia y SIN !important (§4.3). */
+.lvr-products .lvr-page-header {
+    border-bottom: 1px solid var(--lvr-border);
+    padding-bottom: 1rem;
+    margin: 1rem 0 0 1.5rem;
+}
+
+.lvr-products .lvr-breadcrumb {
+    margin-left: 1rem;
+    margin-right: 1rem;
+    display: flex;
+    gap: 0.375rem;
+    font-size: 0.75rem;
+    color: var(--lvr-muted-foreground);
+}
+
+.lvr-products .lvr-breadcrumb a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.lvr-products .lvr-breadcrumb a:hover {
+    text-decoration: underline;
+}
+
+.lvr-products .lvr-breadcrumb__current {
+    font-weight: 700;
+    color: var(--lvr-foreground);
+}
+
+.lvr-products .lvr-page-title {
+    font-family: var(--lvr-font-display);
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-top: 0.5rem;
+}
+
+@media (min-width: 640px) {
+    .lvr-products .lvr-page-title {
+        font-size: 1.5rem;
+    }
+}
+
+/* 8.2 toolbar — RF-4/RF-5/§12(8) (fuente index.tsx:122-135). Neutraliza styles.css:1165-1171
+   por especificidad (0,2,x)>(0,1,x) → SIN !important: flex-wrap+gap sobre :1165-1168, el select
+   pill gana a :1170 (border-radius 4px) y btn-clear-filters a :1171 (margin-left:1rem). NO se
+   declara flex-direction → :1221 (column ≤900) sigue mandando (apilado móvil, T14). */
+.lvr-products .product-grid-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+}
+
+.lvr-products .toolbar-count {
+    font-size: 0.875rem;
+    color: var(--lvr-muted-foreground);
+}
+
+.lvr-products .toolbar-count strong {
+    color: var(--lvr-foreground);
+    font-weight: 700;
+}
+
+/* §12(8): la fuente no muestra label en desktop → sr-only CONSERVANDO for/id (a11y). No existe
+   helper .sr-only previo (styles.css/lvr.css) → propiedades explícitas de tasks.md literal. */
+.lvr-products .toolbar-sort label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+}
+
+.lvr-products .lvr-select-wrap {
+    position: relative;
+    display: inline-flex;
+}
+
+.lvr-products .lvr-select-wrap select {
+    appearance: none;
+    -webkit-appearance: none;
+    border: 1px solid var(--lvr-border);
+    border-radius: 9999px;
+    background: var(--lvr-background);
+    padding: 0.5rem 2.25rem 0.5rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--lvr-foreground);
+}
+
+.lvr-products .lvr-select-wrap__icon {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: var(--lvr-muted-foreground);
+}
+
+.lvr-products .btn-clear-filters {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--lvr-primary);
+    text-decoration: none;
+    margin-left: 0;
+}
+
+.lvr-products .btn-clear-filters:hover {
+    text-decoration: underline;
+}
+
+/* 8.3 chips — RF-6/E4b (fuente index.tsx:141-146): pill con bg-accent CÁLIDO del proyecto
+   (oklch 0.94 0.04 60) + --lvr-accent-foreground (T2) para AA → desviación declarada E4b, NO se
+   cambia el accent. Foco → 8.11 (T14); 44px táctil → 8.10 ≤767 (T14): tasks no asigna hover. */
+.lvr-products .lvr-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 1rem 0;
+}
+
+.lvr-products .lvr-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    border-radius: 9999px;
+    background: var(--lvr-accent);
+    color: var(--lvr-accent-foreground);
+    padding: 0.25rem 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.lvr-products .lvr-chip__remove {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: inherit;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.lvr-products .lvr-chip__remove i {
+    font-size: 1em;
+    line-height: 1;
+}
+
+/* 8.4 sidebar+filtros — RF-7/RF-8/RF-15d/§12(10). Batalla de !important: CADA !important del
+   "REDESIGN SIDEBAR" (lvr.css:1286-1415; los originales NO se editan) se redeclara bajo
+   .lvr-products con !important + N-fix → gana el declarado DESPUÉS. Valores 006 conservados
+   donde tasks.md no da valor nuevo (decisión Coordinator). Sin checkbox en la cabecera del
+   grupo (RF-7 + index.tsx:200-210; tasks item 6 desviado, anotado). D-4: el display:none ≤900
+   de styles.css:1215 sigue mandando (no se declara display en la card). */
+
+/* Card sidebar (RF-7, fuente sticky top-6 rounded-2xl p-5): neutraliza styles.css:1090 (static,
+   bg #fff, radius 6px) por especificidad (0,2,0)>(0,1,0) → SIN !important. */
+
+
+
+
+.lvr-products .filter-sidebar {
+    position: sticky;
+    top: 1.5rem;
+    align-self: start;
+    border: 1px solid var(--lvr-border);
+    border-radius: 1rem;
+    background: var(--lvr-background);
+    padding: 1.25rem;
+    box-shadow: var(--lvr-shadow-card);
+    
+    /* Scroll independiente */
+    max-height: calc(100vh - 3rem); 
+    overflow-y: auto; 
+    
+    /* Ocultar la barra en Firefox */
+    scrollbar-width: none; 
+}
+
+/* Ocultar la barra en Chrome, Safari, Edge y Opera */
+.lvr-products .filter-sidebar::-webkit-scrollbar {
+    display: none;
+}
+
+/* Cabecera (RF-7, fuente L112-115): flex space-between + h2 display + enlace "Limpiar" (T7). */
+.lvr-products .filter-sidebar__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.lvr-products .filter-sidebar__header h2 {
+    font-family: var(--lvr-font-display);
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.lvr-products .filter-sidebar__clear {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--lvr-primary);
+    text-decoration: none;
+}
+
+.lvr-products .filter-sidebar__clear:hover {
+    text-decoration: underline;
+}
+
+/* Anclaje 1 (plan L1301/1305) — h3 → ahora .filter-sidebar__title (T7): color = muted-foreground
+   (item 3); padding conserva valor 006. font-size 0.75rem/uppercase/bold (item 3) ganan por
+   especificidad (0,3,1)>(0,2,1) sin !important. */
+.lvr-products .filter-sidebar h3.filter-sidebar__title {
+    color: var(--lvr-muted-foreground) !important; /* N-fix: lvr.css:1301/1305 */
+    padding: 0 0 1rem 0 !important; /* N-fix: lvr.css:1301/1305 (valor 006 conservado) */
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Anclaje 2 (plan L1321-1325) — cabecera del acordeón = etiqueta de grupo (item 3): color
+   muted-foreground nuevo; bg/padding/font-size/font-weight valores 006 conservados. */
+.lvr-products .accordion__header {
+    background-color: transparent !important; /* N-fix: lvr.css:1321-1325 */
+    color: var(--lvr-muted-foreground) !important; /* N-fix: lvr.css:1321-1325 */
+    padding: 0.5rem 0 !important; /* Cambiado de 1.25rem a 0.75rem */
+    font-size: 0.75rem !important; /* N-fix: lvr.css:1321-1325 */
+    font-weight: 700 !important; /* N-fix: lvr.css:1321-1325 */
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Anclaje 3 (plan L1345-1346) — estado abierto: valores 006 conservados (también anula el
+   primary/blanco de styles.css:1111). El chevron NO se redeclara: gira vía
+   styles.css:1110 (.accordion.is-open .accordion__icon) — mecanismo reutilizado (item 4). */
+.lvr-products .filter-option-header input:checked + .accordion__header,
+.lvr-products .accordion.is-open .accordion__header {
+    background-color: transparent !important; /* N-fix: lvr.css:1345-1346 */
+    color: #0f172a !important; /* N-fix: lvr.css:1345-1346 (valor 006 conservado) */
+}
+
+/* Anclaje 4 (plan L1355) — contenido del acordeón: fondo transparent (apertura sigue siendo el
+   max-height de styles.css:1112-1113, intacto). */
+.lvr-products .accordion__content {
+    background-color: transparent !important; /* N-fix: lvr.css:1355 */
+}
+
+/* Filas (item 4, fuente CheckRow L214): flex/gap/padding/radius + hover. Los fondos de
+   styles.css:1114/:1120/:1122 quedan neutralizados aquí por especificidad → SIN !important. */
+.lvr-products .filter-options-list .filter-option {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 0.375rem 0.5rem;
+    border-radius: 0.5rem;
+    position: relative;
+}
+
+.lvr-products .filter-options-list .filter-option:hover {
+    background-color: var(--lvr-muted);
+}
+
+/* Anclaje 5 (plan L1368-1373) — label de fila: fondos/border 006→transparent/none; padding → 0
+   (la fila ya lleva padding y la caja pasó a flujo: era 2rem por la absoluta); color/font 006
+   conservados. + truncate (item 4) y gap box↔texto 0.75rem (gap-3 de la fuente; Coordinator). */
+.lvr-products .filter-options-list .filter-option label {
+    background-color: transparent !important; /* N-fix: lvr.css:1368-1373 */
+    border-bottom: none !important; /* N-fix: lvr.css:1368-1373 */
+    padding: 0 !important; /* N-fix: lvr.css:1368-1373 (era 2rem por la caja absoluta) */
+    color: #475569 !important; /* N-fix: lvr.css:1368-1373 (valor 006 conservado) */
+    font-size: 0.9rem !important; /* N-fix: lvr.css:1368-1373 */
+    font-weight: 400 !important; /* N-fix: lvr.css:1368-1373 */
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    position: relative;
+    cursor: pointer;
+}
+
+/* Anclaje 6 (plan L1383-1384) — hover del label: fondo transparent (el hover lo da la fila
+   con --lvr-muted); color 006 conservado. */
+.lvr-products .filter-options-list .filter-option:hover label {
+    background-color: transparent !important; /* N-fix: lvr.css:1383-1384 */
+    color: #0f172a !important; /* N-fix: lvr.css:1383-1384 (valor 006 conservado) */
+}
+
+/* Anclaje 7 (plan L1402-1404) — label seleccionado: valores 006 (transparent/primary/600). */
+.lvr-products .filter-option input:checked + label {
+    background-color: transparent !important; /* N-fix: lvr.css:1402-1404 */
+    color: var(--lvr-primary) !important; /* N-fix: lvr.css:1402-1404 */
+    font-weight: 600 !important; /* N-fix: lvr.css:1402-1404 */
+}
+
+/* Checkbox 16px SÓLO con CSS (RF-7/item 6): caja en label::before EN FLUJO (flex:none);
+   neutraliza la absoluta de lvr.css:1394-1404 (position/left/border #cbd5e1/bg #fff) por
+   especificidad (0,3,2) tie+posterior → SIN !important. */
+.lvr-products .filter-options-list .filter-option label::before {
+    content: "";
+    position: static;
+    left: auto;
+    flex: none;
+    width: 16px;
+    height: 16px;
+    border: 1px solid var(--lvr-border);
+    border-radius: 4px;
+    background-color: var(--lvr-background);
+    transition: all 0.2s ease-in-out;
+}
+
+/* Marcado: caja → border/bg primary; background-image:none anula el check SVG de
+   lvr.css:1413-1421 (sin !important → gana por cascada/especificidad). */
+.lvr-products .filter-options-list .filter-option input:checked + label::before {
+    background-color: var(--lvr-primary);
+    border-color: var(--lvr-primary);
+    background-image: none;
+}
+
+/* Check blanco (border + rotate 45°) en label::after, sólo visible al marcar (item 6). */
+.lvr-products .filter-options-list .filter-option label::after {
+    content: "";
+    position: absolute;
+    left: 5px;
+    top: 50%;
+    width: 4px;
+    height: 8px;
+    border: solid #fff;
+    border-width: 0 2px 2px 0;
+    transform: translateY(-50%) rotate(45deg);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.lvr-products .filter-options-list .filter-option input:checked + label::after {
+    opacity: 1;
+}
+
+/* Radios enfocables (RF-8/item 5): anula display:none de styles.css:1102 por especificidad
+   (0,4,1)>(0,3,1) — requiere display explícito (sin él, display:none seguiría mateando y el
+   input no sería enfocable; micro-corrección al literal de tasks, anotada en MEMORY). */
+.lvr-products .filter-group.accordion input[type="radio"] {
+    display: block;
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+    margin: 0;
+}
+
+/* Foco de filtros (RF-15d/item 7): anillo en la FILA (label/cabecera), no en el input oculto;
+   sin :has(). El foco del resto de elementos va en 8.11 (T14). */
+.lvr-products .filter-group.accordion input:focus-visible + label {
+    outline: 2px solid var(--lvr-primary);
+    outline-offset: 2px;
+}
+
+.lvr-products .filter-group.accordion input:focus-visible + .accordion__header {
+    outline: 2px solid var(--lvr-primary);
+    outline-offset: 2px;
+}
+
+/* 8.5 card — RF-9/§12(13) (fuente index.tsx:224-242). Neutraliza styles.css:875 (base),
+   :894 (inner:hover), :932 (escala de imagen), :1185 (content), :937 y :1243 (title ≤550),
+   :951 (meta) por especificidad (0,2,0)>(0,1,0) + cascada posterior → SIN !important (plan §4.3).
+   N9/N10/N11 ya neutralizan max-w/max-h de inner/tag (scope .lvr-home, activo en /productos).
+   .product-card__discount: SIN regla nueva — lvr.css:773-775 la mantiene oculta (006 RF-8). */
+.lvr-products .product-card {
+    position: relative;
+    cursor: pointer; /* §12(13): la card navega vía stretched link */
+    border: 1px solid var(--lvr-border);
+    border-radius: 1rem;
+    background: var(--lvr-background);
+    box-shadow: var(--lvr-shadow-card);
+    transition: transform 300ms, box-shadow 300ms, border-color 300ms;
+}
+
+.lvr-products .product-card:hover {
+    transform: translateY(-4px);
+    border-color: color-mix(in srgb, var(--lvr-primary) 30%, transparent);
+    box-shadow: var(--lvr-shadow-lift);
+}
+
+.lvr-products .product-card__inner:hover {
+    box-shadow: none;
+    transform: none;
+}
+
+.lvr-products .product-card__image {
+    aspect-ratio: 1 / 1;
+    padding: 1rem;
+}
+
+.lvr-products .product-card__image img {
+    object-fit: contain;
+    transition: transform 500ms;
+}
+
+.lvr-products .product-card:hover .product-card__image img {
+    transform: scale(1.05);
+}
+
+.lvr-products .product-card__content {
+    border-top: 1px solid var(--lvr-border);
+    padding: 1rem;
+}
+
+.lvr-products .info__meta {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--lvr-muted-foreground);
+}
+
+.lvr-products .product-card__title {
+    font-size: 14px;
+    font-weight: 600;
+    line-clamp: 2;
+    line-height: 1.375;
+}
+
+.lvr-products .product-card__link {
+    color: inherit;
+    text-decoration: none;
+}
+
+/* Stretched link (D-2): ::after cubre toda la card (article con position:relative). */
+.lvr-products .product-card__link::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+}
+
+.lvr-products .product-card__tag {
+    /* N-fix: lvr.css:752-760 — la original declara estas propiedades con !important (§12(11)) */
+    right: 0.75rem !important;
+    top: 0.75rem !important;
+    z-index: 10 !important;
+    border-radius: 9999px !important;
+    font-size: 10px !important;
+    font-weight: 800 !important;
+    padding: 0.125rem 0.625rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    /* T16: tag decorativo — el clic debe atravesar al stretched ::after (RF-9); z-index intacto. */
+    pointer-events: none;
+}
+
+/* N-fix: lvr.css:771-778 — colores de la original con !important (§12(11); RF-9 fondo success/oferta,
+   texto text-primary-foreground de la fuente). La original de home NO se edita. */
+.lvr-products .product-card__tag.discount--new {
+    background-color: var(--lvr-success) !important;
+    color: var(--lvr-primary-foreground) !important;
+}
+
+.lvr-products .product-card__tag.discount--offer {
+    background-color: var(--lvr-offer) !important;
+    color: var(--lvr-primary-foreground) !important;
+}
+
+/* 8.6 precios + pill — RF-10 (fuente index.tsx:236-244); E1b colores exactos de la fuente. */
+.lvr-products .product-card__price-row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding-top: 0.75rem;
+}
+
+.lvr-products .original-price {
+    /* N-fix: lvr.css:750-756 — .lvr-home .original-price usa !important en font-size/color
+       (activo en /productos: main lleva lvr-home+lvr-products) → aquí también (patrón plan §4;
+       excepción «sólo tag» aprobada por el Coordinator, RF-10 exige 12px + muted). */
+    font-size: 12px !important; /* N-fix: lvr.css:750-756 */
+    color: var(--lvr-muted-foreground) !important; /* N-fix: lvr.css:750-756 */
+    text-decoration: line-through;
+}
+
+.lvr-products .offer-price {
+    font-family: var(--lvr-font-display);
+    font-size: 1.125rem;
+    font-weight: 700;
+}
+
+/* Pill: neutraliza .lvr-home .lvr-badge* (lvr.css:795-841) SIN !important — misma
+   especificidad, bloque 8 posterior → gana el último. */
+.lvr-products .lvr-badge--stock {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.125rem 0.5rem;
+    border-radius: 9999px;
+    vertical-align: middle;
+    font-size: 0; /* el span conserva 0: el texto visible lo inyecta el ::after (D-6) */
+}
+
+/* R1: el ::after REDECLARA font-size aquí (el pseudo-elemento no lo hereda). */
+.lvr-products .lvr-badge--stock::after {
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.lvr-products .lvr-badge--stock::before {
+    content: "";
+    display: block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    margin-right: 0; /* 006 fija 6px: el spacing lo da el gap (fuente gap-1) */
+}
+
+/* E1b: colores EXACTOS de la fuente (excepción AA ≈3.4:1 documentada + aria-label en el span). */
+.lvr-products .lvr-badge--available {
+    background-color: var(--lvr-success-soft);
+    color: var(--lvr-success);
+}
+
+.lvr-products .lvr-badge--available::before {
+    background-color: var(--lvr-success);
+}
+
+.lvr-products .lvr-badge--out-of-stock {
+    background-color: var(--lvr-muted);
+    color: var(--lvr-muted-foreground);
+}
+
+.lvr-products .lvr-badge--out-of-stock::before {
+    background-color: var(--lvr-muted-foreground);
+}
+
+/* 8.7 CTA — RF-11 (fuente: pill bg-primary, icono MessageCircle → bx bxl-whatsapp).
+   §12(13): position:relative + z-index 2 POR ENCIMA del ::after estirado (clic → wa.me,
+   nunca navega al detalle); la card ya lleva cursor:pointer. */
+.lvr-products .product-card__cta {
+    position: relative;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background: var(--lvr-primary);
+    color: var(--lvr-primary-foreground, #fff);
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: opacity 300ms, transform 300ms;
+    
+    /* Nuevas propiedades para ampliar y separar */
+    width: 100%;
+    margin-top: 1rem; /* Puedes ajustar este valor si lo prefieres (ej. 0.75rem) */
+}
+
+/* RF-11: ≥768 aparece al hover/foco de la card; <768 SIEMPRE visible (sin regla que lo oculte). */
+@media (min-width: 768px) {
+    .lvr-products .product-card__cta {
+        opacity: 0;
+        transform: translateY(0.5rem);
+    }
+
+    .lvr-products .product-card:hover .product-card__cta,
+    .lvr-products .product-card:focus-within .product-card__cta {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+/* 8.9 estado vacío — RF-13 (fuente index.tsx:156-160: card rounded-2xl border p-12 shadow-card).
+   Neutraliza styles.css:1187 (padding 4rem 2rem, color) por especificidad (0,2,0)>(0,1,0) →
+   SIN !important. :1188 (`.no-results-found i`) quedó MUERTA: T10 eliminó el icono → sin efecto. */
+.lvr-products .no-results-found {
+    grid-column: 1 / -1;
+    padding: 3rem;
+    border: 1px solid var(--lvr-border);
+    border-radius: 1rem;
+    background: var(--lvr-background);
+    text-align: center;
+    box-shadow: var(--lvr-shadow-card);
+}
+
+.lvr-products .no-results-found__message {
+    font-family: var(--lvr-font-display);
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--lvr-foreground);
+    margin-bottom: 0.5rem;
+}
+
+/* Párrafo secundario = <p> SIN clase (markup T10, L375): selector inferido con :not para no
+   pisar __message (tasks.md da valor/propiedades pero NO selector). */
+.lvr-products .no-results-found p:not(.no-results-found__message) {
+    color: var(--lvr-muted-foreground);
+    font-size: 0.875rem;
+}
+
+.lvr-products .no-results-found__clear {
+    display: inline-block;
+    margin-top: 1rem;
+    background: var(--lvr-primary);
+    color: var(--lvr-primary-foreground, #fff);
+    padding: 0.5rem 1.25rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.lvr-products .no-results-found__clear:hover {
+    filter: brightness(1.1);
+}
+
+/* 8.10 mobile — RF-14/§12(8)/§12(14)/D-4/Q4. MEDIA 900px, NO la 899 de tasks.md: decisión
+   Coordinator — coincide con el conmutador REAL styles.css:1126 display:none base → :1218
+   display:grid en max-width:900 y con D-4 ("breakpoint filtros 900px"); con 899 habría banda
+   de 1px en 900 exactos con sort desktop + móviles + sidebar oculta a la vez. */
+@media (max-width: 900px) {
+    /* Q4 OBLIGATORIO: compensa la pérdida de styles.css:1223 (`.product-grid-header
+       .filter-group`) — T5 renombró ese wrapper a .toolbar-sort → la regla ya no matchea.
+       El sort MÓVIL del markup (#sort-mobile) sigue mandando. */
+    .lvr-products .toolbar-sort { display: none; }
+
+    .lvr-products .mobile-select-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.375rem;
+    }
+
+    /* §12(8): labels "Categoría:/Marca:/Ordenar por:" VISIBLES en móvil
+       (neutraliza styles.css:1143-1147 .85rem/700/primary). */
+    .lvr-products .mobile-select-group label {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--lvr-foreground);
+    }
+
+    /* Neutraliza styles.css:1137-1162 (group gap .5rem; select radio 4px, padding .6rem,
+       border #ccc, bg #fff) por especificidad → SIN !important. Fuente: pills. */
+    .lvr-products .mobile-select {
+        appearance: none;
+        border: 1px solid var(--lvr-border);
+        border-radius: 9999px;
+        background: var(--lvr-background);
+        padding: 0.6rem 2.5rem 0.6rem 1rem;
+        font-size: 0.9375rem;
+        width: 100%;
+    }
+
+    .lvr-products .mobile-select:disabled {
+        opacity: 0.6;
+    }
+}
+
+/* §12(14): ≥44px SÓLO en la base móvil (tasks.md lo asigna a 767); desktop SIN mínimo (la
+   fuente usa pills ~36px a 1280). En ≤767 el .btn-clear-filters visible es el del
+   .mobile-select-group (flex → blockificado → min-height aplica); el del toolbar está oculto. */
+@media (max-width: 767px) {
+    .lvr-products .mobile-select,
+    .lvr-products .btn-clear-filters,
+    .lvr-products .no-results-found__clear,
+    .lvr-products .product-card__cta {
+        min-height: 44px;
+    }
+
+    .lvr-products .lvr-chip__remove {
+        min-width: 44px;
+        min-height: 44px;
+    }
+
+    .lvr-products .lvr-chip {
+        min-height: 44px;
+        align-items: center;
+    }
+}
+
+@media (max-width: 550px) {
+    .lvr-products .product-card__title {
+        font-size: 14px;
+    }
+
+    /* 1. Reducimos el tamaño del precio */
+    .lvr-products .product-card__price,
+    .lvr-products .price-line > span:first-child,
+    .lvr-products .offer-price {
+        font-size: 16px !important; 
+    }
+
+    /* 2. Cambiamos la disposición a columna para que "Disponible" baje */
+    .lvr-products .product-card__price-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.35rem; /* Pequeño espacio entre el precio y la etiqueta */
+    }
+}
+
+/* 8.11 foco — RF-15d: TODO lo que no sean filtros (los filtros quedaron en 8.4/T12). Mismo
+   anillo que .lvr-home a/button:focus-visible (L1067-1071) → redeclaración explícita que además
+   cubre los <select> (no incluidos por a/button). Sin :has() y sin selectores globales desnudos. */
+.lvr-products .product-card__link:focus-visible,
+.lvr-products .product-card__cta:focus-visible,
+.lvr-products .lvr-chip__remove:focus-visible,
+.lvr-products .toolbar-sort select:focus-visible,
+.lvr-products .btn-clear-filters:focus-visible,
+.lvr-products .filter-sidebar__clear:focus-visible,
+.lvr-products .no-results-found__clear:focus-visible,
+.lvr-products .lvr-breadcrumb a:focus-visible,
+.lvr-products .mobile-select:focus-visible {
+    outline: 2px solid var(--lvr-primary);
+    outline-offset: 2px;
+}
+
+/* ==========================================================================
+   PRODUCT DETAIL V2 (Diseño Compacto, Alineaciones y Ajustes Responsivos)
+   ========================================================================== */
+
+/* 1. CORRECCIÓN DE MÁRGENES: Quitamos el límite de ancho al contenedor 
+   para que el margen hacia la pantalla sea exactamente el que definamos */
+.lvr-product-page-wrapper .container {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    max-width: 100% !important; /* Permite que las tarjetas lleguen al borde */
+    margin: 0 auto;
+}
+
+/* Migas de Pan (Exactamente 1.25rem a los lados) */
+.lvr-breadcrumb-detail {
+    margin-left: 1.5rem !important;
+    margin-right: 1.5rem !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    font-size: 0.85rem;
+    color: var(--lvr-muted-foreground);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    white-space: nowrap; 
+}
+
+/* Tarjetas Blancas (Exactamente 1rem a los lados) */
+.lvr-card-section {
+    margin-left: 1.5rem !important;
+    margin-right: 1.5rem !important;
+    background: #ffffff;
+    border-radius: 1.5rem;
+    padding: 2.5rem; /* Padding interno */
+    box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+    margin-bottom: 2rem;
+    border: 1px solid #eaeaea;
+}
+
+.lvr-breadcrumb-detail a { color: var(--lvr-muted-foreground); text-decoration: none; }
+.lvr-breadcrumb-detail a:hover { color: var(--lvr-primary); }
+.lvr-breadcrumb-detail i { font-size: 1rem; }
+
+/* Límite de caracteres con puntos suspensivos para el título de la miga */
+.lvr-breadcrumb-title {
+    color: var(--lvr-foreground); 
+    font-weight: 600; 
+    display: inline-block;
+    max-width: 250px; 
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: bottom;
+}
+
+/* Layout Superior (Info y Galeria) */
+.product-detail-layout {
+    display: grid !important;
+    /* Da más espacio horizontal a la imagen (1.25fr) respecto a la info (0.75fr) */
+    grid-template-columns: 1.25fr 0.75fr !important;
+    gap: 3.5rem !important;
+}
+
+/* Fix Galería */
+.gallery-main-image { border: none !important; border-radius: 1rem !important; }
+.thumbnail-item { border-radius: 0.75rem !important; border: 2px solid transparent !important; background: #f8fafc !important; }
+.thumbnail-item.is-active, .thumbnail-item:hover { border-color: var(--lvr-primary) !important; opacity: 1 !important; }
+
+/* Badges sobre Imagen */
+.lvr-gallery-badges { 
+    position: absolute; 
+    top: 1rem; 
+    right: 1rem;  /* Movido al lado derecho */
+    left: auto; 
+    z-index: 10; 
+    display: flex;
+    flex-direction: column; /* Apila las etiquetas si tiene Nuevo y Oferta a la vez */
+    gap: 0.5rem;
+    align-items: flex-end;
+}
+
+.lvr-badge-new { background-color: var(--lvr-success); color: white; padding: 0.35rem 0.85rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.05em; }
+.lvr-badge-offer { background-color: #ef4444; color: white; padding: 0.35rem 0.85rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.05em; }
+
+/* Tipografía Info Compactada */
+.lvr-info-header { margin-bottom: 0.35rem; }
+.lvr-category-brand { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.05em; color: var(--lvr-muted-foreground); text-transform: uppercase; }
+
+/* Título y precio reducidos */
+.product-info__title { font-family: var(--lvr-font-display) !important; font-size: 1.35rem !important; font-weight: 700 !important; color: var(--lvr-foreground) !important; line-height: 1.25 !important; margin-bottom: 0.2rem !important; }
+.lvr-sku-text { font-size: 0.8rem; color: var(--lvr-muted-foreground); margin-bottom: 1rem; }
+
+/* Precios y Stock Compactados */
+.product-info__price { margin-bottom: 0.75rem !important; }
+.offer-price { font-family: var(--lvr-font-display) !important; font-size: 1.65rem !important; font-weight: 700 !important; color: var(--lvr-foreground) !important; letter-spacing: -0.02em !important; }
+.offer-price small { font-size: 1.1rem; font-weight: 600; color: var(--lvr-muted-foreground); }
+.original-price { font-size: 0.95rem !important; color: #94a3b8 !important; text-decoration: line-through; }
+
+/* Envoltorio para controlar el ancho de la etiqueta de stock */
+.lvr-stock-wrapper { display: flex; flex-direction: column; align-items: flex-start; margin-bottom: 1.25rem; }
+.lvr-stock-pill { 
+    display: inline-flex !important; 
+    align-items: center !important; 
+    justify-content: flex-start;
+    gap: 0.5rem; 
+    padding: 0.35rem 0.85rem !important; 
+    border-radius: 9999px; 
+    font-size: 0.85rem; 
+    font-weight: 600; 
+    width: fit-content !important; 
+    max-width: 100%;
+    margin-bottom: 0.25rem; 
+}
+.lvr-stock-pill.in-stock { background-color: var(--lvr-success-soft); color: var(--lvr-success); }
+.lvr-stock-pill.in-stock .dot { width: 6px; height: 6px; border-radius: 50%; background-color: var(--lvr-success); }
+.lvr-stock-pill.out-of-stock { background-color: var(--lvr-muted); color: var(--lvr-muted-foreground); }
+.lvr-stock-pill.out-of-stock .dot { width: 6px; height: 6px; border-radius: 50%; background-color: var(--lvr-muted-foreground); }
+
+/* Nota de agotado */
+.lvr-out-of-stock-note { font-size: 0.8rem; color: #94a3b8; display: block; }
+
+/* Tarjetas Garantía y Condición */
+.lvr-quick-features { display: flex; gap: 1rem; margin-bottom: 1.5rem; }
+.lvr-qf-box { display: flex; align-items: center; gap: 0.75rem; border: 1px solid #eaeaea; border-radius: 0.75rem; padding: 0.85rem 1rem; flex: 1; }
+.lvr-qf-box i { font-size: 1.4rem; color: var(--lvr-primary); background: #f8fafc; padding: 0.5rem; border-radius: 50%; }
+.lvr-qf-box span { display: block; font-size: 0.75rem; color: var(--lvr-muted-foreground); }
+.lvr-qf-box strong { display: block; font-size: 0.95rem; font-weight: 600; color: var(--lvr-foreground); }
+
+/* Sección Comprar y Cantidad */
+.lvr-action-section { margin-bottom: 1rem; }
+.lvr-qty-label { font-size: 0.85rem; font-weight: 600; color: var(--lvr-foreground); margin-bottom: 0.5rem; display: block; }
+.lvr-action-row { display: flex; align-items: stretch; gap: 1rem; margin-bottom: 0.5rem; }
+.lvr-qty-selector { display: flex; align-items: center; border: 1px solid #eaeaea; border-radius: 9999px; overflow: hidden; background: #fff; }
+.lvr-qty-btn { background: transparent; border: none; padding: 0.5rem 1rem; cursor: pointer; color: var(--lvr-muted-foreground); font-size: 1.2rem; transition: color 0.2s; }
+.lvr-qty-btn:hover { color: var(--lvr-foreground); }
+.lvr-qty-selector input { width: 45px; text-align: center; border: none; font-weight: 600; font-size: 1rem; color: var(--lvr-foreground); appearance: textfield; -moz-appearance: textfield; outline: none; }
+.lvr-qty-selector input::-webkit-outer-spin-button, .lvr-qty-selector input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+.lvr-btn-whatsapp { flex: 1; border-radius: 9999px !important; background-color: var(--lvr-success) !important; border: none !important; padding: 0 !important; overflow: hidden; box-shadow: 0 4px 12px rgba(34,197,94,0.2) !important; transition: transform 0.2s, box-shadow 0.2s; }
+.lvr-btn-whatsapp:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(34,197,94,0.3) !important; }
+.lvr-btn-whatsapp a { display: flex; justify-content: center; align-items: center; width: 100%; height: 100%; padding: 0.85rem 1rem; font-size: 0.95rem; font-weight: 600; color: white !important; gap: 0.5rem; text-decoration: none; }
+.lvr-btn-whatsapp i { font-size: 1.3rem; }
+
+.lvr-response-time { font-size: 0.75rem; color: var(--lvr-muted-foreground); display: flex; align-items: center; gap: 0.35rem; }
+.lvr-response-time i { font-size: 0.9rem; }
+
+/* Beneficios */
+.lvr-benefits-box { background-color: #fff8f1; border-radius: 1rem; padding: 1.25rem; margin-top: 1rem; }
+.lvr-benefits-box ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.75rem; }
+.lvr-benefits-box li { font-size: 0.85rem; font-weight: 500; color: #9a3412; display: flex; align-items: center; gap: 0.75rem; }
+.lvr-benefits-box li i { font-size: 1.2rem; }
+
+/* ==========================================================================
+   TABS (Pestañas - Características y Más Info)
+   ========================================================================== */
+.lvr-tabs-header { 
+    display: flex; 
+    gap: 2.5rem; 
+    border-bottom: 1px solid #eaeaea; 
+    margin-bottom: 2rem; 
+    justify-content: center; /* ¡AQUÍ ESTÁ LA MAGIA! Centra los botones horizontalmente */
+}
+.lvr-tab-btn { background: transparent; border: none; padding: 0 0 0.75rem 0; font-family: var(--lvr-font-sans); font-size: 1.05rem; font-weight: 600; color: var(--lvr-muted-foreground); cursor: pointer; position: relative; transition: color 0.3s; }
+.lvr-tab-btn:hover { color: var(--lvr-foreground); }
+.lvr-tab-btn.active { color: var(--lvr-foreground); }
+.lvr-tab-btn.active::after { content: ''; position: absolute; bottom: -1px; left: 0; width: 100%; height: 3px; background-color: var(--lvr-foreground); border-radius: 3px 3px 0 0; }
+.lvr-tab-pane { display: none; animation: fadeInTab 0.4s ease; }
+.lvr-tab-pane.active { display: block; }
+@keyframes fadeInTab { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+
+.product-extended-description { font-size: 0.95rem; color: var(--lvr-muted-foreground); line-height: 1.7; }
+
+/* ==========================================================================
+   Estilos Tabla Especificaciones (Alineación Derecha - Izquierda)
+   ========================================================================== */
+.lvr-features-container { display: flex; flex-direction: column; gap: 0.25rem; margin-bottom: 1rem; }
+.lvr-feature-text { font-size: 0.95rem; color: var(--lvr-muted-foreground); line-height: 1.6; margin: 0 0 0.5rem 0; text-align: left; }
+
+.lvr-specs-table { 
+    width: 100%; 
+    border-collapse: collapse; 
+    margin-bottom: 0.5rem; 
+}
+
+/* Lo que está ANTES de los dos puntos (Lado Izquierdo) */
+.lvr-specs-table th { 
+    padding: 0.85rem 1.5rem; /* Margen interno para que no choquen en el centro */
+    border-bottom: 1px solid #eaeaea; 
+    color: var(--lvr-muted-foreground); 
+    font-weight: 500; 
+    width: 50%; 
+    font-size: 0.95rem; 
+    text-align: right !important; /* Alineado a la Derecha */
+}
+
+/* Lo que está DESPUÉS de los dos puntos (Lado Derecho) */
+.lvr-specs-table td { 
+    padding: 0.85rem 1.5rem; 
+    border-bottom: 1px solid #eaeaea; 
+    color: var(--lvr-foreground); 
+    font-weight: 600; 
+    width: 50%; 
+    font-size: 0.95rem; 
+    text-align: left !important; /* Alineado a la Izquierda */
+}
+
+.lvr-specs-table tr:last-child th, 
+.lvr-specs-table tr:last-child td { 
+    border-bottom: none; 
+}
+/* ==========================================================================
+   RESPONSIVE (Para Tablet y Móvil)
+   ========================================================================== */
+
+/* TABLET (~1024px) */
+@media (max-width: 1024px) {
+    .product-detail-layout { 
+        grid-template-columns: 1fr !important; /* Pasa a 1 sola columna */
+        gap: 2rem !important; 
+    }
+    
+    .product-gallery {
+        display: grid;
+        grid-template-columns: 80px 1fr;
+        gap: 1.5rem;
+    }
+    
+    .lvr-breadcrumb-title { max-width: 400px; }
+    
+    /* 1. CORRECCIÓN PRINCIPAL: Permitimos que los contenedores ocupen el 100% (stretch) */
+    .product-info {
+        align-items: stretch !important; 
+    }
+    
+    /* Alineamos a la izquierda solo los textos, no las cajas completas */
+    .product-info__title, 
+    .lvr-sku-text, 
+    .lvr-info-header,
+    .product-extended-description {
+        text-align: left !important;
+    }
+
+    .product-info__price {
+        justify-content: flex-start !important;
+    }
+}
+
+/* MÓVIL (<768px) */
+@media (max-width: 768px) {
+    .lvr-card-section { 
+        padding: 1.5rem !important; 
+        border-radius: 1rem;
+        margin-left: 1.2rem !important;
+        margin-right: 1.2rem !important;
+    }
+    
+    .product-gallery {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 1rem;
+    }
+    
+    .gallery-thumbnails {
+        flex-direction: row !important;
+        order: 2;
+        overflow-x: auto;
+        justify-content: center;
+        padding-bottom: 0.5rem;
+    }
+    .gallery-main-image { order: 1; }
+    
+    .lvr-breadcrumb-detail {
+        margin-left: 1.35rem !important;
+        margin-right: 1.35rem !important;
+    }
+    .lvr-breadcrumb-title { max-width: 150px; }
+    
+    /* Ajustes de tipografía para móvil */
+    .product-info__title { font-size: 1.25rem !important; }
+    .offer-price { font-size: 1.5rem !important; }
+    .offer-price small { font-size: 0.9rem; }
+    .original-price { font-size: 0.9rem !important; }
+    .lvr-stock-pill { font-size: 0.75rem; padding: 0.25rem 0.6rem !important; }
+}
+
+/* MÓVIL PEQUEÑO (<600px) */
+@media (max-width: 600px) {
+    /* 2. Cajas de Garantía y Condición: lado a lado pero llenando el 100% */
+    .lvr-quick-features { 
+        flex-direction: row; 
+        gap: 0.5rem; 
+    }
+    .lvr-qf-box { 
+        padding: 0.75rem 0.5rem; 
+        flex: 1; /* Esto obliga a ambas cajas a repartirse el espacio 50/50 */
+        justify-content: center; 
+    }
+    
+    /* 3. Selector de cantidad y Botón WhatsApp: apilados al 100% de ancho */
+    .lvr-action-row { 
+        flex-direction: column; 
+        align-items: stretch; 
+        gap: 0.75rem;
+    }
+    .lvr-qty-selector { 
+        justify-content: space-between; 
+        width: 100%; /* Ocupa todo el ancho */
+        padding: 0.25rem 1rem;
+    } 
+    
+    /* Corrección milimétrica de alineación para la tabla de características en móviles */
+    .lvr-specs-table th, .lvr-specs-table td { 
+        display: block; 
+        width: 100% !important; 
+        padding: 0.25rem 0 !important; 
+        border: none; 
+        text-align: left !important;
+    }
+    .lvr-specs-table td { 
+        border-bottom: 1px solid #eaeaea; 
+        margin-bottom: 0.5rem; 
+    }
+}
+
+/* ==========================================================================
+   NUEVO DISEÑO DE LOGIN (lvr-login)
+   ========================================================================== */
+
+/* Fondo oscuro completo que reemplaza los estilos previos del body */
+.lvr-login-body {
+    background-color: #131e32 !important; /* Azul oscuro corporativo */
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--lvr-font-sans), sans-serif;
+    margin: 0;
+    padding: 1rem;
+}
+
+/* Contenedor principal para centrar la tarjeta y los textos inferiores */
+.lvr-login-wrapper {
+    width: 100%;
+    max-width: 480px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Tarjeta Blanca Principal */
+.lvr-login-card {
+    background-color: #ffffff;
+    width: 100%;
+    border-radius: 1.5rem;
+    padding: 3rem 2.5rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+/* Cabecera del Logo y Badge */
+.lvr-login-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.lvr-login-logo {
+    height: 50px;
+    width: auto;
+    object-fit: contain;
+    margin-bottom: 1rem;
+}
+
+.lvr-login-badge {
+    background-color: #f3f4f6;
+    color: #4b5563;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.35rem 0.75rem;
+    border-radius: 9999px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    border: 1px solid #e5e7eb;
+}
+
+.lvr-login-badge i {
+    font-size: 0.9rem;
+    color: var(--lvr-primary);
+}
+
+/* Textos de Bienvenida */
+.lvr-login-title {
+    font-family: var(--lvr-font-display);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 0.5rem;
+    text-align: center;
+}
+
+.lvr-login-subtitle {
+    font-size: 0.875rem;
+    color: #6b7280;
+    text-align: center;
+    line-height: 1.5;
+    margin-bottom: 2rem;
+    padding: 0 1rem;
+}
+
+/* Formulario */
+.lvr-login-form {
+    width: 100%;
+}
+
+.lvr-input-group {
+    margin-bottom: 1.25rem;
+}
+
+.lvr-input-group label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 0.5rem;
+}
+
+/* Contenedor de Inputs con Iconos */
+.lvr-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.lvr-input-icon {
+    position: absolute;
+    left: 1rem;
+    font-size: 1.2rem;
+    color: #9ca3af;
+}
+
+.lvr-input-wrapper input {
+    width: 100%;
+    padding: 0.75rem 1rem 0.75rem 2.75rem; /* Espacio extra a la izquierda para el icono */
+    border: 1px solid #e5e7eb;
+    border-radius: 0.75rem;
+    font-size: 0.95rem;
+    color: #111827;
+    background-color: #f9fafb;
+    transition: all 0.2s ease;
+    font-family: inherit;
+}
+
+/* Espacio extra a la derecha para el input de contraseña (para el icono del ojo) */
+.lvr-input-wrapper input[type="password"],
+.lvr-input-wrapper input[id="clave"] {
+    padding-right: 2.75rem; 
+}
+
+.lvr-input-wrapper input:focus {
+    outline: none;
+    border-color: var(--lvr-primary);
+    background-color: #ffffff;
+    box-shadow: 0 0 0 4px rgba(27, 71, 121, 0.1);
+}
+
+.lvr-input-wrapper input::placeholder {
+    color: #9ca3af;
+    opacity: 0.7;
+}
+
+/* Icono para mostrar/ocultar contraseña */
+.lvr-toggle-password {
+    position: absolute;
+    right: 1rem;
+    font-size: 1.2rem;
+    color: #9ca3af;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.lvr-toggle-password:hover {
+    color: var(--lvr-primary);
+}
+
+/* Botón Principal */
+.lvr-btn-submit {
+    width: 100%;
+    background-color: var(--lvr-primary);
+    color: #ffffff;
+    border: none;
+    padding: 0.85rem;
+    border-radius: 0.75rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 1rem;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+.lvr-btn-submit:hover {
+    background-color: #15365d; /* Un tono más oscuro que el primary */
+}
+
+.lvr-btn-submit:active {
+    transform: scale(0.98);
+}
+
+/* Textos del Footer */
+.lvr-login-footer {
+    text-align: center;
+    color: #9ca3af;
+}
+
+.lvr-login-footer p {
+    font-size: 0.85rem;
+    margin-bottom: 0.5rem;
+}
+
+.lvr-login-footer small {
+    font-size: 0.75rem;
+    opacity: 0.7;
+}
+
+/* Responsivo para móviles pequeños */
+@media (max-width: 480px) {
+    .lvr-login-card {
+        padding: 2.5rem 1.5rem;
+        border-radius: 1rem;
+    }
+    .lvr-login-title {
+        font-size: 1.35rem;
+    }
+    .lvr-login-subtitle {
+        font-size: 0.8rem;
+        padding: 0;
+    }
+}
