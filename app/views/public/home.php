@@ -66,7 +66,7 @@
                                 >
                             </picture>
                         <?php else: ?>
-                            <img src="/assets/categories/default.jpg"
+                            <img src="/assets/uploads/categories/default.jpg"
                             alt="<?php echo htmlspecialchars($category['name']); ?>"
                             loading="lazy" 
                             width="500" height="500" 
@@ -175,7 +175,7 @@
                                 >
                             </picture>
                         <?php else: ?>
-                            <img src="/assets/brands/default.jpg"
+                            <img src="/assets/uploads/brands/default.jpg"
                             alt="<?php echo htmlspecialchars($brand['name']); ?>"
                             loading="lazy" 
                             width="300" height="300" 
