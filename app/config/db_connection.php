@@ -11,7 +11,7 @@
     
     // Configuración para la versión Venezuela
     $user = "caronico_admin";
-    $pass = "B20s9#Wu-vyJM8";
+    $pass = "T4sQcjLVx2QWRA3";
     $db = "caronico_3d";
     date_default_timezone_set("America/Caracas");
     $db_timezone = "-04:00";
