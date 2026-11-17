@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Local (slot 1)
         updateImagePreview(1, 'preview-img-1', false);
 
-        // 3. MARCAS (Dynamic Slots)
+        // 3. MATERIALES (Dynamic Slots)
         updateBrandsPreview();
 
         // 4. MAPA

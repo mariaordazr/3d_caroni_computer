@@ -32,7 +32,7 @@
                         <div class="swiper-wrapper">
                             <?php 
                                 // Truco: Duplicamos el array 3 veces para asegurar que el loop funcione
-                                // aunque tengas pocas marcas registradas.
+                                // aunque tengas pocas materiales registradas.
                                 $infiniteClients = array_merge($serviceClients, $serviceClients, $serviceClients);
                                 
                                 foreach ($infiniteClients as $client) { ?>

@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if(currentFileInput) {
             currentFileInput.value = ''; // 1. Borrar el archivo del input
             
-            // 2. Si era un slot dinámico nuevo (Marcas/Clientes) y estaba oculto, elimínalo por completo
+            // 2. Si era un slot dinámico nuevo (Materiales/Clientes) y estaba oculto, elimínalo por completo
             if (currentSlot && currentSlot.style.display === 'none') {
                 currentSlot.remove();
             }
@@ -236,7 +236,7 @@ document.addEventListener('DOMContentLoaded', function() {
         initializeSlot(slot);
     });
 
-    // --- LÓGICA DINÁMICA (MARCAS, CLIENTES, ETC) ---
+    // --- LÓGICA DINÁMICA (MATERIALES, CLIENTES, ETC) ---
     function setupDynamicAddButton(btnId, containerId, varIndexName) {
         const btn = document.getElementById(btnId);
         const container = document.getElementById(containerId);

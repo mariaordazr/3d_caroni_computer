@@ -489,7 +489,7 @@
   }
 }
 
-/* 4. HOME — categorías · tarjetas de producto (scope .lvr-home) · banner · marcas · ofertas · títulos (T4)
+/* 4. HOME — categorías · tarjetas de producto (scope .lvr-home) · banner · materiales · ofertas · títulos (T4)
    Referencia: index.tsx:122-173. TODA regla sobre .product-card (todas sus variantes) e info__meta
    va SCOPEADA a .lvr-home (RF-13): esas clases se comparten con /productos (products.php) y /producto/{id}. */
 
@@ -508,7 +508,7 @@
   margin-top: 1.25rem;
 }
 
-/* --- Tiles categoría/marca estilo Lovable (index.tsx:126-129): SIN caja/borde (era card con borde),
+/* --- Tiles categoría/material estilo Lovable (index.tsx:126-129): SIN caja/borde (era card con borde),
        imagen cuadrada redondeada con zoom al hover y etiqueta debajo (RF-5 / RF-8) --- */
 .lvr-home .category-card,
 .lvr-home .brand-card {
@@ -533,8 +533,8 @@
   margin-bottom: 0; /* el respiro lo da el gap del tile */
 }
 
-/* T8/RF-6 — Casillas de marca con fondo blanco para unificar logos de distintos tamaños
-   (SÓLO marcas: las fotos de categorías no se rellenan, CA 6.1/6.4). El cuadrado 1:1, el
+/* T8/RF-6 — Casillas de material con fondo blanco para unificar logos de distintos tamaños
+   (SÓLO materiales: las fotos de categorías no se rellenan, CA 6.1/6.4). El cuadrado 1:1, el
    overflow que contiene el zoom y el centrado flex del logo ya los declara styles.css:799-809
    (sólo lectura, diff vacío) → no hace falta repetirlos aquí. */
 .lvr-home .brand-card__image {
@@ -584,7 +584,7 @@
    literal DT-4, ≈6:1 en el borde superior del título). El título se ancla a la tarjeta
    (position: relative del <a>), NO a la imagen → el overflow:hidden del cuadrado no lo
    recorta: sus coordenadas son respecto a la tarjeta. z-index: 1 y posterior en DOM → el
-   título pinta sobre el ::after. Marcas: SIN scrim y texto oscuro (la caja blanca de T8 ya
+   título pinta sobre el ::after. Materiales: SIN scrim y texto oscuro (la caja blanca de T8 ya
    da ≥10:1 vía la regla compartida — CA 7.5). El scrim vive en ::after de la imagen → el
    zoom del <img> no lo distorsiona (CA 7.6). Markup intacto en esta tarea (CA 7.7 — los
    <span> se eliminan en T10). */
@@ -1039,7 +1039,7 @@
   padding-inline: var(--lvr-gutter);
 }
 
-/* Categorías (.overlap-container) y marcas (.overlap-container1): sólo se usan en home.php
+/* Categorías (.overlap-container) y materiales (.overlap-container1): sólo se usan en home.php
    (verificado por grep) → ajuste sin scope, como N4/N5. */
 .overlap-container,
 .overlap-container1 {
@@ -1062,7 +1062,7 @@
   margin-inline: var(--lvr-gutter);
 }
 
-/* Foco visible en los enlaces/controles del home (RF-11): tiles de categoría/marca, cards de
+/* Foco visible en los enlaces/controles del home (RF-11): tiles de categoría/material, cards de
    producto y CTAs scopeados a .lvr-home. */
 .lvr-home a:focus-visible,
 .lvr-home button:focus-visible {
@@ -1166,7 +1166,7 @@
   }
 }
 
-/* N8 — styles.css:743-744 OCULTABA categorías/marcas ≥8 (selector idéntico → gana el orden de
+/* N8 — styles.css:743-744 OCULTABA categorías/materiales ≥8 (selector idéntico → gana el orden de
    lvr.css). display:flex restaura el layout interno del card ⇒ TODAS visibles (D2/M1). */
 .category-grid > *:nth-child(n+8),
 .brand-grid > *:nth-child(n+8) {
@@ -1322,7 +1322,7 @@
     border-bottom: none;
 }
 
-/* 4. Cabecera del acordeón (Simulando los títulos grises "CATEGORÍAS", "MARCA") */
+/* 4. Cabecera del acordeón (Simulando los títulos grises "CATEGORÍAS", "MATERIAL") */
 .lvr-home .accordion__header {
     background-color: transparent !important;
     color: #475569 !important;
@@ -2097,7 +2097,7 @@
         gap: 0.375rem;
     }
 
-    /* §12(8): labels "Categoría:/Marca:/Ordenar por:" VISIBLES en móvil
+    /* §12(8): labels "Categoría:/Material:/Ordenar por:" VISIBLES en móvil
        (neutraliza styles.css:1143-1147 .85rem/700/primary). */
     .lvr-products .mobile-select-group label {
         font-size: 0.875rem;

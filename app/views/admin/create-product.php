@@ -70,11 +70,11 @@
                             </select>
                         </div>
 
-                        <!-- Marca -->
+                        <!-- Material -->
                         <div class="lvr-field-group">
-                            <label class="lvr-field-label" for="brand">Marca</label>
+                            <label class="lvr-field-label" for="brand">Material</label>
                             <select id="brand" name="brand" class="lvr-select" required>
-                                <option value="" disabled selected>Selecciona una marca</option>
+                                <option value="" disabled selected>Selecciona un material</option>
                                 <?php foreach($brands as $brand): ?>
                                     <option value="<?php echo $brand['id_brand']; ?>"><?php echo htmlspecialchars(ucfirst(mb_strtolower($brand['name']))); ?></option>
                                 <?php endforeach; ?>

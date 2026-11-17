@@ -31,7 +31,7 @@
                         <div class="swiper-wrapper">
                             <?php 
                                 // Truco: Duplicamos el array 3 veces para asegurar que el loop funcione
-                                // aunque tengas pocas marcas registradas.
+                                // aunque tengas pocos materiales registradas.
                                 $infiniteBrands = array_merge($shippingBrands, $shippingBrands, $shippingBrands);
                                 
                                 foreach ($infiniteBrands as $brand) { ?>

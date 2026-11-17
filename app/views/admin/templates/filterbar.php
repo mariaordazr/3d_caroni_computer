@@ -53,7 +53,7 @@
                     </select>
 
                     <select name="brand" class="filter-bar__select" onchange="this.form.submit()">
-                        <option value="">Marca</option>
+                        <option value="">Material</option>
                         <?php foreach($headerBrands as $brand): ?>
                             <option value="<?php echo $brand['id_brand']; ?>" <?php echo (($_GET['brand'] ?? '') == $brand['id_brand']) ? 'selected' : ''; ?>>
                                 <?php echo htmlspecialchars(ucfirst(mb_strtolower($brand['name']))); ?>

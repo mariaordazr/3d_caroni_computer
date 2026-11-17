@@ -35,7 +35,7 @@
                         $isNew    = (!$hasOffer && $product['id_new_product'] !== null);
                     ?>
                     <div class="product-item-ml lvr-product-list-item <?php echo $isHidden ? 'is-hidden' : ''; ?>">
-                        <!-- Columna 1: Miniatura + Nombre + SKU + Categoría/Marca -->
+                        <!-- Columna 1: Miniatura + Nombre + SKU + Categoría/Material -->
                         <a href="/admin/products/edit/<?php echo $product['id_product']; ?>" class="lvr-product-main-link">
                             <div class="product-item-ml__image lvr-product-thumb">
                                 <picture>

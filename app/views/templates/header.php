@@ -53,7 +53,7 @@
             </a>
 
             <form class="header-search" method="GET" action="/productos">
-                <input type="text" class="header-search__input" name="search" aria-label="Buscar productos" placeholder="Buscar productos, marcas y más..." value="<?php echo htmlspecialchars($_GET['search'] ?? ''); ?>">
+                <input type="text" class="header-search__input" name="search" aria-label="Buscar productos" placeholder="Buscar productos, materiales y más..." value="<?php echo htmlspecialchars($_GET['search'] ?? ''); ?>">
                 <button type="submit" class="header-search__button" aria-label="Buscar">
                     <i class='bx bx-search' aria-hidden="true"></i>
                 </button>

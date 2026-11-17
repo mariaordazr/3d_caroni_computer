@@ -11,7 +11,7 @@
 
                     <div class="form-grid">
                         <div class="form-column">
-                            <label for="name">Nombre de la marca:</label>
+                            <label for="name">Nombre de la material:</label>
                             <input type="text" id="name" name="name" value="<?php echo htmlspecialchars($brand['name']); ?>">
                         </div>
 

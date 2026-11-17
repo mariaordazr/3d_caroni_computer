@@ -97,13 +97,13 @@
                 </div>
 
                 <div class="mobile-select-group">
-                    <label>Marca:</label>
+                    <label>Material:</label>
                     <select onchange="submitMobileFilter(this.value)" class="mobile-select" <?php echo ($current_cat_id === null) ? 'disabled' : ''; ?>>
                         
                         <?php if ($current_cat_id === null): ?>
                             <option value="">Selecciona una categoría primero</option>
                         <?php else: ?>
-                            <option value="cat-<?php echo $current_cat_id; ?>">Todas las marcas</option>
+                            <option value="cat-<?php echo $current_cat_id; ?>">Todos los materiales</option>
                             
                             <?php 
                             $selectedCategoryData = null;
@@ -163,7 +163,7 @@
                         <?php 
                             $category_value_prefix = "cat-" . $category['id_category'];
 
-                            // Mantenemos el acordeón abierto si es la categoría activa O si contiene una marca seleccionada
+                            // Mantenemos el acordeón abierto si es la categoría activa O si contiene un material seleccionada
                             $is_open = ($current_filter === $category_value_prefix || strpos($current_filter, $category_value_prefix . '-') === 0);
                         ?>
 
@@ -205,7 +205,7 @@
                                             onchange="submitSidebarFilter()"
                                         > 
                                         <label for="<?php echo $category_value; ?>-all">
-                                            - Todas las marcas -
+                                            - Todos los materiales -
                                         </label>
                                     </div>
 

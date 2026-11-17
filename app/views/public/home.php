@@ -156,7 +156,7 @@
 <section class="section lvr-home">
     <div class="container overlap-container1">
 
-        <div class="brand-grid" tabindex="0" role="region" aria-label="Marcas destacadas">
+        <div class="brand-grid" tabindex="0" role="region" aria-label="Materiales destacadas">
             <?php foreach ($featuredBrands as $brand): ?>
                 <a href="/productos?search=&filter_choice=brand-<?php echo $brand['id_brand']; ?>" class="brand-card">
                     <div class="brand-card__image">

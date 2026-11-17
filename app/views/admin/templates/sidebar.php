@@ -178,9 +178,9 @@
                             </a>
                         </li>
                         <li class="nav-item <?php echo (isset($active_menu) && $active_menu == 'brands') ? 'active' : ''; ?>" data-section-item="admin">
-                            <a href="/admin/brands" title="Marcas">
+                            <a href="/admin/brands" title="Materiales">
                                 <span class="lvr-nav-icon"><i class='bx bx-buildings'></i></span>
-                                <span class="lvr-nav-label">Marcas</span>
+                                <span class="lvr-nav-label">Materiales</span>
                             </a>
                         </li>
                         <li class="nav-item <?php echo (isset($active_menu) && $active_menu == 'users') ? 'active' : ''; ?>" data-section-item="admin">

@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     
     // =========================================================
-    // 1. LÓGICA PARA IMAGEN ÚNICA (Categorías y Marcas)
+    // 1. LÓGICA PARA IMAGEN ÚNICA (Categorías y Materiales)
     // =========================================================
     const singleImageInput = document.getElementById('image-input');
 

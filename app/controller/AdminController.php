@@ -353,7 +353,7 @@ class AdminController {
             if ($productId > 0) {
                 // Si el usuario quiere MOSTRAR el producto ($newStatus == 0)
                 if ($newStatus === 0) {
-                    // Verificamos el estado de la categoría y la marca
+                    // Verificamos el estado de la categoría y el material
                     $productInfo = $this->productModel->getById($productId);
                     
                     if ($productInfo) {
@@ -366,11 +366,11 @@ class AdminController {
                             exit;
                         }
 
-                        // Si la marca está oculta
+                        // Si el material está oculto
                         if ($productInfo['brand_hidden'] == 1) {
                             echo json_encode([
                                 'success' => false, 
-                                'message' => "No se puede mostrar el producto porque pertenece a la marca '{$productInfo['brand_name']}', la cual está oculta."
+                                'message' => "No se puede mostrar el producto porque pertenece al material '{$productInfo['brand_name']}', la cual está oculta."
                             ]);
                             exit;
                         }
@@ -405,7 +405,7 @@ class AdminController {
         $moneySymbol = $this->siteContentModel->getValue('money_symbol');
         $webhookUrl = $this->getDriveConfig('api_video_products'); // <-- NUEVO: Obtener el enlace de la API de videos
 
-        // Obtenemos las categorías y marcas para los menús desplegables
+        // Obtenemos las categorías y materiales para los menús desplegables
         $categories = $this->categoryModel->getAllSimple();
         $brands = $this->brandModel->getAllSimple();
 
@@ -1481,7 +1481,7 @@ class AdminController {
 
     //-------------------------------------------------------//
     
-    //-------------------------MARCAS------------------------//
+    //-------------------------Materiales------------------------//
 
     public function brands() {
         $userInfo = $this->userModel->getById($_SESSION['idUser']);
@@ -1489,8 +1489,8 @@ class AdminController {
         $copyrightText = $this->siteContentModel->getValue('copyright');
         $pageType = 'basic_list'; 
         $active_menu = 'brands';
-        $pageTitle = 'Gestión de Marcas';
-        $buttonAgg = 'Marca';
+        $pageTitle = 'Gestión de Materiales';
+        $buttonAgg = 'Material';
 
         // --- CORRECCIÓN: Recoger filtros ---
         $filters = [
@@ -1510,7 +1510,7 @@ class AdminController {
         $copyrightText = $this->siteContentModel->getValue('copyright');
         $footerJS = '/assets/admin/js/crud.js';
         $active_menu = 'brands';
-        $pageTitle = 'Agregar Nueva Marca';
+        $pageTitle = 'Agregar Nuevo Material';
         $pageType = 'crud';
 
         include ROOT_PATH . 'app/views/admin/create-brand.php';
@@ -1525,10 +1525,10 @@ class AdminController {
                 'name' => $_POST['name'] ?? ''
             ];
 
-            // 2. Obtenemos el ID de la nueva marca
+            // 2. Obtenemos el ID del nuevo material
             $newBrandId = $this->brandModel->create($data); //
 
-            // 3. Si la marca se creó, subir la imagen
+            // 3. Si el material se creó, subir la imagen
             if ($newBrandId) {
                 $uploadDir = ROOT_PATH . 'public/assets/uploads/brands/';
 
@@ -1551,10 +1551,10 @@ class AdminController {
                 }
             }
 
-            $_SESSION['flash_message'] = '¡Marca agregada con éxito!';
+            $_SESSION['flash_message'] = '¡Material agregado con éxito!';
         }
 
-        // Redirigimos a la lista de marcas
+        // Redirigimos a la lista de materiales
         header('Location: /admin/brands');
         exit;
     }
@@ -1565,7 +1565,7 @@ class AdminController {
         $copyrightText = $this->siteContentModel->getValue('copyright');
         $footerJS = '/assets/admin/js/crud.js';
         $active_menu = 'brands';
-        $pageTitle = 'Editar Marca';
+        $pageTitle = 'Editar Material';
         $pageType = 'crud';
 
         $brandId = (int)$id;
@@ -1593,7 +1593,7 @@ class AdminController {
                     $this->productModel->updateHiddenStatusByBrand($brandId, $newStatus);
 
                     // ¡AQUÍ ESTÁ EL CAMBIO! Guardamos el mensaje en la sesión PHP
-                    $_SESSION['flash_message'] = $newStatus ? 'Marca y sus productos ocultados con éxito' : 'Marca y sus productos ya son visibles';
+                    $_SESSION['flash_message'] = $newStatus ? 'Material y sus productos ocultados con éxito' : 'Material y sus productos ya son visibles';
                     
                     echo json_encode(['success' => true]);
                     exit; 
@@ -1601,7 +1601,7 @@ class AdminController {
             }
         }
         
-        echo json_encode(['success' => false, 'message' => 'Error al actualizar visibilidad de la marca.']);
+        echo json_encode(['success' => false, 'message' => 'Error al actualizar visibilidad de la material.']);
         exit; 
     }
 
@@ -1657,7 +1657,7 @@ class AdminController {
                 $this->brandModel->updateImage($id, $imageName); 
             }
         }
-        $_SESSION['flash_message'] = '¡Marca actualizada con éxito!';
+        $_SESSION['flash_message'] = '¡Material actualizado con éxito!';
         header('Location: /admin/brands');
         exit;
     }
@@ -2315,7 +2315,7 @@ class AdminController {
         }
 
         // ----------------------------------------------------
-        // C. MARCAS DESTACADAS
+        // C. MATERIALES DESTACADOS
         // ----------------------------------------------------
         if (isset($_POST['featured_brands'])) { 
             $featuredBrands = $_POST['featured_brands'] ?? [];
@@ -2323,7 +2323,7 @@ class AdminController {
 
             if (count($featuredBrands) !== 7) {
                 $success = false; 
-                $error_message .= 'Debe seleccionar exactamente 7 marcas. ';
+                $error_message .= 'Debe seleccionar exactamente 7 materiales. ';
             } else {
                 $this->siteContentModel->deleteContentByKey($keyBrands);
                 $order = 1;
@@ -2707,7 +2707,7 @@ class AdminController {
         $shippingTitleKey = 'shipping_title';
         $shippingTextKey = 'shipping_text';
         $shippingImageKey = 'shipping_image';
-        $shippingBrandKey = 'shipping_brand'; // Prefijo para marcas
+        $shippingBrandKey = 'shipping_brand'; // Prefijo para materiales
         $shippingLinkkey = 'shipping_link';
 
         // 1. Cargar datos individuales
@@ -2718,7 +2718,7 @@ class AdminController {
         $titleIds = $this->siteContentModel->getOrderedIdsByKey($shippingTitleKey) ?? [];
         $textIds = $this->siteContentModel->getOrderedIdsByKey($shippingTextKey) ?? [];
 
-        // 2. Cargar TODAS las marcas dinámicamente (sin limitar a 4)
+        // 2. Cargar TODAS las materiales dinámicamente (sin limitar a 4)
         // Esto devuelve un array de filas de la BD ordenadas por display_order
         $brandContent = $this->siteContentModel->getOrderedContentByPrefix($shippingBrandKey);
 
@@ -2737,7 +2737,7 @@ class AdminController {
         // Claves de BD
         $bannerKey = 'shipping_banner';
         $shippingImageKey = 'shipping_image'; // Local
-        $shippingBrandKey = 'shipping_brand'; // Marcas
+        $shippingBrandKey = 'shipping_brand'; // Materiales
 
         // Rutas
         $bannerSavePath = $uploadDir . 'shipping/banner/';
@@ -2788,9 +2788,9 @@ class AdminController {
         }
 
         // ====================================================
-        // 3. MARCAS (ID 2 EN ADELANTE - DINÁMICO)
+        // 3. MATERIALES (ID 2 EN ADELANTE - DINÁMICO)
         // ====================================================
-        // Borramos las marcas existentes para reordenar limpiamente
+        // Borramos las materiales existentes para reordenar limpiamente
         $this->siteContentModel->deleteContentByKey($shippingBrandKey);
 
         $brandDisplayOrder = 1; 

@@ -255,7 +255,7 @@ document.addEventListener('click', function(event) {
         } else if (deleteUrl.includes('/admin/categories/')) {
             showAdvancedDeleteConfirmation(deleteUrl, 'categoría');
         } else if (deleteUrl.includes('/admin/brands/')) {
-            showAdvancedDeleteConfirmation(deleteUrl, 'marca');
+            showAdvancedDeleteConfirmation(deleteUrl, 'material');
         } else {
             showSimpleDeleteConfirmation(deleteUrl);
         }

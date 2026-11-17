@@ -708,7 +708,7 @@ picture { max-width: 100%; height: auto; display: block; }
 }
 
 /* ==========================================================================
-   ESTILOS UNIFICADOS DE GRILLA Y TARJETAS (Categorías y Marcas)
+   ESTILOS UNIFICADOS DE GRILLA Y TARJETAS (Categorías y Materiales)
    ========================================================================== */
 
 /* 1. Contenedores Base */
@@ -718,7 +718,7 @@ picture { max-width: 100%; height: auto; display: block; }
     margin: 0 auto;
 }
 
-/* Contenedor específico de marcas */
+/* Contenedor específico de materiales */
 .brand-grid, .category-grid {
     margin-top: 2rem;
     margin-bottom: 3rem;
@@ -750,7 +750,7 @@ picture { max-width: 100%; height: auto; display: block; }
 }
 
 
-/* 4. Estilos de Tarjetas UNIFICADOS (Categorías y Marcas iguales) */
+/* 4. Estilos de Tarjetas UNIFICADOS (Categorías y Materiales iguales) */
 
 /* Overlap específico SOLO para categorías (para montar sobre el slider) */
 .overlap-container {
@@ -785,7 +785,7 @@ picture { max-width: 100%; height: auto; display: block; }
     box-shadow: 0 8px 20px rgba(0,0,0,0.12);
 }
 
-/* Títulos (Nombre de la categoría o marca) */
+/* Títulos (Nombre de la categoría o material) */
 .category-card h2,
 .brand-card h2 { 
     font-size: 1rem; 
@@ -815,7 +815,7 @@ picture { max-width: 100%; height: auto; display: block; }
     object-fit: cover; /* Foto llena el cuadro */
 }
 
-/* Ajuste especial solo para logos de marcas para evitar cortes */
+/* Ajuste especial solo para logos de materiales para evitar cortes */
 .brand-card__image img { 
     width: 100%; 
     height: 100%; 
@@ -830,7 +830,7 @@ picture { max-width: 100%; height: auto; display: block; }
     object-fit: cover; /* Foto llena el cuadro */
 }
 
-/* Ajuste especial solo para logos de marcas para evitar cortes */
+/* Ajuste especial solo para logos de materiales para evitar cortes */
 .brand-card__image picture { 
     width: 100%; 
     height: 100%; 

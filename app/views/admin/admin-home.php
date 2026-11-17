@@ -129,7 +129,7 @@
                     </div>
                 </div>
 
-                <!-- 3. MARCAS DESTACADAS -->
+                <!-- 3. MATERIALES DESTACADOS -->
                 <div class="lvr-step-card">
                     <div class="lvr-step-header">
                         <div class="lvr-step-header-left">
@@ -138,8 +138,8 @@
                                 <span class="lvr-step-num">3</span>
                             </div>
                             <div class="lvr-step-titles">
-                                <h3>Marcas destacadas</h3>
-                                <p>Selecciona exactamente las 7 marcas que deseas destacar en la página de inicio</p>
+                                <h3>Materiales destacados</h3>
+                                <p>Selecciona exactamente los 7 materiales que deseas destacar en la página de inicio</p>
                             </div>
                         </div>
                         <span class="lvr-tag-amber" id="brand-counter-badge">0 / 7 seleccionadas</span>
@@ -172,7 +172,7 @@
 
                     <div id="brands-error-message" class="alert alert-danger lvr-alert-warning-soft" style="display: none;">
                         <i class='bx bx-error-circle' style="font-size: 1.1rem;"></i>
-                        <span><strong>¡Atención!</strong> Debes seleccionar exactamente 7 marcas destacadas para poder guardar.</span>
+                        <span><strong>¡Atención!</strong> Debes seleccionar exactamente 7 materiales destacados para poder guardar.</span>
                     </div>
                 </div>
 
@@ -196,13 +196,13 @@
                         <strong id="summary-home-cats">0 / 7</strong>
                     </div>
                     <div class="lvr-summary-row">
-                        <span>Marcas</span>
+                        <span>Materiales</span>
                         <strong id="summary-home-brands">0 / 7</strong>
                     </div>
 
                     <div class="lvr-req-progress-box">
                         <div class="lvr-req-progress-top">
-                            <span>Requisitos (Cat. y Marcas)</span>
+                            <span>Requisitos (Categorias y Materiales)</span>
                             <strong id="summary-home-req-count">0/2</strong>
                         </div>
                         <div class="lvr-req-progress-bar">
@@ -299,7 +299,7 @@
                 }
             }
 
-            // 2. Categorías y Marcas (7 requeridas)
+            // 2. Categorías y Materiales (7 requeridas)
             let checkedCats = 0;
             catChecks.forEach(c => { if (c.checked) checkedCats++; });
             let checkedBrands = 0;
@@ -320,7 +320,7 @@
             const bannerEl  = document.getElementById('summary-home-banner');
             if (bannerEl) bannerEl.textContent = hasBanner ? 'Sí' : 'No';
 
-            // 4. Barra de progreso de requisitos (7 categorías + 7 marcas = 2/2)
+            // 4. Barra de progreso de requisitos (7 categorías + 7 materiales = 2/2)
             let reqDone = 0;
             if (checkedCats === 7) reqDone++;
             if (checkedBrands === 7) reqDone++;

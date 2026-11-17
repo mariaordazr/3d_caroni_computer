@@ -85,7 +85,7 @@ class PublicController {
         }
         $featuredCategories = $this->categoryModel->getFeaturedCategories($featuredCategoryIds);
 
-        // 4. MARCAS DESTACADAS
+        // 4. MATERIALES DESTACADOS
         // Usamos el método que obtiene TODOS los IDs ordenados para esta clave
         $featuredBrandIds = $this->siteContentModel->getOrderedIdsByKey($featuredBrandsKey);
         
@@ -148,7 +148,7 @@ class PublicController {
 
         // --- LÓGICA DE FILTROS ---
         if (!empty($filters['search'])) {
-            // Si hay búsqueda por texto, priorizamos eso y limpiamos categoría/marca
+            // Si hay búsqueda por texto, priorizamos eso y limpiamos categoría/material
             $filters['category'] = null;
             $filters['brand'] = null;
         } else {
@@ -156,13 +156,13 @@ class PublicController {
             if (isset($_GET['filter_choice']) && !empty($_GET['filter_choice'])) {
                 $choice = $_GET['filter_choice'];
                 
-                // Opción A: Se seleccionó CATEGORÍA y MARCA desde el sidebar (ej: "cat-1-brand-5")
+                // Opción A: Se seleccionó CATEGORÍA y MATERIAL desde el sidebar (ej: "cat-1-brand-5")
                 if (strpos($choice, 'cat-') === 0 && strpos($choice, '-brand-') !== false) {
                     $parts = explode('-brand-', $choice);
                     $filters['category'] = (int) str_replace('cat-', '', $parts[0]);
                     $filters['brand'] = (int) $parts[1];
                 }
-                // Opción B: Se seleccionó SOLO una MARCA desde el home (ej: "brand-5")
+                // Opción B: Se seleccionó SOLO una MATERIAL desde el home (ej: "brand-5")
                 else if (strpos($choice, 'brand-') === 0) {
                     $filters['brand'] = (int) str_replace('brand-', '', $choice);
                 }
@@ -211,7 +211,7 @@ class PublicController {
 
 
         // --- NUEVA LÓGICA DE VISIBILIDAD ---
-        // Chequeamos si el producto, su categoría o su marca están ocultos
+        // Chequeamos si el producto, su categoría o su material están ocultos
         if (!$product || $product['product_hidden'] == 1 || $product['category_hidden'] == 1 || $product['brand_hidden'] == 1) {
             http_response_code(403); // Forbidden
             
@@ -221,7 +221,7 @@ class PublicController {
             } elseif ($product['category_hidden'] == 1) {
                 $reason = "La categoría '{$product['category_name']}' se encuentra inactiva.";
             } elseif ($product['brand_hidden'] == 1) {
-                $reason = "La marca '{$product['brand_name']}' se encuentra inactiva.";
+                $reason = "La material '{$product['brand_name']}' se encuentra inactiva.";
             }
 
             // Puedes estilizar este mensaje o incluir una vista de error bonita

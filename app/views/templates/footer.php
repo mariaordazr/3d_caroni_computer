@@ -265,7 +265,7 @@
                 <span>
                     ©<?php echo date('Y'); ?> 
                     <?php echo htmlspecialchars($copyrightText);?><C class="A"></C>.
-                    es un negocio independiente. Las marcas comerciales mencionadas pertenecen a sus respectivos fabricantes. | Sitio web creado por: 
+                    es un negocio independiente. Las materiales comerciales mencionadas pertenecen a sus respectivos fabricantes. | Sitio web creado por: 
                     <a href="https://mariaordaz.dev" target="_blank">mariaordaz.dev</a>
                 </span>
             </div>

@@ -69,7 +69,7 @@
                     </div>
                 </div>
 
-                <!-- 2. SECCIÓN ENVÍOS / AGENCIAS (MARCAS) -->
+                <!-- 2. SECCIÓN ENVÍOS / AGENCIAS (MATERIALES) -->
                 <div class="lvr-step-card">
                     <div class="lvr-step-header">
                         <div class="lvr-step-header-left">

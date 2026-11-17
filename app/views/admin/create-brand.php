@@ -4,11 +4,11 @@
 
                     <div class="form-grid">
                         <div class="form-column">
-                            <label for="name">Nombre de la Marca:</label>
+                            <label for="name">Nombre de la Material:</label>
                             <input type="text" id="name" name="name" required>
                         </div>
                         <div class="form-column">
-                            <label>Imagen de la Marca:</label>
+                            <label>Imagen de la Material:</label>
                             <div class="image-upload-box">
                                 <label for="image-input">
                                     <!-- <div class="image-placeholder" id="image-preview-container">
