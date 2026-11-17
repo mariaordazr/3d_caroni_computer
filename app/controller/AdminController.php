@@ -95,6 +95,14 @@ class AdminController {
         }
     }
 
+    private function getDriveConfig($key = 'api_products') {
+        $stmt = $this->db->prepare("SELECT value FROM google_drive WHERE name = ?");
+        $stmt->bind_param("s", $key);
+        $stmt->execute();
+        $row = $stmt->get_result()->fetch_assoc();
+        return $row['value'] ?? '';
+    }
+
     private function resizeToWebP($sourcePath, $destPath, $maxWidth = 400, $quality = 80) {
         // 1. Obtener dimensiones y tipo de la imagen original
         list($width, $height, $type) = getimagesize($sourcePath);
