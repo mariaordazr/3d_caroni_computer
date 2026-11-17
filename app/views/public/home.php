@@ -33,9 +33,9 @@
 
             <!-- Overlay SIEMPRE visible sobre cualquier slide (N1) — textos literales de Lovable (N2) -->
             <div class="lvr-hero__overlay">
-                <span class="lvr-hero__badge">+500 repuestos en stock</span>
-                <h1 class="lvr-hero__title">Revive tu laptop con la pieza exacta.</h1>
-                <p class="lvr-hero__subtitle">Teclados, pantallas, chips y herramientas certificadas. Si no sabes cuál necesitas, te asesoramos por WhatsApp.</p>
+                <span class="lvr-hero__badge">Variedad de filamentos</span>
+                <h1 class="lvr-hero__title">Si lo imaginas lo podemos imprimir.</h1>
+                <p class="lvr-hero__subtitle">Herramientas, piezas, accesorios. Si no sabes cuál necesitas, te asesoramos por WhatsApp.</p>
                 <div class="lvr-hero__ctas">
                     <a class="lvr-hero__cta lvr-hero__cta--primary" href="/productos">Ver productos <i class='bx bx-chevron-right' aria-hidden="true"></i></a>
                     <a class="lvr-hero__cta lvr-hero__cta--outline" href="https://wa.me/<?php echo htmlspecialchars(preg_replace('/\D+/', '', $contactPhone)); ?>?text=Hola equipo de <?php echo htmlspecialchars($copyrightText);?>, quiero pedir asesoría" target="_blank" rel="noopener"><i class='bx bxl-whatsapp' aria-hidden="true"></i> Pedir asesoría</a>
