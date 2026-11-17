@@ -146,56 +146,10 @@ if ($segments[0] === 'auth') {
             $controller->updateSettings(); 
             exit;
         }
-        if ($section === 'receipts' && $action === 'send-pdf') {
-            $controller->sendPdfEmail(); 
-            exit;
-        }
-        if ($section === 'receipts' && $action === 'mark-wa-sent') {
-            $controller->markReceiptWhatsappSent();
-            exit;
-        }
-        // --- ESTAS SON LAS DOS RUTAS NUEVAS PARA LAS ETIQUETAS ---
-        if ($section === 'receipts' && $action === 'update-service-status') {
-            $controller->updateServiceStatus();
-            exit;
-        }
-        if ($section === 'receipts' && $action === 'update-payment-status') {
-            $controller->updatePaymentStatus();
-            exit;
-        }
-        
-        // --- NUEVA RUTA PARA SUBIDA ASÍNCRONA DE IMÁGENES ---
-        if ($section === 'receipts' && $action === 'upload-async') {
-            $controller->uploadAsyncImage();
-            exit;
-        }
-
-        if ($section === 'receipts' && $action === 'sync') {
-            $controller->syncDriveImages();
-            exit;
-        }
             
     }
 
-    // --- RUTA PARA AUTocompletar cliente (Petición GET) ---
-    if ($section === 'receipts' && $action === 'check-client') {
-        $controller->checkClientAjax();
-        exit;
-    }
-    // RUTAS DE CLIENTES
-    if ($section === 'clients') {
-        switch ($action) {
-            case 'index': $controller->clients(); break;
-            case 'create': $controller->createClient(); break;
-            case 'store': $controller->storeClient(); break;
-            case 'edit': $controller->editClient($id); break;
-            case 'update': $controller->updateClient(); break;
-            case 'delete': $controller->deleteClient($id); break;
-            default: header('Location: /admin/clients'); exit;
-        }
-        exit;
-    }
-
+    
     if ($section === 'pages' && $action === 'general') {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $controller->updateGeneral(); exit;
@@ -225,12 +179,6 @@ if ($segments[0] === 'auth') {
             $controller->updateShipping(); exit;
         }
         $controller->showShipping(); exit;
-    }
-    if ($section === 'pages' && $action === 'blog') {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $controller->updateBlog(); exit;
-        }
-        $controller->showBlog(); exit;
     }
     
     if ($section === 'uploadSiteImage') { $controller->uploadSiteImage(); exit; }
@@ -268,54 +216,7 @@ if ($segments[0] === 'auth') {
     if ($section === 'new-products' && $action === 'create') {
         $controller->createNewProduct(); exit;
     }
-    if ($section === 'blogs' && $action === 'create') {
-        $controller->createBlog(); exit;
-    }
-    if ($section === 'blogs' && $action === 'store' && $_SERVER['REQUEST_METHOD'] === 'POST') {
-        $controller->storeBlog(); exit; 
-    }
-    if ($section === 'blogs' && $action === 'edit' && $id) {
-        $controller->editBlog($id); exit;
-    }
-    if ($section === 'blogs' && $action === 'update' && $_SERVER['REQUEST_METHOD'] === 'POST') {
-        $controller->updateBlogPost(); exit; 
-    }
-    if ($section === 'blogs' && $action === 'delete' && $id) {
-        $controller->deleteBlog($id); exit;
-    }
-    // --- RUTAS PARA NOTAS DE RECIBO ---
-    if ($section === 'receipts' && $action === 'settings') {
-        // Corregido: segments[3] es donde llega la palabra 'update'
-        if (isset($segments[3]) && $segments[3] === 'update' && $_SERVER['REQUEST_METHOD'] === 'POST') {
-            $controller->updateSettingsReceipts(); 
-        } else {
-            $controller->settingsReceipts(); 
-        }
-        exit;
-    }
-
-    if ($section === 'receipts' && $action === 'create') {
-        $controller->createReceipt(); exit;
-    }
-    if ($section === 'receipts' && $action === 'store' && $_SERVER['REQUEST_METHOD'] === 'POST') {
-        $controller->storeReceipt(); exit;
-    }
     
-    if ($section === 'receipts' && $action === 'edit' && $id) {
-        $controller->editReceipt($id); exit;
-    }
-    if ($section === 'receipts' && $action === 'update' && $_SERVER['REQUEST_METHOD'] === 'POST') {
-        $controller->updateReceipt(); exit;
-    }
-
-    if ($section === 'receipts' && $action === 'delete' && $id) {
-        $controller->deleteReceipt($id); exit;
-    }
-    if ($section === 'receipts' && $action === 'view' && $id) {
-        $controller->viewReceiptPdf($id); exit;
-    }
-
-
     if ($section === 'categories' && $action === 'productCount' && $id) {
         $controller->getCategoryProductCount($id); exit;
     }
@@ -404,28 +305,6 @@ if ($segments[0] === 'auth') {
 } elseif ($segments[0] === 'envios') { // <-- AÑADE ESTA RUTA
     $controller = new PublicController($connection);
     $controller->shipping();
-
-} elseif ($segments[0] === 'nota' && isset($segments[1])) {
-    $controller = new PublicController($connection);
-    $controller->viewPublicReceipt($segments[1]);
-
-} elseif ($segments[0] === 'blog') { 
-    $controller = new PublicController($connection);
-    
-    // Si la URL tiene un slug (ej. /blog/mi-articulo-genial)
-    if (isset($segments[1]) && !empty($segments[1])) {
-        $controller->showBlogPost($segments[1]);
-    } else {
-        // Si solo es /blog, muestra la lista normal
-        $controller->blog();
-    }
-    
-
-// } elseif ($segments[0] === 'api_sincronizar.php') {
-//     // --- RUTA NUEVA PARA SINCRONIZAR ---
-//     // Si la URL pide el sincronizador, cargamos el archivo y detenemos el resto de la web.
-//     require_once 'api_sincronizar.php';
-//     exit;
 
 } else {
     // Ruta principal (homepage)

@@ -273,10 +273,6 @@ body {
     gap: 0.5rem !important;
 }
 
-.status-toggle-container, .receipt-dropdown-wrapper {
-    width: 100% !important;
-    min-width: max-content !important; /* El botón crecerá lo necesario */
-}
 
 /* Botón principal del dropdown (Más pequeño) */
 button.interactive-badge, .interactive-badge {
@@ -837,8 +833,7 @@ button.interactive-badge, .interactive-badge {
 
 .actions-menu-container,
 .status-toggle-container,
-.type-toggle-container,
-.receipt-dropdown-wrapper {
+.type-toggle-container {
     position: relative !important;
 }
 
@@ -867,8 +862,7 @@ button.interactive-badge, .interactive-badge {
 
 .actions-menu-container,
 .status-toggle-container,
-.type-toggle-container,
-.receipt-dropdown-wrapper {
+.type-toggle-container {
     position: relative !important;
 }
 
@@ -976,58 +970,6 @@ button.interactive-badge, .interactive-badge {
     margin-top: 2px !important;
 }
 
-/* 2. ESTILO DE VISTA EN LISTA (.lvr-receipt-list-item) */
-.lvr-receipt-list-item {
-    display: grid !important;
-    /* 4 columnas reales: Info Cliente | Estados | Contacto (alineado a la derecha) | 3 puntos */
-    grid-template-columns: minmax(240px, 1.6fr) auto minmax(220px, 1.2fr) 36px !important;
-    align-items: center !important;
-    gap: 1.5rem !important;
-    padding: 1rem 1.35rem !important;
-    border-radius: 16px !important;
-    background: #ffffff !important;
-    border: 1px solid #e2e8f0 !important;
-}
-
-.lvr-receipt-list-item .table-item-ml__actions {
-    position: static !important;
-    top: auto !important;
-    right: auto !important;
-    justify-self: end !important;
-}
-
-.lvr-receipt-list-item .table-item-ml__contact {
-    max-width: none !important;
-    width: 100% !important;
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: flex-end !important;
-    justify-content: center !important;
-    gap: 0.35rem !important;
-    justify-self: end !important;
-}
-
-.lvr-receipt-list-item .lvr-sent-row {
-    justify-content: flex-end !important;
-    white-space: nowrap !important;
-}
-
-/* En Tablet/Móvil (<= 1100px) mantenemos el diseño apilado limpio */
-@media (max-width: 1100px) {
-    .lvr-receipt-list-item .table-item-ml__contact {
-        align-items: flex-start !important;
-        justify-self: start !important;
-    }
-    .lvr-receipt-list-item .lvr-sent-row {
-        justify-content: flex-start !important;
-    }
-    .lvr-receipt-list-item .table-item-ml__actions {
-        position: absolute !important;
-        top: 1rem !important;
-        right: 1rem !important;
-    }
-}
-
 .lvr-list-main-link {
     display: flex !important;
     align-items: center !important;
@@ -1067,53 +1009,12 @@ button.interactive-badge, .interactive-badge {
     gap: 1.25rem !important;
 }
 
-/* 4. ESTILO DE TARJETA EN CUADRÍCULA CON ICONO DE HOJA ARRIBA MÁS PEQUEÑO */
-.lvr-receipt-card {
-    padding: 1.15rem !important;
-    border-radius: 16px !important;
-    background: #ffffff !important;
-    border: 1px solid #e2e8f0 !important;
-    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04) !important;
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 0.75rem !important;
-    position: relative !important;
-}
-
-/* Caja del icono de hoja arriba del título (más pequeña y proporcionada) */
-.lvr-receipt-card .lvr-receipt-icon-box {
-    height: 92px !important;
-    background-color: #f8fafc !important;
-    border-radius: 12px !important;
-    margin-bottom: 0.15rem !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-}
-
-.lvr-receipt-card .lvr-receipt-icon-box i {
-    font-size: 3.2rem !important;
-    color: #0f172a !important;
-}
-
-.lvr-receipt-card .grid-item-card__actions {
-    position: absolute !important;
-    top: 0.75rem !important;
-    right: 0.75rem !important;
-    z-index: 10 !important;
-}
-
 /* Badges de estado en Cuadrícula */
 .lvr-card-badges {
     display: flex !important;
     flex-direction: column !important;
     gap: 0.4rem !important;
     width: 100% !important;
-}
-
-.lvr-card-badges .receipt-dropdown-wrapper {
-    width: 100% !important;
-    min-width: 0 !important;
 }
 
 .lvr-card-badges .interactive-badge {
@@ -1189,36 +1090,8 @@ button.interactive-badge, .interactive-badge {
         gap: 1rem !important;
     }
 
-    /* En Tablet/Móvil, la tarjeta de Lista se adapta limpiamente sin salirse */
-    .lvr-receipt-list-item {
-        display: flex !important;
-        flex-direction: column !important;
-        align-items: flex-start !important;
-        gap: 0.75rem !important;
-        padding: 1.1rem !important;
-        position: relative !important;
-    }
-
     .lvr-list-main-link {
         width: calc(100% - 36px) !important;
-    }
-
-    .lvr-receipt-list-item .table-item-ml__status-column {
-        display: flex !important;
-        flex-direction: row !important;
-        flex-wrap: wrap !important;
-        gap: 0.45rem !important;
-        width: 100% !important;
-    }
-
-    .lvr-receipt-list-item .status-toggle-container {
-        width: auto !important;
-        min-width: 0 !important;
-    }
-
-    .lvr-receipt-list-item .interactive-badge {
-        width: auto !important;
-        padding: 5px 11px !important;
     }
 
     .lvr-list-contact-link {
@@ -1230,12 +1103,6 @@ button.interactive-badge, .interactive-badge {
         border-top: 1px solid #f1f5f9 !important;
     }
 
-    .lvr-receipt-list-item .table-item-ml__actions {
-        position: absolute !important;
-        top: 1rem !important;
-        right: 1rem !important;
-    }
-
     /* En Cuadrícula de Tablet, badges en fila tipo píldora */
     .lvr-card-badges {
         flex-direction: row !important;
@@ -1243,7 +1110,7 @@ button.interactive-badge, .interactive-badge {
         gap: 0.45rem !important;
     }
 
-    .lvr-card-badges .receipt-dropdown-wrapper {
+    .lvr-card-badges {
         width: auto !important;
         min-width: 0 !important;
     }
@@ -1695,13 +1562,13 @@ button.interactive-badge, .interactive-badge {
    REDISEÑO LOVABLE: CREAR Y EDITAR NOTA DE ENTREGA (IMG 1, 2, 3)
    ========================================================= */
 
-body:has(.lvr-receipt-page) .main-header-admin:not(.lvr-keep-header),
-.content-panel:has(.lvr-receipt-page) > .admin-header-row,
-.content-panel:has(.lvr-receipt-page) .form-actions {
+body:has(.lvr-admin-page) .main-header-admin:not(.lvr-keep-header),
+.content-panel:has(.lvr-admin-page) > .admin-header-row,
+.content-panel:has(.lvr-admin-page) .form-actions {
     display: none !important;
 }
 
-.lvr-receipt-page {
+.lvr-admin-page {
     width: 100%;
     max-width: 1180px;
     margin: 0 auto;
@@ -1710,9 +1577,9 @@ body:has(.lvr-receipt-page) .main-header-admin:not(.lvr-keep-header),
     box-sizing: border-box;
 }
 
-.lvr-receipt-page *,
-.lvr-receipt-page *::before,
-.lvr-receipt-page *::after {
+.lvr-admin-page *,
+.lvr-admin-page *::before,
+.lvr-admin-page *::after {
     box-sizing: border-box;
 }
 
@@ -1953,7 +1820,7 @@ body:has(.lvr-receipt-page) .main-header-admin:not(.lvr-keep-header),
 .lvr-input,
 .lvr-select,
 .lvr-textarea,
-.lvr-receipt-page .iti input[type="tel"] {
+.lvr-admin-page .iti input[type="tel"] {
     width: 100% !important;
     height: 42px !important;
     padding: 0 14px !important;
@@ -1979,7 +1846,7 @@ body:has(.lvr-receipt-page) .main-header-admin:not(.lvr-keep-header),
 .lvr-input:focus,
 .lvr-select:focus,
 .lvr-textarea:focus,
-.lvr-receipt-page .iti input[type="tel"]:focus {
+.lvr-admin-page .iti input[type="tel"]:focus {
     border-color: #2563eb !important;
     box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12) !important;
 }
@@ -2293,25 +2160,25 @@ body:has(.lvr-receipt-page) .main-header-admin:not(.lvr-keep-header),
     color: #15803d;
 }
 
-.lvr-receipt-page .image-slots-container.receipt-gallery {
+/* .lvr-admin-page .image-slots-container.receipt-gallery {
     display: flex !important;
     flex-wrap: wrap !important;
     gap: 0.75rem !important;
-}
+} */
 
-.lvr-receipt-page .image-slot {
+.lvr-admin-page .image-slot {
     width: 112px !important;
     height: 112px !important;
     border-radius: 14px !important;
 }
 
-.lvr-receipt-page .image-slot label {
+.lvr-admin-page .image-slot label {
     border-radius: 14px !important;
     border: 1.5px dashed #cbd5e1 !important;
     background: #ffffff !important;
     transition: border-color 0.2s, background 0.2s !important;
 }
-.lvr-receipt-page .image-slot label:hover {
+.lvr-admin-page .image-slot label:hover {
     border-color: #2563eb !important;
     background: #eff6ff !important;
 }
@@ -2479,23 +2346,23 @@ body:has(.lvr-receipt-page) .main-header-admin:not(.lvr-keep-header),
 .lvr-btn-cancel-note:hover { color: #0f172a; }
 
 /* Fix para que intl-tel-input respete el espacio de la bandera en Teléfono WhatsApp */
-.lvr-receipt-page .iti {
+.lvr-admin-page .iti {
     width: 100% !important;
     display: block !important;
 }
 
-.lvr-receipt-page .iti input[type="tel"].lvr-input,
-.lvr-receipt-page input#phone_input.lvr-input {
+.lvr-admin-page .iti input[type="tel"].lvr-input,
+.lvr-admin-page input#phone_input.lvr-input {
     padding-left: 52px !important;
     padding-right: 14px !important;
 }
 
-.lvr-receipt-page .iti--separate-dial-code input[type="tel"].lvr-input,
-.lvr-receipt-page .iti--separate-dial-code input#phone_input.lvr-input {
+.lvr-admin-page .iti--separate-dial-code input[type="tel"].lvr-input,
+.lvr-admin-page .iti--separate-dial-code input#phone_input.lvr-input {
     padding-left: 88px !important;
 }
 
-/* Responsive de Create/Edit Receipt (Img 2 y 3) */
+
 @media (max-width: 1080px) {
     .lvr-form-layout {
         grid-template-columns: minmax(0, 1fr);
@@ -2604,7 +2471,7 @@ body:has(.lvr-receipt-page) .main-header-admin:not(.lvr-keep-header),
 }
 
 /* =========================================================
-   REDISEÑO LOVABLE: CATEGORÍAS, MARCAS, USUARIOS Y BLOGS
+   REDISEÑO LOVABLE: CATEGORÍAS, MARCAS, USUARIOS
    ========================================================= */
 
 /* Unificación de contenedores de Lista y Cuadrícula en basic_list */
@@ -2632,7 +2499,7 @@ body:has(.lvr-receipt-page) .main-header-admin:not(.lvr-keep-header),
     margin-top: 0.5rem !important;
 }
 
-/* Filas de lista para Categorías, Marcas, Usuarios y Blogs */
+/* Filas de lista para Categorías, Marcas, Usuarios*/
 .lvr-entity-row {
     display: grid !important;
     grid-template-columns: minmax(0, 1.6fr) auto 36px !important;
@@ -2679,7 +2546,7 @@ body:has(.lvr-receipt-page) .main-header-admin:not(.lvr-keep-header),
     right: auto !important;
 }
 
-/* Miniaturas circulares/recortadas para Usuarios y Blogs */
+/* Miniaturas circulares/recortadas para Usuarios*/
 .lvr-thumb-cover {
     padding: 0 !important;
     overflow: hidden !important;
@@ -2695,7 +2562,7 @@ body:has(.lvr-receipt-page) .main-header-admin:not(.lvr-keep-header),
     display: block !important;
 }
 
-/* Tarjetas de cuadrícula para Categorías, Marcas, Usuarios y Blogs */
+/* Tarjetas de cuadrícula para Categorías, Marcas, Usuarios */
 .lvr-entity-card {
     width: 100% !important;
     max-width: 100% !important;
@@ -3501,7 +3368,7 @@ body:has(.lvr-receipt-page) .main-header-admin:not(.lvr-keep-header),
 }
 
 /* =========================================================
-   COMPLEMENTO CMS: NOSOTROS, BLOG, SERVICIOS Y ENVÍOS
+   COMPLEMENTO CMS: NOSOTROS, SERVICIOS Y ENVÍOS
    ========================================================= */
 
 /* Evitar que el círculo numerado (1, 2, 3...) se corte en el borde izquierdo */

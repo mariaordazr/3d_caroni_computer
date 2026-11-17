@@ -191,28 +191,6 @@
                         </li>
                     <?php endif; ?>
 
-                    <li class="nav-header" data-section="billing">
-                        <span>FACTURACIÓN</span>
-                        <i class='bx bx-chevron-down nav-header-chevron'></i>
-                    </li>
-                    <li class="nav-item <?php echo ($active_menu === 'receipts') ? 'active' : ''; ?>" data-section-item="billing">
-                        <a href="/admin/receipts" title="Notas de Recibo">
-                            <span class="lvr-nav-icon"><i class='bx bx-receipt'></i></span>
-                            <span class="lvr-nav-label">Notas de Recibo</span>
-                        </a>
-                    </li>
-                    <li class="nav-item <?php echo ($active_menu === 'receipts-settings') ? 'active' : ''; ?>" data-section-item="billing">
-                        <a href="/admin/receipts/settings" title="Conf. de Notas">
-                            <span class="lvr-nav-icon"><i class='bx bx-slider'></i></span>
-                            <span class="lvr-nav-label">Conf. de Notas</span>
-                        </a>
-                    </li>
-                    <li class="nav-item <?php echo ($active_menu === 'clients') ? 'active' : ''; ?>" data-section-item="billing">
-                        <a href="/admin/clients" title="Clientes">
-                            <span class="lvr-nav-icon"><i class='bx bx-group'></i></span>
-                            <span class="lvr-nav-label">Clientes</span>
-                        </a>
-                    </li>
                     
                     <?php if ($userInfo['role'] == 'admin'): ?>
                         <li class="nav-header" data-section="pages">
@@ -234,13 +212,6 @@
                             </a>
                         </li>
 
-                        <li class="nav-item <?php echo ($active_menu === 'pages-blog') ? 'active' : ''; ?>" data-section-item="pages">
-                            <a href="/admin/pages/blog" title="Página de Blog">
-                                <span class="lvr-nav-icon"><i class='bx bx-news'></i></span>
-                                <span class="lvr-nav-label">Página de Blog</span>
-                            </a>
-                        </li>
-
                         <li class="nav-item <?php echo ($active_menu === 'pages-about') ? 'active' : ''; ?>" data-section-item="pages">
                             <a href="/admin/pages/about" title="Página de Nosotros">
                                 <span class="lvr-nav-icon"><i class='bx bx-buildings'></i></span>
@@ -259,17 +230,6 @@
                             <a href="/admin/pages/shipping" title="Página de Envíos">
                                 <span class="lvr-nav-icon"><i class='bx bxs-truck'></i></span>
                                 <span class="lvr-nav-label">Página de Envíos</span>
-                            </a>
-                        </li>
-
-                        <li class="nav-header" data-section="blogs">
-                            <span>BLOGS</span>
-                            <i class='bx bx-chevron-down nav-header-chevron'></i>
-                        </li>
-                        <li class="nav-item <?php echo ($active_menu === 'blogs') ? 'active' : ''; ?>" data-section-item="blogs">
-                            <a href="/admin/blogs" title="Artículos">
-                                <span class="lvr-nav-icon"><i class='bx bx-news'></i></span>
-                                <span class="lvr-nav-label">Artículos</span>
                             </a>
                         </li>
 

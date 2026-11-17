@@ -5,7 +5,7 @@
 ?>
 
 <section class="content-panel">
-    <form class="edit-form lvr-receipt-page lvr-product-page" method="POST" action="/admin/storeProduct" id="product-form" enctype="multipart/form-data">
+    <form class="edit-form lvr-admin-page lvr-product-page" method="POST" action="/admin/storeProduct" id="product-form" enctype="multipart/form-data">
 
         <!-- TOPBAR: Breadcrumb + Título + Badge -->
         <div class="lvr-page-topbar">
@@ -287,7 +287,7 @@
                             <label class="lvr-field-label" for="video_title">Título del video</label>
                             <input type="text" id="video_title" name="video_title" class="lvr-input" value="" placeholder="Ej. Demostración del equipo">
 
-                            <div class="receipt-video-container">
+                            <div class="product-video-container">
                                 <div class="add-video-card" style="display:block;">
                                     <label class="lvr-video-upload-card">
                                         <div class="lvr-video-upload-icon">
@@ -577,7 +577,7 @@
         if (e.target && e.target.id === 'video_file') {
             const file = e.target.files[0];
             if (!file) return;
-            const container = e.target.closest('.receipt-video-container');
+            const container = e.target.closest('.product-video-container');
             const previewContainer = container.querySelector('.video-preview-container');
             const addCard = container.querySelector('.add-video-card');
             
@@ -602,7 +602,7 @@
     document.addEventListener('click', function(e) {
         const btn = e.target.closest('.remove-video-btn');
         if (btn && !btn.hasAttribute('onclick')) {
-            const container = btn.closest('.receipt-video-container');
+            const container = btn.closest('.product-video-container');
             container.querySelector('#video_file').value = '';
             const videoEl = container.querySelector('video');
             if (videoEl) videoEl.src = '';

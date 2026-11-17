@@ -7,7 +7,7 @@
 ?>
 
 <section class="content-panel">
-    <form class="edit-form lvr-receipt-page lvr-cms-page" method="POST" action="/admin/pages/general/update" id="general-form" enctype="multipart/form-data">
+    <form class="edit-form lvr-admin-page lvr-cms-page" method="POST" action="/admin/pages/general/update" id="general-form" enctype="multipart/form-data">
 
         <!-- TOPBAR: Breadcrumb + Título + Badge -->
         <div class="lvr-page-topbar">

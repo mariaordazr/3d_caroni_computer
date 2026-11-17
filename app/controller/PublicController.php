@@ -241,87 +241,6 @@ class PublicController {
         include ROOT_PATH . 'app/views/public/product-detail.php';
     }
 
-    // ... otros métodos ...
-
-    public function blog() {
-        // --- Header y Footer data (Copia lo mismo que en otros métodos) ---
-        $pageName = $this->siteContentModel->getValue('page_title');
-        $locationHeader = $this->siteContentModel->getValue('location_header');
-        $logoImage = $this->siteContentModel->getValue('logo_header');
-        $locationLink = $this->siteContentModel->getValue('location_link');
-        $moneySymbol = $this->siteContentModel->getValue('money_symbol');
-        $locationAddress = $this->siteContentModel->getValue('location_address');
-        $contactPhone = $this->siteContentModel->getValue('contact_number');
-        $paymentContent = $this->siteContentModel->getOrderedContentByPrefix('payment_logo');
-        $paymentMethods = array_column($paymentContent,'content_value');
-        $facebook = $this->siteContentModel->getValue('facebook_link');
-        $instagram = $this->siteContentModel->getValue('instagram_link');
-        $youtube = $this->siteContentModel->getValue('youtube_link');
-        $tiktok = $this->siteContentModel->getValue('tiktok_link');
-        $copyrightText = $this->siteContentModel->getValue('copyright');
-        $categoryModel = new Category($this->db);
-        $brandModel = new Brand($this->db);
-        $headerCategories = $this->categoryModel->getAllSimple();
-        $activePage = 'blog'; 
-        // ----------------------------------------------------------------
-
-        // 1. BANNER DEL BLOG
-        $bannerKey = 'blog_banner';
-        $bannerImage = $this->siteContentModel->getValue($bannerKey);
-
-        // --- 4. NUEVA LÓGICA: Obtener los artículos reales ---
-        require_once ROOT_PATH . 'app/model/Blog.php';
-        $blogModel = new Blog($this->db);
-        
-        // Le pedimos al modelo que traiga SOLO los artículos publicados 
-        // y los ordene desde el más reciente al más antiguo
-        $blogs = $blogModel->getAll([
-            'status' => 'publicado',
-            'sort'   => 'created_at-desc' 
-        ]);
-        
-
-        include ROOT_PATH . 'app/views/public/blog.php';
-    }
-
-    public function showBlogPost($slug) {
-        // --- 1. Cargar datos del Header y Footer (igual que el resto) ---
-        $pageName = $this->siteContentModel->getValue('page_title');
-        $locationHeader = $this->siteContentModel->getValue('location_header');
-        $logoImage = $this->siteContentModel->getValue('logo_header');
-        $locationLink = $this->siteContentModel->getValue('location_link');
-        $moneySymbol = $this->siteContentModel->getValue('money_symbol');
-        $locationAddress = $this->siteContentModel->getValue('location_address');
-        $contactPhone = $this->siteContentModel->getValue('contact_number');
-        $paymentContent = $this->siteContentModel->getOrderedContentByPrefix('payment_logo');
-        $paymentMethods = array_column($paymentContent,'content_value');
-        $facebook = $this->siteContentModel->getValue('facebook_link');
-        $instagram = $this->siteContentModel->getValue('instagram_link');
-        $youtube = $this->siteContentModel->getValue('youtube_link');
-        $tiktok = $this->siteContentModel->getValue('tiktok_link');
-        $copyrightText = $this->siteContentModel->getValue('copyright');
-        $categoryModel = new Category($this->db);
-        $brandModel = new Brand($this->db);
-        $headerCategories = $this->categoryModel->getAllSimple();
-        $activePage = 'blog'; 
-        // ----------------------------------------------------------------
-
-        // --- 2. Buscar el artículo por su slug ---
-        require_once ROOT_PATH . 'app/model/Blog.php';
-        $blogModel = new Blog($this->db);
-        $post = $blogModel->getBySlug($slug);
-
-        // Si el artículo no existe o está en borrador, lo regresamos a la lista principal
-        if (!$post) {
-            header('Location: /blog');
-            exit;
-        }
-
-        // --- 3. Renderizar la nueva vista ---
-        include ROOT_PATH . 'app/views/public/blog-detail.php';
-    }
-
-     // NUEVO MÉTODO PARA "NOSOTROS"
     public function aboutUs() {
         //------------header----------
         $pageName = $this->siteContentModel->getValue('page_title');
@@ -475,57 +394,7 @@ class PublicController {
         $shippingBrandsCount = count($shippingBrands);
 
         include ROOT_PATH . 'app/views/public/shipping.php';
-    }
-
-    public function viewPublicReceipt($token) {
-        require_once ROOT_PATH . 'app/model/Receipt.php';
-        $receiptModel = new Receipt($this->db);
-        
-        $receipt = $receiptModel->getByToken($token);
-
-        if ($receipt) {
-            // 1. Si el cliente presiona "Sí, acepto", "No" o "Deshacer respuesta" (POST o GET AJAX)
-            if ($_SERVER['REQUEST_METHOD'] === 'POST' || isset($_GET['save_choice'])) {
-                header('Content-Type: application/json');
-                $jsonInput = json_decode(file_get_contents('php://input'), true) ?: $_POST;
-                
-                if (isset($jsonInput['action']) && $jsonInput['action'] === 'save_client_choice') {
-                    $rowIndex = (int)($jsonInput['row_index'] ?? -1);
-                    $choice   = trim($jsonInput['choice'] ?? ''); // 'accepted', 'rejected', o '' (sin respuesta)
-
-                    $budgetData = json_decode($receipt['budget_json'] ?? '{}', true) ?: [];
-                    // Soportar estructura con 'items' en budget_json
-                    if (isset($budgetData['items'][$rowIndex])) {
-                        $budgetData['items'][$rowIndex]['client_choice'] = $choice;
-                        $newBudgetJson = json_encode($budgetData, JSON_UNESCAPED_UNICODE);
-
-                        $stmt = $this->db->prepare("UPDATE receipts SET budget_json = ? WHERE id_receipt = ?");
-                        $stmt->bind_param("si", $newBudgetJson, $receipt['id_receipt']);
-                        $ok = $stmt->execute();
-
-                        echo json_encode(['success' => $ok, 'choice' => $choice]);
-                        exit;
-                    }
-                }
-                echo json_encode(['success' => false, 'message' => 'Fila no encontrada']);
-                exit;
-            }
-
-            // 2. Cargamos el símbolo de la moneda para la vista pública
-            $moneySymbol = $this->siteContentModel->getValue('money_symbol') ?: '$';
-
-            $settings = $receiptModel->getSettings();
-            $items = json_decode($receipt['items_json'], true);
-            $budget = json_decode($receipt['budget_json'], true); 
-            $data = $receipt;
-            
-            $isPublic = true; 
-            include ROOT_PATH . 'app/views/admin/receipt-pdf.php';
-        } else {
-            echo "<h2 style='text-align:center; padding: 50px; font-family:sans-serif; color: #d32f2f;'>Enlace inválido o caducado.</h2>";
-            echo "<p style='text-align:center;'>Por su seguridad, solicite un nuevo enlace de acceso a Caroni Computer.</p>";
-        }
-    }   
+    } 
  
 
 }

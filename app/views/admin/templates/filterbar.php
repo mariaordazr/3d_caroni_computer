@@ -21,43 +21,17 @@
                     <option value="updated_at-desc" <?php echo (($_GET['sort'] ?? '') === 'updated_at-desc') ? 'selected' : ''; ?>>Edición (Reciente)</option>
                     <option value="updated_at-asc" <?php echo (($_GET['sort'] ?? '') === 'updated_at-asc') ? 'selected' : ''; ?>>Edición (Antigua)</option>
                     
-                    <?php if ($active_menu === 'blogs'): ?>
-                        <option value="title-asc" <?php echo (($_GET['sort'] ?? '') === 'title-asc') ? 'selected' : ''; ?>>Título (A-Z)</option>
-                        <option value="title-desc" <?php echo (($_GET['sort'] ?? '') === 'title-desc') ? 'selected' : ''; ?>>Título (Z-A)</option>
-                        <option value="author-asc" <?php echo (($_GET['sort'] ?? '') === 'author-asc') ? 'selected' : ''; ?>>Autor (A-Z)</option>
-                        <option value="author-desc" <?php echo (($_GET['sort'] ?? '') === 'author-desc') ? 'selected' : ''; ?>>Autor (Z-A)</option>
-                    <?php elseif ($active_menu !== 'receipts'): ?>
-                            <option value="name-asc" <?php echo (($_GET['sort'] ?? '') === 'name-asc') ? 'selected' : ''; ?>>A-Z</option>
-                            <option value="name-desc" <?php echo (($_GET['sort'] ?? '') === 'name-desc') ? 'selected' : ''; ?>>Z-A</option>
-                    <?php endif; ?>
+                    <option value="name-asc" <?php echo (($_GET['sort'] ?? '') === 'name-asc') ? 'selected' : ''; ?>>A-Z</option>
+                    <option value="name-desc" <?php echo (($_GET['sort'] ?? '') === 'name-desc') ? 'selected' : ''; ?>>Z-A</option>
+                    
 
-                    <?php if (isset($pageType) && $pageType !== 'basic_list' && $active_menu !== 'blogs'): ?>
+                    <?php if (isset($pageType) && $pageType !== 'basic_list'): ?>
                         <option value="price-asc" <?php echo (($_GET['sort'] ?? '') === 'price-asc') ? 'selected' : ''; ?>>$ Menor</option>
                         <option value="price-desc" <?php echo (($_GET['sort'] ?? '') === 'price-desc') ? 'selected' : ''; ?>>$ Mayor</option>
                         <option value="stock-asc" <?php echo (($_GET['sort'] ?? '') === 'stock-asc') ? 'selected' : ''; ?>>Stock Bajo</option>
                         <option value="stock-desc" <?php echo (($_GET['sort'] ?? '') === 'stock-desc') ? 'selected' : ''; ?>>Stock Alto</option>
                     <?php endif; ?>
                 </select>
-
-                <?php if ($active_menu === 'blogs'): ?>
-                    <select name="status" class="filter-bar__select" onchange="this.form.submit()">
-                        <option value="">Estado</option>
-                        <option value="publicado" <?php echo (($_GET['status'] ?? '') === 'publicado') ? 'selected' : ''; ?>>Publicado</option>
-                        <option value="borrador" <?php echo (($_GET['status'] ?? '') === 'borrador') ? 'selected' : ''; ?>>Borrador</option>
-                    </select>
-                <?php endif; ?>
-
-                <?php if ($active_menu === 'receipts'): ?>
-                    <select name="status" class="filter-bar__select" onchange="this.form.submit()">
-                        <option value="">Todos los Estados</option>
-                        <option value="in_progress" <?php echo (($_GET['status'] ?? '') === 'in_progress') ? 'selected' : ''; ?>>En proceso</option>
-                        <option value="finished" <?php echo (($_GET['status'] ?? '') === 'finished') ? 'selected' : ''; ?>>Finalizado</option>
-                        <option value="sent_wa" <?php echo (($_GET['status'] ?? '') === 'sent_wa') ? 'selected' : ''; ?>>Enviados (WhatsApp)</option>
-                        <option value="sent_email" <?php echo (($_GET['status'] ?? '') === 'sent_email') ? 'selected' : ''; ?>>Enviados (Correo)</option>
-                        <option value="not_sent" <?php echo (($_GET['status'] ?? '') === 'not_sent') ? 'selected' : ''; ?>>No Enviados</option>
-                        <option value="edited" <?php echo (($_GET['status'] ?? '') === 'edited') ? 'selected' : ''; ?>>Editados</option>
-                    </select>
-                <?php endif; ?>
 
                 <?php if (isset($active_menu) && $active_menu === 'users'): ?>
                     <select name="role" class="filter-bar__select" onchange="this.form.submit()">
@@ -68,7 +42,7 @@
                     </select>
                 <?php endif; ?>
 
-                <?php if (isset($pageType) && $pageType !== 'basic_list' && $active_menu !== 'blogs'): ?>
+                <?php if (isset($pageType) && $pageType !== 'basic_list'): ?>
                     <select name="category" class="filter-bar__select" onchange="this.form.submit()">
                         <option value="">Categoría</option>
                         <?php foreach($headerCategories as $category): ?>
@@ -88,7 +62,7 @@
                     </select>
                 <?php endif; ?>
 
-                <?php if (isset($pageType) && $pageType === 'full_list' && $active_menu !== 'blogs'): ?>
+                <?php if (isset($pageType) && $pageType === 'full_list'): ?>
                     <select name="status" class="filter-bar__select" onchange="this.form.submit()">
                         <option value="">Estado</option>
                         <option value="active" <?php echo (($_GET['status'] ?? '') === 'active') ? 'selected' : ''; ?>>Disponibles</option>
