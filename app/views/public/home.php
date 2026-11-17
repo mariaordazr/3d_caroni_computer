@@ -51,7 +51,7 @@
             <?php foreach ($featuredCategories as $category): ?>
                 <a href="/productos?search=&filter_choice=cat-<?php echo $category['id_category']; ?>&sort=name-asc" class="category-card">
                     <div class="category-card__image">
-                        <?php if (!empty($category['image'])): ?>
+                        <?php if (!empty($category['image']) || $category['image']!='default.jpg'): ?>
                             <?php 
                                 $originalFile = $category['image']; // ej: prod_123.jpg
                                 $nameWithoutExt = pathinfo($originalFile, PATHINFO_FILENAME); // ej: prod_123
