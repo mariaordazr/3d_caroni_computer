@@ -36,7 +36,7 @@
 </head>
 <body>
 
-<div class="lvr-topbar"><p>Envíos a toda el país · Variedad de métodos de pago · Atención por WhatsApp</p></div>
+<div class="lvr-topbar"><p>Envíos a todo el país · Variedad de métodos de pago · Atención por WhatsApp</p></div>
 
 <header class="main-header lvr-header" id="header">
     <div class="header-container">
