@@ -403,7 +403,7 @@ class AdminController {
         $pageType = 'crud';
 
         $moneySymbol = $this->siteContentModel->getValue('money_symbol');
-        $webhookUrl = $this->getDriveConfig('api_video_products'); // <-- NUEVO: Obtener el enlace de la API de videos
+        $webhookUrl = $this->getDriveConfig('api_products'); // <-- NUEVO: Obtener el enlace de la API de videos
 
         // Obtenemos las categorías y materiales para los menús desplegables
         $categories = $this->categoryModel->getAllSimple();
@@ -582,7 +582,7 @@ class AdminController {
         $pageType = 'crud';
 
         $moneySymbol = $this->siteContentModel->getValue('money_symbol');
-        $webhookUrl = $this->getDriveConfig('api_video_products'); // <-- NUEVO: Obtener el enlace de la API de videos
+        $webhookUrl = $this->getDriveConfig('api_products'); // <-- NUEVO: Obtener el enlace de la API de videos
 
         $productId = (int)$id;
         $product = $this->productModel->getById($productId);
@@ -780,8 +780,8 @@ class AdminController {
      * Sube un lote de imágenes de un producto a Google Drive y/o elimina IDs de Drive
      */
     private function uploadProductImagesToDrive(int $productId, string $productName, array $filesToUpload = [], array $deletedLinks = [], ?string $oldProductName = null): array {
-        // Usa 'api_products' si creaste una clave separada, o reutiliza 'api_video_products'
-        $webhookUrl = $this->getDriveConfig('api_products') ?: $this->getDriveConfig('api_video_products');
+        // Usa 'api_products' si creaste una clave separada, o reutiliza 'api_products'
+        $webhookUrl = $this->getDriveConfig('api_products') ?: $this->getDriveConfig('api_products');
         if (empty($webhookUrl)) {
             return [];
         }
@@ -2907,7 +2907,7 @@ class AdminController {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $action = $_POST['action'] ?? '';
             $productId = (int)($_POST['product_id'] ?? 0);
-            $webhookUrl = $this->getDriveConfig('api_video_products');
+            $webhookUrl = $this->getDriveConfig('api_products');
 
             // FASE 1: Solicitar URL para subida
             if ($action === 'init_upload') {
@@ -3009,7 +3009,7 @@ class AdminController {
             }
 
             // Enviar solicitud de eliminación a Google Drive
-            $webhookUrl = $this->getDriveConfig('api_video_products');
+            $webhookUrl = $this->getDriveConfig('api_products');
             
             $payload = [
                 'action' => 'deleteVideo',
