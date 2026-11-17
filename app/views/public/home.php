@@ -160,7 +160,7 @@
             <?php foreach ($featuredBrands as $brand): ?>
                 <a href="/productos?search=&filter_choice=brand-<?php echo $brand['id_brand']; ?>" class="brand-card">
                     <div class="brand-card__image">
-                        <?php if (!empty($brand['image'])): ?>
+                        <?php if (!empty($brand['image']) || $brand['image']!='default.jpg'): ?>
                             <?php 
                                 $originalFile = $brand['image']; // ej: prod_123.jpg
                                 $nameWithoutExt = pathinfo($originalFile, PATHINFO_FILENAME); // ej: prod_123
