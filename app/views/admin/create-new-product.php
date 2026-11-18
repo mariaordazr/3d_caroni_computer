@@ -6,7 +6,7 @@
 ?>
 
 <section class="content-panel">
-    <form class="edit-form lvr-product-page lvr-product-page" method="POST" action="/admin/storeNewProduct" id="new-product-form">
+    <form class="edit-form lvr-product-page" method="POST" action="/admin/storeNewProduct" id="new-product-form">
 
         <!-- TOPBAR: Breadcrumb + Título + Badge -->
         <div class="lvr-page-topbar">
