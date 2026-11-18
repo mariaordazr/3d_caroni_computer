@@ -1,7 +1,7 @@
 <?php include_once ROOT_PATH . 'app/views/admin/templates/header.php'; ?>
 
 <section class="content-panel">
-    <form class="edit-form lvr-receipt-page lvr-product-page" method="POST" action="/admin/storeBrand" id="brand-form" enctype="multipart/form-data">
+    <form class="edit-form lvr-product-page lvr-product-page" method="POST" action="/admin/storeBrand" id="brand-form" enctype="multipart/form-data">
 
         <!-- TOPBAR: Breadcrumb + Título + Badge -->
         <div class="lvr-page-topbar">
