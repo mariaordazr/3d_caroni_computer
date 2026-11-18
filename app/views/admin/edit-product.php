@@ -41,7 +41,7 @@ $currencySymbol = htmlspecialchars($moneySymbol ?? '$');
 ?>
 
 <section class="content-panel">
-    <form class="edit-form lvr-admin-page lvr-product-page" method="POST" action="/admin/updateProduct" id="product-form" enctype="multipart/form-data">
+    <form class="edit-form lvr-receipt-page lvr-product-page" method="POST" action="/admin/updateProduct" id="product-form" enctype="multipart/form-data">
         <input type="hidden" name="id_product" value="<?php echo $product['id_product']; ?>">
         <?php if (!empty($product['hidden'])): ?>
             <input type="hidden" name="hidden" value="1">
@@ -112,9 +112,9 @@ $currencySymbol = htmlspecialchars($moneySymbol ?? '$');
                             </select>
                         </div>
 
-                        <!-- Material -->
+                        <!-- Marca -->
                         <div class="lvr-field-group">
-                            <label class="lvr-field-label" for="brand">Material</label>
+                            <label class="lvr-field-label" for="brand">Marca</label>
                             <select id="brand" name="brand" class="lvr-select" required>
                                 <?php foreach($brands as $brand): ?>
                                     <option value="<?php echo $brand['id_brand']; ?>" <?php echo ($brand['id_brand'] == $product['brand']) ? 'selected' : ''; ?>>
@@ -369,7 +369,7 @@ $currencySymbol = htmlspecialchars($moneySymbol ?? '$');
                             <label class="lvr-field-label" for="video_title">Título del video</label>
                             <input type="text" id="video_title" name="video_title" class="lvr-input" value="<?php echo htmlspecialchars($product['video_title'] ?? ''); ?>" placeholder="Ej. Demostración del equipo">
                             
-                            <div class="product-video-container">
+                            <div class="receipt-video-container">
                                 <?php if (isset($product) && !empty($product['video_url'])): ?>
                                     <input type="hidden" name="old_video_url" id="old_video_url" value="<?php echo htmlspecialchars($product['video_url']); ?>">
                                 <?php endif; ?>
@@ -874,7 +874,7 @@ $currencySymbol = htmlspecialchars($moneySymbol ?? '$');
         if (e.target && e.target.id === 'video_file') {
             const file = e.target.files[0];
             if (!file) return;
-            const container = e.target.closest('.product-video-container');
+            const container = e.target.closest('.receipt-video-container');
             const previewContainer = container.querySelector('.video-preview-container');
             const addCard = container.querySelector('.add-video-card');
             
@@ -899,7 +899,7 @@ $currencySymbol = htmlspecialchars($moneySymbol ?? '$');
     document.addEventListener('click', function(e) {
         const btn = e.target.closest('.remove-video-btn');
         if (btn && !btn.hasAttribute('onclick')) {
-            const container = btn.closest('.product-video-container');
+            const container = btn.closest('.receipt-video-container');
             container.querySelector('#video_file').value = '';
             const videoEl = container.querySelector('video');
             if (videoEl) videoEl.src = '';
