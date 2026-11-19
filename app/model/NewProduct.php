@@ -107,7 +107,7 @@ class NewProduct
             }
         }
 
-        // --- (El resto de tus filtros de categoría, material y tipo no cambian) ---
+        // --- (El resto de tus filtros de categoría, marca y tipo no cambian) ---
         if (!empty($filters['category'])) {
             $conditions[] = "p.category = ?";
             $params[] = $filters['category'];

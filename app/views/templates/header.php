@@ -53,7 +53,7 @@
             </a>
 
             <form class="header-search" method="GET" action="/productos">
-                <input type="text" class="header-search__input" name="search" aria-label="Buscar productos" placeholder="Buscar productos, materiales y más..." value="<?php echo htmlspecialchars($_GET['search'] ?? ''); ?>">
+                <input type="text" class="header-search__input" name="search" aria-label="Buscar productos" placeholder="Buscar productos, marcas y más..." value="<?php echo htmlspecialchars($_GET['search'] ?? ''); ?>">
                 <button type="submit" class="header-search__button" aria-label="Buscar">
                     <i class='bx bx-search' aria-hidden="true"></i>
                 </button>
@@ -92,11 +92,13 @@
                     <li class="nav-item"><a href="/productos?sort=name-asc" class="nav-link">Productos</a></li>
                     <li class="nav-item"><a href="/productos?type=new&sort=name-asc" class="nav-link">Recién llegados</a></li>
                     <li class="nav-item"><a href="/productos?type=offer&sort=name-asc" class="nav-link">Ofertas</a></li>
+                    <li class="nav-item"><a href="https://caronicomputer.com" class="nav-link">Respuestos para tus equipos</a></li>
                 </ul>
             </nav>
 
             <nav class="header-user-nav">
                 <ul class="nav-list">
+                    <li class="nav-item"><a href="/blog" class="nav-link">Blog</a></li>
                     <li class="nav-item"><a href="/nosotros" class="nav-link">Nosotros</a></li>
                     <li class="nav-item"><a href="/servicios" class="nav-link">Servicios</a></li>
                     <li class="nav-item"><a href="/envios" class="nav-link">Envíos</a></li>

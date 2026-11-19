@@ -9,7 +9,8 @@ function getVenezuelaBcvRate(): ?array {
     }
 
     date_default_timezone_set('America/Caracas');
-    $today = date('Y-m-d'); // Cambia exactamente a las 12:00 AM hora de Venezuela
+    $today = date('Y-m-d');
+    $now   = time();
 
     $cacheDir = ROOT_PATH . 'public/assets/uploads/';
     if (!is_dir($cacheDir)) {
@@ -20,10 +21,10 @@ function getVenezuelaBcvRate(): ?array {
     $cache = [
         'active_rate'      => null, // Tasa vigente mostrada hoy
         'active_date'      => null, // Fecha valor de la tasa vigente (YYYY-MM-DD)
-        'active_date_text' => '',   // Texto legible (ej. "16/11/2026")
-        'staged_rate'      => null, // Tasa futura publicada un viernes para el lunes
+        'active_date_text' => '',   // Texto legible (ej. "19/11/2026")
+        'staged_rate'      => null, // Tasa futura publicada para el siguiente día hábil
         'staged_date'      => null, // Fecha valor futura (YYYY-MM-DD)
-        'checked_for_day'  => null  // Día en que ya se verificó (se renueva a las 12:00 AM)
+        'last_checked_ts'  => 0     // Timestamp Unix de la última consulta
     ];
 
     if (file_exists($cacheFile)) {
@@ -33,8 +34,7 @@ function getVenezuelaBcvRate(): ?array {
         }
     }
 
-    // 2. Si había una tasa futura guardada (ej. publicada el viernes para el lunes)
-    // y ya son las 12:00 AM o más del día correspondiente ($today >= staged_date), la activamos:
+    // 2. Si había una tasa futura guardada y ya llegamos a esa fecha (12:00 AM Caracas), la activamos
     if (!empty($cache['staged_rate']) && !empty($cache['staged_date']) && $cache['staged_date'] <= $today) {
         $cache['active_rate']      = (float)$cache['staged_rate'];
         $cache['active_date']      = $cache['staged_date'];
@@ -44,8 +44,13 @@ function getVenezuelaBcvRate(): ?array {
         @file_put_contents($cacheFile, json_encode($cache, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
     }
 
-    // 3. Si hoy (después de las 12:00 AM) aún no hemos consultado, o no tenemos tasa activa
-    if (($cache['checked_for_day'] ?? null) !== $today || empty($cache['active_rate'])) {
+    // 3. Consultar periódicamente (cada 10 min si es día hábil y aún tiene fecha vieja; si no, cada 30 min)
+    $forceRefresh  = isset($_GET['refresh_bcv']) && $_GET['refresh_bcv'] == '1';
+    $lastCheckedTs = (int)($cache['last_checked_ts'] ?? 0);
+    $isWeekday     = ((int)date('N') <= 5);
+    $ttl           = ($isWeekday && ($cache['active_date'] ?? '') < $today) ? 600 : 1800;
+
+    if ($forceRefresh || empty($cache['active_rate']) || ($now - $lastCheckedTs) >= $ttl) {
         $scraped = fetchFromBcvSources();
 
         if ($scraped && !empty($scraped['rate']) && !empty($scraped['date'])) {
@@ -53,30 +58,28 @@ function getVenezuelaBcvRate(): ?array {
             $bcvRate = (float)$scraped['rate'];
 
             if ($bcvDate <= $today) {
-                // La fecha es igual o menor a hoy -> Se aplica de inmediato
+                // La fecha valor es de hoy o anterior -> Aplicar de inmediato
                 $cache['active_rate']      = $bcvRate;
                 $cache['active_date']      = $bcvDate;
                 $cache['active_date_text'] = date('d/m/Y', strtotime($bcvDate));
             } else {
-                // La fecha es MAYOR a hoy (ej. Viernes publicando Lunes) -> Guardar en espera hasta el lunes a las 12:00 AM
+                // La fecha valor es FUTURA (ej. publicada en la tarde para mañana/lunes) -> Dejar en espera
                 $cache['staged_rate'] = $bcvRate;
                 $cache['staged_date'] = $bcvDate;
 
-                // Si es la primera vez que se crea el caché y aún no existe tasa previa del viernes,
-                // usamos la obtenida como base inicial para que nunca salga en 0
                 if (empty($cache['active_rate'])) {
                     $cache['active_rate']      = $bcvRate;
                     $cache['active_date']      = $today;
                     $cache['active_date_text'] = date('d/m/Y', strtotime($today));
                 }
             }
-
-            $cache['checked_for_day'] = $today;
-            @file_put_contents($cacheFile, json_encode($cache, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
         }
+
+        // Registrar el intento para no saturar si las fuentes fallan temporalmente
+        $cache['last_checked_ts'] = $now;
+        @file_put_contents($cacheFile, json_encode($cache, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
     }
 
-    // Siempre devolver estructura válida en Venezuela para que el botón NUNCA desaparezca
     $hasRate = !empty($cache['active_rate']) && (float)$cache['active_rate'] > 0;
 
     return [
@@ -137,9 +140,9 @@ function fetchFromBcvSources(): ?array {
 
         if ($rate && $rate > 0) {
             $bcvDate = null;
-            if (preg_match('/property=["\']dc:date["\'][^>]*content=["\'](\d{4}-\d{2}-\d{2})/i', $html, $dm)) {
-                $bcvDate = $dm[1];
-            } elseif (preg_match('/content=["\'](\d{4}-\d{2}-\d{2})T/i', $html, $dm)) {
+
+            // Priorizar la Fecha Valor exacta del bloque de tasas
+            if (preg_match('/Fecha\s+Valor[\s\S]{0,250}?content=["\'](\d{4}-\d{2}-\d{2})/i', $html, $dm)) {
                 $bcvDate = $dm[1];
             } elseif (preg_match('/Fecha\s+Valor[^0-9]*(\d{1,2})\s+(?:de\s+)?([A-Za-záéíóúÁÉÍÓÚ]+)\s+(?:de\s+)?(\d{4})/iu', $html, $tm)) {
                 $day = str_pad($tm[1], 2, '0', STR_PAD_LEFT);
@@ -153,6 +156,10 @@ function fetchFromBcvSources(): ?array {
                 if (isset($months[$monthName])) {
                     $bcvDate = "{$year}-{$months[$monthName]}-{$day}";
                 }
+            } elseif (preg_match('/class=["\'][^"\']*date-display-single[^"\']*["\'][^>]*content=["\'](\d{4}-\d{2}-\d{2})/i', $html, $dm)) {
+                $bcvDate = $dm[1];
+            } elseif (preg_match('/property=["\']dc:date["\'][^>]*content=["\'](\d{4}-\d{2}-\d{2})/i', $html, $dm)) {
+                $bcvDate = $dm[1];
             }
 
             return [
@@ -162,14 +169,22 @@ function fetchFromBcvSources(): ?array {
         }
     }
 
-    // CAPA 2: Espejo Oficial BCV (DolarApi Venezuela) - Funciona desde hostings en EE.UU./Europa
+    // CAPA 2: Espejo Oficial BCV (DolarApi Venezuela)
     $jsonDolarApi = fetchUrlContentBcv('https://ve.dolarapi.com/v1/dolares/oficial', 5);
     if (!empty($jsonDolarApi)) {
         $data = json_decode($jsonDolarApi, true);
         if (is_array($data) && !empty($data['promedio']) && (float)$data['promedio'] > 0) {
             $apiDate = date('Y-m-d');
-            if (!empty($data['fechaActualizacion']) && preg_match('/^(\d{4}-\d{2}-\d{2})/', $data['fechaActualizacion'], $fm)) {
-                $apiDate = $fm[1];
+            if (!empty($data['fechaActualizacion'])) {
+                try {
+                    $dt = new DateTime($data['fechaActualizacion']);
+                    $dt->setTimezone(new DateTimeZone('America/Caracas'));
+                    $apiDate = $dt->format('Y-m-d');
+                } catch (\Throwable $e) {
+                    if (preg_match('/^(\d{4}-\d{2}-\d{2})/', $data['fechaActualizacion'], $fm)) {
+                        $apiDate = $fm[1];
+                    }
+                }
             }
             return [
                 'rate' => (float)$data['promedio'],

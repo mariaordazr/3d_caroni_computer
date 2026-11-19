@@ -11,9 +11,9 @@ class Brand
     }
 
     /**
-     * Crea una nueva material en la base de datos.
-     * Corresponde a la lógica de agregar_material.php
-     * @param string $name El nombre de la material.
+     * Crea una nueva marca en la base de datos.
+     * Corresponde a la lógica de agregar_marca.php
+     * @param string $name El nombre de la marca.
      * @return bool
      */
     
@@ -63,8 +63,8 @@ class Brand
     }
 
     /**
-     * Obtiene todos los materiales de la base de datos.
-     * Corresponde a la lógica de lista_materiales.php
+     * Obtiene todas las marcas de la base de datos.
+     * Corresponde a la lógica de lista_marcas.php
      * @return array
      */
     public function getAll(array $filters = []): array
@@ -135,21 +135,21 @@ class Brand
     
 
     /**
-     * Obtiene un material por su ID.
-     * Corresponde a la lógica de editar_material.php
-     * @param int $id El ID de la material.
+     * Obtiene una marca por su ID.
+     * Corresponde a la lógica de editar_marca.php
+     * @param int $id El ID de la marca.
      * @return array|null
      */
 
     // En app/model/Brand.php
 
     /**
-     * Obtiene todos los materiales y cuenta cuántos productos están asociados a cada una.
+     * Obtiene todas las marcas y cuenta cuántos productos están asociados a cada una.
      * @return array
      */
     public function getAllWithProductCount(): array
     {
-        // Usamos LEFT JOIN para asegurarnos de que se listen todos los materiales,
+        // Usamos LEFT JOIN para asegurarnos de que se listen todas las marcas,
         // incluso si no tienen productos (contarán como 0).
         $query = "SELECT 
                     b.id_brand,
@@ -202,9 +202,9 @@ class Brand
     }
 
     /**
-     * Actualiza el nombre de un material.
-     * Corresponde a la lógica de editar_material.php
-     * @param int $id El ID del material.
+     * Actualiza el nombre de una marca.
+     * Corresponde a la lógica de editar_marca.php
+     * @param int $id El ID de la marca.
      * @param string $name El nuevo nombre.
      * @return bool
      */
@@ -219,9 +219,9 @@ class Brand
     }
 
     /**
-     * Elimina una material de la base de datos.
-     * Corresponde a la lógica de eliminar_material.php
-     * @param int $id El ID de la material a eliminar.
+     * Elimina una marca de la base de datos.
+     * Corresponde a la lógica de eliminar_marca.php
+     * @param int $id El ID de la marca a eliminar.
      * @return bool
      */
     public function delete(int $id): bool
@@ -295,7 +295,7 @@ class Brand
             $stmt->execute();
             $stmt->close();
             
-            // 2. Borra el material
+            // 2. Borra la marca
             $brandDeleteQuery = "DELETE FROM brands WHERE id_brand = ?";
             $stmt = $this->db->prepare($brandDeleteQuery);
             $stmt->bind_param("i", $id);

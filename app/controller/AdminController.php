@@ -16,6 +16,7 @@ class AdminController {
     private $siteContentModel;
     private $settingsModel;
     private $uploadDir;
+    private $blogModel;
 
     public function __construct($connection) {
         require_once ROOT_PATH . 'app/model/Product.php';
@@ -26,6 +27,7 @@ class AdminController {
         require_once ROOT_PATH . 'app/model/NewProduct.php';
         require_once ROOT_PATH . 'app/model/SiteContent.php';
         require_once ROOT_PATH . 'app/model/Settings.php';
+        require_once ROOT_PATH . 'app/model/Blog.php';
 
         $this->db = $connection;
         $this->productModel = new Product($this->db);
@@ -36,6 +38,7 @@ class AdminController {
         $this->newProductModel = new NewProduct($this->db);
         $this->siteContentModel = new SiteContent($this->db);
         $this->settingsModel = new Settings($this->db);
+        $this->blogModel = new Blog($this->db);
         $this->uploadDir = ROOT_PATH . 'public/assets/uploads/';
 
         // --- AÑADIR ESTO: Asegurarse de que existan las carpetas ---
@@ -48,7 +51,10 @@ class AdminController {
         $this->ensureDirExists($this->uploadDir . 'shipping/banner');
         $this->ensureDirExists($this->uploadDir . 'shipping/body');
         $this->ensureDirExists($this->uploadDir . 'logo');     // Para logo_header
-        $this->ensureDirExists($this->uploadDir . 'payments');
+        $this->ensureDirExists($this->uploadDir . 'payments'); // Para payment_logo
+        $this->ensureDirExists($this->uploadDir . 'blog/banner');
+        $this->ensureDirExists($this->uploadDir . 'blog/posts');
+        $this->ensureDirExists($this->uploadDir . 'blog/videos');
 
         // Iniciar la sesión si no está iniciada
         if (session_status() == PHP_SESSION_NONE) {
@@ -93,14 +99,6 @@ class AdminController {
             $params = session_get_cookie_params();
             setcookie(session_name(), session_id(), $cookieLifetime, $params["path"], $params["domain"], $params["secure"], $params["httponly"]);
         }
-    }
-
-    private function getDriveConfig($key = 'api_products') {
-        $stmt = $this->db->prepare("SELECT value FROM google_drive WHERE name = ?");
-        $stmt->bind_param("s", $key);
-        $stmt->execute();
-        $row = $stmt->get_result()->fetch_assoc();
-        return $row['value'] ?? '';
     }
 
     private function resizeToWebP($sourcePath, $destPath, $maxWidth = 400, $quality = 80) {
@@ -161,7 +159,14 @@ class AdminController {
             mkdir($path, 0777, true); // true para creación recursiva
         }
     }
-
+    
+    private function getDriveConfig($key = 'api_products') {
+        $stmt = $this->db->prepare("SELECT value FROM google_drive WHERE name = ?");
+        $stmt->bind_param("s", $key);
+        $stmt->execute();
+        $row = $stmt->get_result()->fetch_assoc();
+        return $row['value'] ?? '';
+    }
 
     /**
      * Función de ayuda para guardar un par clave-valor en la BD.
@@ -361,7 +366,7 @@ class AdminController {
             if ($productId > 0) {
                 // Si el usuario quiere MOSTRAR el producto ($newStatus == 0)
                 if ($newStatus === 0) {
-                    // Verificamos el estado de la categoría y el material
+                    // Verificamos el estado de la categoría y la marca
                     $productInfo = $this->productModel->getById($productId);
                     
                     if ($productInfo) {
@@ -374,11 +379,11 @@ class AdminController {
                             exit;
                         }
 
-                        // Si el material está oculto
+                        // Si la marca está oculta
                         if ($productInfo['brand_hidden'] == 1) {
                             echo json_encode([
                                 'success' => false, 
-                                'message' => "No se puede mostrar el producto porque pertenece al material '{$productInfo['brand_name']}', la cual está oculta."
+                                'message' => "No se puede mostrar el producto porque pertenece a la marca '{$productInfo['brand_name']}', la cual está oculta."
                             ]);
                             exit;
                         }
@@ -411,9 +416,9 @@ class AdminController {
         $pageType = 'crud';
 
         $moneySymbol = $this->siteContentModel->getValue('money_symbol');
-        $webhookUrl = $this->getDriveConfig('api_products'); // <-- NUEVO: Obtener el enlace de la API de videos
+        $webhookUrl = $this->getDriveConfig('api_video_products'); // <-- NUEVO: Obtener el enlace de la API de videos
 
-        // Obtenemos las categorías y materiales para los menús desplegables
+        // Obtenemos las categorías y marcas para los menús desplegables
         $categories = $this->categoryModel->getAllSimple();
         $brands = $this->brandModel->getAllSimple();
 
@@ -590,7 +595,7 @@ class AdminController {
         $pageType = 'crud';
 
         $moneySymbol = $this->siteContentModel->getValue('money_symbol');
-        $webhookUrl = $this->getDriveConfig('api_products'); // <-- NUEVO: Obtener el enlace de la API de videos
+        $webhookUrl = $this->getDriveConfig('api_video_products'); // <-- NUEVO: Obtener el enlace de la API de videos
 
         $productId = (int)$id;
         $product = $this->productModel->getById($productId);
@@ -788,8 +793,8 @@ class AdminController {
      * Sube un lote de imágenes de un producto a Google Drive y/o elimina IDs de Drive
      */
     private function uploadProductImagesToDrive(int $productId, string $productName, array $filesToUpload = [], array $deletedLinks = [], ?string $oldProductName = null): array {
-        // Usa 'api_products' si creaste una clave separada, o reutiliza 'api_products'
-        $webhookUrl = $this->getDriveConfig('api_products') ?: $this->getDriveConfig('api_products');
+        // Usa 'api_products' si creaste una clave separada, o reutiliza 'api_video_products'
+        $webhookUrl = $this->getDriveConfig('api_products') ?: $this->getDriveConfig('api_video_products');
         if (empty($webhookUrl)) {
             return [];
         }
@@ -1489,7 +1494,7 @@ class AdminController {
 
     //-------------------------------------------------------//
     
-    //-------------------------Materiales------------------------//
+    //-------------------------MARCAS------------------------//
 
     public function brands() {
         $userInfo = $this->userModel->getById($_SESSION['idUser']);
@@ -1497,8 +1502,8 @@ class AdminController {
         $copyrightText = $this->siteContentModel->getValue('copyright');
         $pageType = 'basic_list'; 
         $active_menu = 'brands';
-        $pageTitle = 'Gestión de Materiales';
-        $buttonAgg = 'Material';
+        $pageTitle = 'Gestión de Marcas';
+        $buttonAgg = 'Marca';
 
         // --- CORRECCIÓN: Recoger filtros ---
         $filters = [
@@ -1518,7 +1523,7 @@ class AdminController {
         $copyrightText = $this->siteContentModel->getValue('copyright');
         $footerJS = '/assets/admin/js/crud.js';
         $active_menu = 'brands';
-        $pageTitle = 'Agregar Nuevo Material';
+        $pageTitle = 'Agregar Nueva Marca';
         $pageType = 'crud';
 
         include ROOT_PATH . 'app/views/admin/create-brand.php';
@@ -1533,10 +1538,10 @@ class AdminController {
                 'name' => $_POST['name'] ?? ''
             ];
 
-            // 2. Obtenemos el ID del nuevo material
+            // 2. Obtenemos el ID de la nueva marca
             $newBrandId = $this->brandModel->create($data); //
 
-            // 3. Si el material se creó, subir la imagen
+            // 3. Si la marca se creó, subir la imagen
             if ($newBrandId) {
                 $uploadDir = ROOT_PATH . 'public/assets/uploads/brands/';
 
@@ -1559,10 +1564,10 @@ class AdminController {
                 }
             }
 
-            $_SESSION['flash_message'] = '¡Material agregado con éxito!';
+            $_SESSION['flash_message'] = '¡Marca agregada con éxito!';
         }
 
-        // Redirigimos a la lista de materiales
+        // Redirigimos a la lista de marcas
         header('Location: /admin/brands');
         exit;
     }
@@ -1573,7 +1578,7 @@ class AdminController {
         $copyrightText = $this->siteContentModel->getValue('copyright');
         $footerJS = '/assets/admin/js/crud.js';
         $active_menu = 'brands';
-        $pageTitle = 'Editar Material';
+        $pageTitle = 'Editar Marca';
         $pageType = 'crud';
 
         $brandId = (int)$id;
@@ -1601,7 +1606,7 @@ class AdminController {
                     $this->productModel->updateHiddenStatusByBrand($brandId, $newStatus);
 
                     // ¡AQUÍ ESTÁ EL CAMBIO! Guardamos el mensaje en la sesión PHP
-                    $_SESSION['flash_message'] = $newStatus ? 'Material y sus productos ocultados con éxito' : 'Material y sus productos ya son visibles';
+                    $_SESSION['flash_message'] = $newStatus ? 'Marca y sus productos ocultados con éxito' : 'Marca y sus productos ya son visibles';
                     
                     echo json_encode(['success' => true]);
                     exit; 
@@ -1609,7 +1614,7 @@ class AdminController {
             }
         }
         
-        echo json_encode(['success' => false, 'message' => 'Error al actualizar visibilidad de la material.']);
+        echo json_encode(['success' => false, 'message' => 'Error al actualizar visibilidad de la marca.']);
         exit; 
     }
 
@@ -1665,7 +1670,7 @@ class AdminController {
                 $this->brandModel->updateImage($id, $imageName); 
             }
         }
-        $_SESSION['flash_message'] = '¡Material actualizado con éxito!';
+        $_SESSION['flash_message'] = '¡Marca actualizada con éxito!';
         header('Location: /admin/brands');
         exit;
     }
@@ -2323,7 +2328,7 @@ class AdminController {
         }
 
         // ----------------------------------------------------
-        // C. MATERIALES DESTACADOS
+        // C. MARCAS DESTACADAS
         // ----------------------------------------------------
         if (isset($_POST['featured_brands'])) { 
             $featuredBrands = $_POST['featured_brands'] ?? [];
@@ -2331,7 +2336,7 @@ class AdminController {
 
             if (count($featuredBrands) !== 7) {
                 $success = false; 
-                $error_message .= 'Debe seleccionar exactamente 7 materiales. ';
+                $error_message .= 'Debe seleccionar exactamente 7 marcas. ';
             } else {
                 $this->siteContentModel->deleteContentByKey($keyBrands);
                 $order = 1;
@@ -2372,6 +2377,245 @@ class AdminController {
              $_SESSION['flash_message'] = 'Error: ' . $error_message;
         }
         header('Location: /admin/pages/home'); 
+        exit;
+    }
+
+    //------------------------- BLOG ------------------------//
+
+    public function showBlog() {
+        $userInfo = $this->userModel->getById($_SESSION['idUser']);
+        $pageName = $this->siteContentModel->getValue('page_title');
+        $copyrightText = $this->siteContentModel->getValue('copyright');
+        $pageType = 'crud'; 
+        $pageTitle = 'Gestión del Blog';
+        $active_menu = 'pages-blog'; // Asegúrate de agregar esto a tu sidebar.php si quieres que se ilumine
+
+        $bannerKey = 'blog_banner';
+        $titleKey  = 'blog_title';
+        $textKey   = 'blog_text';
+        $imageKey  = 'blog_image';
+        $videoKey  = 'blog_video';
+        $linkKey   = 'blog_link';
+
+        // 1. Cargar Banner
+        $bannerImage = $this->siteContentModel->getContentByKey($bannerKey);
+
+        // 2. Cargar Posts existentes ordenados
+        // Nota: Usamos getOrderedIdsByKey porque en tus vistas admin usas variables como $titleIds
+        $titleIds = $this->siteContentModel->getOrderedIdsByKey($titleKey) ?? [];
+        $textIds  = $this->siteContentModel->getOrderedIdsByKey($textKey) ?? [];
+        $imageIds = $this->siteContentModel->getOrderedIdsByKey($imageKey) ?? [];
+        $videoIds = $this->siteContentModel->getOrderedIdsByKey($videoKey) ?? [];
+        $linkIds  = $this->siteContentModel->getOrderedIdsByKey($linkKey) ?? [];
+
+        include ROOT_PATH . 'app/views/admin/admin-blog.php';
+    }
+
+    public function updateBlog() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: /admin/pages/blog');
+            exit;
+        }
+
+        $uploadDir = ROOT_PATH . 'public/assets/uploads/';
+        
+        // Claves de base de datos
+        $bannerKey = 'blog_banner';
+        $titleKey  = 'blog_title';
+        $textKey   = 'blog_text';
+        $imageKey  = 'blog_image';
+        $videoKey  = 'blog_video';
+        $linkKey   = 'blog_link';
+
+        // Rutas de guardado
+        $bannerPath = $uploadDir . 'blog/banner/';
+        $imagesPath  = $uploadDir . 'blog/images/';
+        $videosPath = $uploadDir . 'blog/videos/';
+
+        // ====================================================
+        // 1. BANNER DEL BLOG
+        // ====================================================
+        $this->siteContentModel->deleteContentByKey($bannerKey);
+        
+        $currentBanner = $_POST['slot_image_id_banner'] ?? null;
+        $deleteBanner  = $_POST['delete_image_banner'] ?? null;
+        
+        if (isset($_FILES['blog_banner_image']) && $_FILES['blog_banner_image']['error'] === UPLOAD_ERR_OK) {
+            // Usamos tu función handleFileUpload existente para imágenes
+            $newBanner = $this->handleFileUpload($_FILES['blog_banner_image'], $bannerPath, 'blog_bn');
+            if ($newBanner) {
+                if (!empty($currentBanner)) @unlink($bannerPath . $currentBanner);
+                $this->siteContentModel->saveOrUpdateContent($bannerKey, $newBanner, 1);
+            }
+        } elseif (empty($deleteBanner) && !empty($currentBanner)) {
+            $this->siteContentModel->saveOrUpdateContent($bannerKey, $currentBanner, 1);
+        } elseif (!empty($deleteBanner) && !empty($currentBanner)) {
+            @unlink($bannerPath . $currentBanner);
+        }
+
+
+        $_SESSION['flash_message'] = 'Blog actualizado correctamente.';
+        header('Location: /admin/pages/blog');
+        exit;
+    }
+
+    //------------------------- BLOG POSTS (CRUD) ------------------------//
+
+    public function blogs() {
+        // 1. Obtener la información básica requerida por el sidebar/header
+        $userInfo = $this->userModel->getById($_SESSION['idUser']);
+        $pageName = $this->siteContentModel->getValue('page_title');
+        $copyrightText = $this->siteContentModel->getValue('copyright');
+        
+        // 2. Configuración de la vista
+        $pageType = 'basic_list'; 
+        $active_menu = 'blogs';
+        $pageTitle = 'Gestión de Blogs';
+        $buttonAgg = 'Artículo'; // Texto para el botón "+ Agregar"
+
+        // 3. Recoger filtros (Búsqueda, orden, estado)
+        $filters = [
+            'search' => $_GET['search'] ?? null,
+            'sort'   => $_GET['sort'] ?? null,
+            'status' => $_GET['status'] ?? null,
+        ];
+
+        // 4. Obtener todos los artículos usando el modelo
+        $blogs = $this->blogModel->getAll($filters);
+
+        // 5. Incluir la vista correcta (la que definimos en la respuesta anterior)
+        include ROOT_PATH . 'app/views/admin/blogs.php';
+    }
+
+    public function createBlog() {
+        $userInfo = $this->userModel->getById($_SESSION['idUser']);
+        $pageName = $this->siteContentModel->getValue('page_title');
+        $active_menu = 'blogs';
+        $pageTitle = 'Agregar Nuevo Artículo';
+        $pageType = 'crud';
+
+        include ROOT_PATH . 'app/views/admin/create-blog.php';
+    }
+
+    public function storeBlog() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $title = $_POST['title'] ?? '';
+            // Generamos una URL amigable (slug) basada en el título y un ID único
+            $slug = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $title))) . '-' . substr(uniqid(), -5);
+            
+            $data = [
+                'title' => $title,
+                'author' => $_POST['author'] ?? '',
+                'slug' => $slug,
+                'content' => $_POST['content'] ?? '',
+                'status' => $_POST['status'] ?? 'borrador',
+                'cover_image' => 'default_blog.webp' // Imagen por defecto
+            ];
+
+            // Si subió una imagen de portada
+            if (isset($_FILES['cover_image']) && $_FILES['cover_image']['error'] === UPLOAD_ERR_OK) {
+                $uploadDir = ROOT_PATH . 'public/assets/uploads/blog/posts/';
+                $this->ensureDirExists($uploadDir);
+                
+                $baseName = uniqid('post_') . '-' . pathinfo($_FILES['cover_image']['name'], PATHINFO_FILENAME);
+                $ext = pathinfo($_FILES['cover_image']['name'], PATHINFO_EXTENSION);
+                $data['cover_image'] = $baseName . '.' . $ext;
+                
+                $targetFile = $uploadDir . $data['cover_image'];
+                
+                if (move_uploaded_file($_FILES['cover_image']['tmp_name'], $targetFile)) {
+                    // NUEVO: Generar versión reducida para la miniatura del admin
+                    $smallFile = $uploadDir . 'small_' . $baseName . '.webp';
+                    $this->resizeToWebP($targetFile, $smallFile, 400);
+                }
+            }
+
+            $this->blogModel->create($data);
+            $_SESSION['flash_message'] = '¡Artículo publicado con éxito!';
+            header('Location: /admin/blogs');
+            exit;
+        }
+    }
+
+    public function editBlog($id) {
+        $userInfo = $this->userModel->getById($_SESSION['idUser']);
+        $pageName = $this->siteContentModel->getValue('page_title');
+        $active_menu = 'blogs';
+        $pageTitle = 'Editar Artículo';
+        $pageType = 'crud';
+
+        $blogId = (int)$id;
+        $blog = $this->blogModel->getById($blogId);
+
+        if (!$blog) { header('Location: /admin/blogs'); exit; }
+
+        include ROOT_PATH . 'app/views/admin/edit-blog.php';
+    }
+
+    public function updateBlogPost() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $id = (int)$_POST['id_blog'];
+            $currentBlog = $this->blogModel->getById($id);
+            if(!$currentBlog) { header('Location: /admin/blogs'); exit; }
+
+            $data = [
+                'title' => $_POST['title'] ?? '',
+                'author' => $_POST['author'] ?? '',
+                'slug' => $currentBlog['slug'], // Mantenemos el mismo enlace
+                'content' => $_POST['content'] ?? '',
+                'status' => $_POST['status'] ?? 'borrador',
+                'cover_image' => $currentBlog['cover_image']
+            ];
+
+            if (isset($_FILES['cover_image']) && $_FILES['cover_image']['error'] === UPLOAD_ERR_OK) {
+                $uploadDir = ROOT_PATH . 'public/assets/uploads/blog/posts/';
+                $this->ensureDirExists($uploadDir);
+                
+                $baseName = uniqid('post_') . '-' . pathinfo($_FILES['cover_image']['name'], PATHINFO_FILENAME);
+                $ext = pathinfo($_FILES['cover_image']['name'], PATHINFO_EXTENSION);
+                $data['cover_image'] = $baseName . '.' . $ext;
+                
+                $targetFile = $uploadDir . $data['cover_image'];
+                
+                if(move_uploaded_file($_FILES['cover_image']['tmp_name'], $targetFile)) {
+                    // NUEVO: Crear la miniatura correspondiente
+                    $smallFile = $uploadDir . 'small_' . $baseName . '.webp';
+                    $this->resizeToWebP($targetFile, $smallFile, 400);
+
+                    // Borrar la imagen original anterior y su miniatura vieja si no es la default
+                    if($currentBlog['cover_image'] !== 'default_blog.webp') {
+                        $oldFile = $uploadDir . $currentBlog['cover_image'];
+                        $oldBase = pathinfo($currentBlog['cover_image'], PATHINFO_FILENAME);
+                        $oldSmall = $uploadDir . 'small_' . $oldBase . '.webp';
+                        
+                        if(file_exists($oldFile)) @unlink($oldFile);
+                        if(file_exists($oldSmall)) @unlink($oldSmall);
+                    }
+                }
+            }
+
+            $this->blogModel->update($id, $data);
+            $_SESSION['flash_message'] = '¡Artículo actualizado con éxito!';
+            header('Location: /admin/blogs');
+            exit;
+        }
+    }
+
+    public function deleteBlog($id) {
+        header('Content-Type: application/json');
+        $blogId = (int)$id;
+        
+        $currentBlog = $this->blogModel->getById($blogId);
+        // Borrar imagen física
+        if($currentBlog && $currentBlog['cover_image'] !== 'default_blog.webp') {
+            $uploadDir = ROOT_PATH . 'public/assets/uploads/blog/posts/';
+            if(file_exists($uploadDir . $currentBlog['cover_image'])) {
+                @unlink($uploadDir . $currentBlog['cover_image']);
+            }
+        }
+
+        $success = $this->blogModel->delete($blogId);
+        echo json_encode(['success' => $success, 'message' => $success ? 'Artículo eliminado.' : 'Error al eliminar.']);
         exit;
     }
 
@@ -2715,7 +2959,7 @@ class AdminController {
         $shippingTitleKey = 'shipping_title';
         $shippingTextKey = 'shipping_text';
         $shippingImageKey = 'shipping_image';
-        $shippingBrandKey = 'shipping_brand'; // Prefijo para materiales
+        $shippingBrandKey = 'shipping_brand'; // Prefijo para marcas
         $shippingLinkkey = 'shipping_link';
 
         // 1. Cargar datos individuales
@@ -2726,7 +2970,7 @@ class AdminController {
         $titleIds = $this->siteContentModel->getOrderedIdsByKey($shippingTitleKey) ?? [];
         $textIds = $this->siteContentModel->getOrderedIdsByKey($shippingTextKey) ?? [];
 
-        // 2. Cargar TODAS las materiales dinámicamente (sin limitar a 4)
+        // 2. Cargar TODAS las marcas dinámicamente (sin limitar a 4)
         // Esto devuelve un array de filas de la BD ordenadas por display_order
         $brandContent = $this->siteContentModel->getOrderedContentByPrefix($shippingBrandKey);
 
@@ -2745,7 +2989,7 @@ class AdminController {
         // Claves de BD
         $bannerKey = 'shipping_banner';
         $shippingImageKey = 'shipping_image'; // Local
-        $shippingBrandKey = 'shipping_brand'; // Materiales
+        $shippingBrandKey = 'shipping_brand'; // Marcas
 
         // Rutas
         $bannerSavePath = $uploadDir . 'shipping/banner/';
@@ -2796,9 +3040,9 @@ class AdminController {
         }
 
         // ====================================================
-        // 3. MATERIALES (ID 2 EN ADELANTE - DINÁMICO)
+        // 3. MARCAS (ID 2 EN ADELANTE - DINÁMICO)
         // ====================================================
-        // Borramos las materiales existentes para reordenar limpiamente
+        // Borramos las marcas existentes para reordenar limpiamente
         $this->siteContentModel->deleteContentByKey($shippingBrandKey);
 
         $brandDisplayOrder = 1; 
@@ -2915,7 +3159,7 @@ class AdminController {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $action = $_POST['action'] ?? '';
             $productId = (int)($_POST['product_id'] ?? 0);
-            $webhookUrl = $this->getDriveConfig('api_products');
+            $webhookUrl = $this->getDriveConfig('api_video_products');
 
             // FASE 1: Solicitar URL para subida
             if ($action === 'init_upload') {
@@ -3017,7 +3261,7 @@ class AdminController {
             }
 
             // Enviar solicitud de eliminación a Google Drive
-            $webhookUrl = $this->getDriveConfig('api_products');
+            $webhookUrl = $this->getDriveConfig('api_video_products');
             
             $payload = [
                 'action' => 'deleteVideo',

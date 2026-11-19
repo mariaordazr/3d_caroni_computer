@@ -733,7 +733,7 @@ button.interactive-badge, .interactive-badge {
    CORRECCIÓN DEFINITIVA: VISTAS LISTA/GRID, IMÁGENES Y MENÚS
    ========================================================= */
 
-/* 1. MOSTRAR IMÁGENES EN LA VISTA DE CUADRÍCULA (Productos, Categorías, Materiales, Usuarios, Recibos) */
+/* 1. MOSTRAR IMÁGENES EN LA VISTA DE CUADRÍCULA (Productos, Categorías, Marcas, Usuarios, Recibos) */
 .grid-item-card__image {
     display: flex !important;
     align-items: center !important;
@@ -2604,7 +2604,7 @@ body:has(.lvr-receipt-page) .main-header-admin:not(.lvr-keep-header),
 }
 
 /* =========================================================
-   REDISEÑO LOVABLE: CATEGORÍAS, MATERIALES, USUARIOS Y BLOGS
+   REDISEÑO LOVABLE: CATEGORÍAS, MARCAS, USUARIOS Y BLOGS
    ========================================================= */
 
 /* Unificación de contenedores de Lista y Cuadrícula en basic_list */
@@ -2632,7 +2632,7 @@ body:has(.lvr-receipt-page) .main-header-admin:not(.lvr-keep-header),
     margin-top: 0.5rem !important;
 }
 
-/* Filas de lista para Categorías, Materiales, Usuarios y Blogs */
+/* Filas de lista para Categorías, Marcas, Usuarios y Blogs */
 .lvr-entity-row {
     display: grid !important;
     grid-template-columns: minmax(0, 1.6fr) auto 36px !important;
@@ -2695,7 +2695,7 @@ body:has(.lvr-receipt-page) .main-header-admin:not(.lvr-keep-header),
     display: block !important;
 }
 
-/* Tarjetas de cuadrícula para Categorías, Materiales, Usuarios y Blogs */
+/* Tarjetas de cuadrícula para Categorías, Marcas, Usuarios y Blogs */
 .lvr-entity-card {
     width: 100% !important;
     max-width: 100% !important;
@@ -3403,7 +3403,7 @@ body:has(.lvr-receipt-page) .main-header-admin:not(.lvr-keep-header),
     padding: 0 !important;
 }
 
-/* 3. Píldoras Compactas para Categorías y Materiales Destacadas (7 exactas) */
+/* 3. Píldoras Compactas para Categorías y Marcas Destacadas (7 exactas) */
 .lvr-featured-pills-grid {
     display: flex !important;
     flex-wrap: wrap !important;

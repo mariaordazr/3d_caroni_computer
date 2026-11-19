@@ -363,13 +363,13 @@ class Product {
                     $types .= 'ssssssssss';
 
                     // 2. Construcción del SISTEMA DE PUNTOS (ORDER BY)
-                    // Jerarquía: Cat+Material > Cat > Material > SKU > Name > Desc > Cond > Warr > Ext > Price > Stock
+                    // Jerarquía: Cat+Marca > Cat > Marca > SKU > Name > Desc > Cond > Warr > Ext > Price > Stock
                     
                     // Categoría: 5000 pts
                     $scoreParts[] = "(CASE WHEN c.name LIKE ? THEN 5000 ELSE 0 END)";
                     array_push($scoreParams, $searchTerm); $scoreTypes .= 's';
 
-                    // Material: 2000 pts
+                    // Marca: 2000 pts
                     $scoreParts[] = "(CASE WHEN b.name LIKE ? THEN 2000 ELSE 0 END)";
                     array_push($scoreParams, $searchTerm); $scoreTypes .= 's';
 
@@ -581,7 +581,7 @@ class Product {
 
     /**
      * Obtiene todas las categorías y, para cada una,
-     * una lista de los materiales que tienen productos en esa categoría.
+     * una lista de las marcas que tienen productos en esa categoría.
      * @return array
      */
     public function getCategoriesWithBrands(): array
@@ -605,10 +605,10 @@ class Product {
                 $categories[$row['id_category']] = [
                     'id_category' => $row['id_category'],
                     'name' => $row['category_name'],
-                    'brands' => [] // Preparamos el array para sus materiales
+                    'brands' => [] // Preparamos el array para sus marcas
                 ];
             }
-            // Añadimos el material a la lista de materiales de esa categoría
+            // Añadimos la marca a la lista de marcas de esa categoría
             $categories[$row['id_category']]['brands'][] = [
                 'id_brand' => $row['id_brand'],
                 'name' => $row['brand_name']

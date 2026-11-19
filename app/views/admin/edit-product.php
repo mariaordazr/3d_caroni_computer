@@ -112,9 +112,9 @@ $currencySymbol = htmlspecialchars($moneySymbol ?? '$');
                             </select>
                         </div>
 
-                        <!-- Material -->
+                        <!-- Marca -->
                         <div class="lvr-field-group">
-                            <label class="lvr-field-label" for="brand">Material</label>
+                            <label class="lvr-field-label" for="brand">Marca</label>
                             <select id="brand" name="brand" class="lvr-select" required>
                                 <?php foreach($brands as $brand): ?>
                                     <option value="<?php echo $brand['id_brand']; ?>" <?php echo ($brand['id_brand'] == $product['brand']) ? 'selected' : ''; ?>>
@@ -127,17 +127,9 @@ $currencySymbol = htmlspecialchars($moneySymbol ?? '$');
                         <!-- Características principales -->
                         <div class="lvr-field-group lvr-field-full">
                             <label class="lvr-field-label">
-                                <i class='bx bx-list-ul'></i> Características principales 
-                                <span class="lvr-muted-counter" id="features-count-label">· <?php echo count($featureLines); ?> añadidas</span>
+                                <i class='bx bx-list-ul'></i> Características principales
                             </label>
                             <textarea id="description" name="description" class="lvr-textarea" rows="5" placeholder="Describe las características de tu producto..."><?php echo htmlspecialchars($product['description'] ?? ''); ?></textarea>
-
-
-                            <div class="lvr-bottom-add-wrap" style="margin-top: 0.45rem;">
-                                <button type="button" id="btn-add-feature" class="lvr-btn-add-bottom">
-                                    <i class='bx bx-plus'></i> Añadir característica
-                                </button>
-                            </div>
                         </div>
 
                         <!-- Descripción extendida -->

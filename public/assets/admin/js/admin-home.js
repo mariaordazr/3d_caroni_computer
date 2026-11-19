@@ -267,7 +267,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     
-    // --- LÓGICA DE VALIDACIÓN Y LÍMITE DE CHECKBOXES (Categorías/Materiales) ---
+    // --- LÓGICA DE VALIDACIÓN Y LÍMITE DE CHECKBOXES (Categorías/Marcas) ---
 
     const MAX_ITEMS = 7;
     const $categoryCheckboxes = $('input[name="featured_categories[]"]');
@@ -292,7 +292,7 @@ document.addEventListener('DOMContentLoaded', function() {
             $categoryCheckboxes.prop('disabled', false).closest('.form-check').removeClass('disabled-item');
         }
         
-        // Validar Materiales
+        // Validar Marcas
         if (brandsExist) {
             if (brandCount >= MAX_ITEMS) {
                 $brandCheckboxes.not(':checked').prop('disabled', true).closest('.form-check').addClass('disabled-item');

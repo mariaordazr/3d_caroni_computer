@@ -92,7 +92,7 @@ class Offer
             $types .= 'i';
         }
 
-        // Filtro por material
+        // Filtro por marca
         if ($brandId !== null) {
             $conditions[] = "p.brand = ?";
             $params[] = $brandId;
@@ -209,7 +209,7 @@ class Offer
             }
         }
 
-        // --- (El resto de tus filtros de categoría, material y tipo no cambian) ---
+        // --- (El resto de tus filtros de categoría, marca y tipo no cambian) ---
         if (!empty($filters['category'])) {
             $conditions[] = "p.category = ?";
             $params[] = $filters['category'];

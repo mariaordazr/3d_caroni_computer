@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     
     // =========================================================
-    // 1. LÓGICA PARA IMAGEN ÚNICA (Categorías y Materiales)
+    // 1. LÓGICA PARA IMAGEN ÚNICA (Categorías y Marcas)
     // =========================================================
     const singleImageInput = document.getElementById('image-input');
 
@@ -481,4 +481,61 @@ document.addEventListener('DOMContentLoaded', function () {
         // Inicializar estado (útil si el select viene preseleccionado por servidor)
         updateWarrantyVisibility();
     }
+});
+
+// =========================================================
+// 4. NAVEGACIÓN CON ENTER Y BLOQUEO DE GUARDADO ACCIDENTAL
+// =========================================================
+document.addEventListener('DOMContentLoaded', function () {
+    const productForm = document.getElementById('product-form') || document.querySelector('form.lvr-product-page');
+    if (!productForm) return;
+
+    productForm.addEventListener('keydown', function (e) {
+        if (e.key !== 'Enter') return;
+
+        const target = e.target;
+        const tagName = target.tagName.toLowerCase();
+
+        // 1. Permitir saltos de línea normales dentro de los <textarea>
+        if (tagName === 'textarea') {
+            return;
+        }
+
+        // 2. Si el foco está explícitamente sobre el botón de Guardar, permitir que guarde
+        if (target.type === 'submit' || target.classList.contains('lvr-btn-save-note')) {
+            return;
+        }
+
+        // En cualquier otro input o select, bloqueamos el envío automático del formulario
+        e.preventDefault();
+
+        // 3. CASO ESPECIAL: Si está en un input de "Características principales",
+        // presionar Enter activa el botón "+ Añadir característica"
+        if (target.classList.contains('lvr-feature-input')) {
+            const addFeatureBtn = document.getElementById('btn-add-feature');
+            if (addFeatureBtn) {
+                addFeatureBtn.click();
+            }
+            return;
+        }
+
+        // 4. RESTO DE CAMPOS: Pasar al siguiente campo o sección visible del formulario
+        const focusableFields = Array.from(
+            productForm.querySelectorAll('input:not([type="hidden"]):not([type="file"]):not([disabled]), select:not([disabled]), textarea:not([disabled])')
+        ).filter(el => {
+            // Filtrar solo los elementos que están visibles en pantalla
+            return el.offsetWidth > 0 && el.offsetHeight > 0 && window.getComputedStyle(el). visibility !== 'hidden';
+        });
+
+        const currentIndex = focusableFields.indexOf(target);
+        if (currentIndex > -1 && currentIndex + 1 < focusableFields.length) {
+            const nextField = focusableFields[currentIndex + 1];
+            nextField.focus();
+
+            // Si es un input de texto o número, seleccionamos su contenido para facilitar la edición
+            if (nextField.tagName.toLowerCase() === 'input' && ['text', 'number'].includes(nextField.type)) {
+                nextField.select();
+            }
+        }
+    });
 });

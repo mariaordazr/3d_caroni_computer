@@ -85,7 +85,7 @@ class PublicController {
         }
         $featuredCategories = $this->categoryModel->getFeaturedCategories($featuredCategoryIds);
 
-        // 4. MATERIALES DESTACADOS
+        // 4. MARCAS DESTACADAS
         // Usamos el método que obtiene TODOS los IDs ordenados para esta clave
         $featuredBrandIds = $this->siteContentModel->getOrderedIdsByKey($featuredBrandsKey);
         
@@ -148,7 +148,7 @@ class PublicController {
 
         // --- LÓGICA DE FILTROS ---
         if (!empty($filters['search'])) {
-            // Si hay búsqueda por texto, priorizamos eso y limpiamos categoría/material
+            // Si hay búsqueda por texto, priorizamos eso y limpiamos categoría/marca
             $filters['category'] = null;
             $filters['brand'] = null;
         } else {
@@ -156,13 +156,13 @@ class PublicController {
             if (isset($_GET['filter_choice']) && !empty($_GET['filter_choice'])) {
                 $choice = $_GET['filter_choice'];
                 
-                // Opción A: Se seleccionó CATEGORÍA y MATERIAL desde el sidebar (ej: "cat-1-brand-5")
+                // Opción A: Se seleccionó CATEGORÍA y MARCA desde el sidebar (ej: "cat-1-brand-5")
                 if (strpos($choice, 'cat-') === 0 && strpos($choice, '-brand-') !== false) {
                     $parts = explode('-brand-', $choice);
                     $filters['category'] = (int) str_replace('cat-', '', $parts[0]);
                     $filters['brand'] = (int) $parts[1];
                 }
-                // Opción B: Se seleccionó SOLO una MATERIAL desde el home (ej: "brand-5")
+                // Opción B: Se seleccionó SOLO una MARCA desde el home (ej: "brand-5")
                 else if (strpos($choice, 'brand-') === 0) {
                     $filters['brand'] = (int) str_replace('brand-', '', $choice);
                 }
@@ -211,7 +211,7 @@ class PublicController {
 
 
         // --- NUEVA LÓGICA DE VISIBILIDAD ---
-        // Chequeamos si el producto, su categoría o su material están ocultos
+        // Chequeamos si el producto, su categoría o su marca están ocultos
         if (!$product || $product['product_hidden'] == 1 || $product['category_hidden'] == 1 || $product['brand_hidden'] == 1) {
             http_response_code(403); // Forbidden
             
@@ -221,7 +221,7 @@ class PublicController {
             } elseif ($product['category_hidden'] == 1) {
                 $reason = "La categoría '{$product['category_name']}' se encuentra inactiva.";
             } elseif ($product['brand_hidden'] == 1) {
-                $reason = "La material '{$product['brand_name']}' se encuentra inactiva.";
+                $reason = "La marca '{$product['brand_name']}' se encuentra inactiva.";
             }
 
             // Puedes estilizar este mensaje o incluir una vista de error bonita
@@ -241,6 +241,87 @@ class PublicController {
         include ROOT_PATH . 'app/views/public/product-detail.php';
     }
 
+    // ... otros métodos ...
+
+    public function blog() {
+        // --- Header y Footer data (Copia lo mismo que en otros métodos) ---
+        $pageName = $this->siteContentModel->getValue('page_title');
+        $locationHeader = $this->siteContentModel->getValue('location_header');
+        $logoImage = $this->siteContentModel->getValue('logo_header');
+        $locationLink = $this->siteContentModel->getValue('location_link');
+        $moneySymbol = $this->siteContentModel->getValue('money_symbol');
+        $locationAddress = $this->siteContentModel->getValue('location_address');
+        $contactPhone = $this->siteContentModel->getValue('contact_number');
+        $paymentContent = $this->siteContentModel->getOrderedContentByPrefix('payment_logo');
+        $paymentMethods = array_column($paymentContent,'content_value');
+        $facebook = $this->siteContentModel->getValue('facebook_link');
+        $instagram = $this->siteContentModel->getValue('instagram_link');
+        $youtube = $this->siteContentModel->getValue('youtube_link');
+        $tiktok = $this->siteContentModel->getValue('tiktok_link');
+        $copyrightText = $this->siteContentModel->getValue('copyright');
+        $categoryModel = new Category($this->db);
+        $brandModel = new Brand($this->db);
+        $headerCategories = $this->categoryModel->getAllSimple();
+        $activePage = 'blog'; 
+        // ----------------------------------------------------------------
+
+        // 1. BANNER DEL BLOG
+        $bannerKey = 'blog_banner';
+        $bannerImage = $this->siteContentModel->getValue($bannerKey);
+
+        // --- 4. NUEVA LÓGICA: Obtener los artículos reales ---
+        require_once ROOT_PATH . 'app/model/Blog.php';
+        $blogModel = new Blog($this->db);
+        
+        // Le pedimos al modelo que traiga SOLO los artículos publicados 
+        // y los ordene desde el más reciente al más antiguo
+        $blogs = $blogModel->getAll([
+            'status' => 'publicado',
+            'sort'   => 'created_at-desc' 
+        ]);
+        
+
+        include ROOT_PATH . 'app/views/public/blog.php';
+    }
+
+    public function showBlogPost($slug) {
+        // --- 1. Cargar datos del Header y Footer (igual que el resto) ---
+        $pageName = $this->siteContentModel->getValue('page_title');
+        $locationHeader = $this->siteContentModel->getValue('location_header');
+        $logoImage = $this->siteContentModel->getValue('logo_header');
+        $locationLink = $this->siteContentModel->getValue('location_link');
+        $moneySymbol = $this->siteContentModel->getValue('money_symbol');
+        $locationAddress = $this->siteContentModel->getValue('location_address');
+        $contactPhone = $this->siteContentModel->getValue('contact_number');
+        $paymentContent = $this->siteContentModel->getOrderedContentByPrefix('payment_logo');
+        $paymentMethods = array_column($paymentContent,'content_value');
+        $facebook = $this->siteContentModel->getValue('facebook_link');
+        $instagram = $this->siteContentModel->getValue('instagram_link');
+        $youtube = $this->siteContentModel->getValue('youtube_link');
+        $tiktok = $this->siteContentModel->getValue('tiktok_link');
+        $copyrightText = $this->siteContentModel->getValue('copyright');
+        $categoryModel = new Category($this->db);
+        $brandModel = new Brand($this->db);
+        $headerCategories = $this->categoryModel->getAllSimple();
+        $activePage = 'blog'; 
+        // ----------------------------------------------------------------
+
+        // --- 2. Buscar el artículo por su slug ---
+        require_once ROOT_PATH . 'app/model/Blog.php';
+        $blogModel = new Blog($this->db);
+        $post = $blogModel->getBySlug($slug);
+
+        // Si el artículo no existe o está en borrador, lo regresamos a la lista principal
+        if (!$post) {
+            header('Location: /blog');
+            exit;
+        }
+
+        // --- 3. Renderizar la nueva vista ---
+        include ROOT_PATH . 'app/views/public/blog-detail.php';
+    }
+
+     // NUEVO MÉTODO PARA "NOSOTROS"
     public function aboutUs() {
         //------------header----------
         $pageName = $this->siteContentModel->getValue('page_title');
@@ -394,7 +475,7 @@ class PublicController {
         $shippingBrandsCount = count($shippingBrands);
 
         include ROOT_PATH . 'app/views/public/shipping.php';
-    } 
+    }
  
 
 }
