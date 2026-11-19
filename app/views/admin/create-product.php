@@ -87,23 +87,8 @@
                                 <i class='bx bx-list-ul'></i> Características principales 
                                 <span class="lvr-muted-counter" id="features-count-label">· 0 añadidas</span>
                             </label>
-                            <textarea id="description" name="description" style="display:none;"></textarea>
+                            <textarea id="description" name="description" class="lvr-textarea" rows="5" placeholder="Describe las características de tu producto..."><?php echo htmlspecialchars($product['description'] ?? ''); ?></textarea>
 
-                            <div id="lvr-features-list" class="lvr-features-list">
-                                <div class="lvr-feature-item">
-                                    <span class="lvr-feature-num">1</span>
-                                    <input type="text" class="lvr-input lvr-feature-input" placeholder="Característica 1">
-                                    <button type="button" class="lvr-feature-remove" title="Quitar característica" style="display:none;">
-                                        <i class='bx bx-x'></i>
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div class="lvr-bottom-add-wrap" style="margin-top: 0.45rem;">
-                                <button type="button" id="btn-add-feature" class="lvr-btn-add-bottom">
-                                    <i class='bx bx-plus'></i> Añadir característica
-                                </button>
-                            </div>
                         </div>
 
                         <!-- Descripción extendida -->
