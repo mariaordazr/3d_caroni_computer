@@ -21,7 +21,7 @@ if (strpos($domain, 'corporaciongruponet.com') !== false) {
 } else {
     $user = "caronico_admin";
     $pass = "B20s9#Wu-vyJM8";
-    $db = "caronico_gruponet_db";
+    $db = "caronico_3d";
     date_default_timezone_set("America/Caracas");
 }
 
