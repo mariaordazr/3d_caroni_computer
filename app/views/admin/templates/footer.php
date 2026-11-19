@@ -46,7 +46,7 @@
     
     <?php if (isset($active_menu) && $active_menu === 'pages-home'): ?>
         <script src="/assets/admin/js/admin-home.js" defer></script>
-    <?php elseif (isset($active_menu) && in_array($active_menu, ['pages-about', 'pages-services', 'pages-shipping', 'pages-general'])): ?>
+    <?php elseif (isset($active_menu) && in_array($active_menu, ['pages-about', 'pages-services', 'pages-shipping', 'pages-general', 'pages-blog'])): ?>
         <?php if ($active_menu == 'pages-shipping'):?>
             <script>
                 window.lastBrandIndex = <?php echo isset($currentIndex) ? $currentIndex : 2; ?>;
@@ -72,6 +72,10 @@
         <script src="/assets/admin/js/categories.js" defer></script>
     <?php elseif (isset($active_menu) && $active_menu === 'brands'): ?>
         <script src="/assets/admin/js/brands.js" defer></script>
+    <?php elseif (isset($active_menu) && $active_menu == 'blogs'):?>
+        <script src="/assets/admin/js/blog-posts.js" defer></script>
+    <?php elseif (isset($active_menu) && in_array($active_menu, ['receipts', 'receipts-settings'])):?>
+        <script src="/assets/admin/js/receipts.js" defer></script>
     <?php elseif (isset($active_menu) && $active_menu === 'users' && $pageType == 'crud'): ?>
         <script src="/assets/admin/js/avatar-cropper.js" defer></script>
     <?php endif; ?>

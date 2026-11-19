@@ -178,9 +178,9 @@
                             </a>
                         </li>
                         <li class="nav-item <?php echo (isset($active_menu) && $active_menu == 'brands') ? 'active' : ''; ?>" data-section-item="admin">
-                            <a href="/admin/brands" title="Materiales">
+                            <a href="/admin/brands" title="Marcas">
                                 <span class="lvr-nav-icon"><i class='bx bx-buildings'></i></span>
-                                <span class="lvr-nav-label">Materiales</span>
+                                <span class="lvr-nav-label">Marcas</span>
                             </a>
                         </li>
                         <li class="nav-item <?php echo (isset($active_menu) && $active_menu == 'users') ? 'active' : ''; ?>" data-section-item="admin">
@@ -212,6 +212,13 @@
                             </a>
                         </li>
 
+                        <li class="nav-item <?php echo ($active_menu === 'pages-blog') ? 'active' : ''; ?>" data-section-item="pages">
+                            <a href="/admin/pages/blog" title="Página de Blog">
+                                <span class="lvr-nav-icon"><i class='bx bx-news'></i></span>
+                                <span class="lvr-nav-label">Página de Blog</span>
+                            </a>
+                        </li>
+
                         <li class="nav-item <?php echo ($active_menu === 'pages-about') ? 'active' : ''; ?>" data-section-item="pages">
                             <a href="/admin/pages/about" title="Página de Nosotros">
                                 <span class="lvr-nav-icon"><i class='bx bx-buildings'></i></span>
@@ -230,6 +237,17 @@
                             <a href="/admin/pages/shipping" title="Página de Envíos">
                                 <span class="lvr-nav-icon"><i class='bx bxs-truck'></i></span>
                                 <span class="lvr-nav-label">Página de Envíos</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-header" data-section="blogs">
+                            <span>BLOGS</span>
+                            <i class='bx bx-chevron-down nav-header-chevron'></i>
+                        </li>
+                        <li class="nav-item <?php echo ($active_menu === 'blogs') ? 'active' : ''; ?>" data-section-item="blogs">
+                            <a href="/admin/blogs" title="Artículos">
+                                <span class="lvr-nav-icon"><i class='bx bx-news'></i></span>
+                                <span class="lvr-nav-label">Artículos</span>
                             </a>
                         </li>
 
