@@ -158,7 +158,7 @@
     <?php else: ?>
         <div class="no-results-message">
             <i class='bx bx-search-alt'></i>
-            <h2>No se encontraron marcas</h2>
+            <h2>No se encontraron materiales</h2>
             <p>Prueba a cambiar los filtros o a restablecer la búsqueda.</p>
         </div>
     <?php endif; ?>
