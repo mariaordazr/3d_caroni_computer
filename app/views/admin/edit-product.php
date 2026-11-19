@@ -112,9 +112,9 @@ $currencySymbol = htmlspecialchars($moneySymbol ?? '$');
                             </select>
                         </div>
 
-                        <!-- Marca -->
+                        <!-- Material -->
                         <div class="lvr-field-group">
-                            <label class="lvr-field-label" for="brand">Marca</label>
+                            <label class="lvr-field-label" for="brand">Material</label>
                             <select id="brand" name="brand" class="lvr-select" required>
                                 <?php foreach($brands as $brand): ?>
                                     <option value="<?php echo $brand['id_brand']; ?>" <?php echo ($brand['id_brand'] == $product['brand']) ? 'selected' : ''; ?>>
