@@ -7,21 +7,20 @@ class Product {
         $this->db = $connection;
     }
 
+    // 1. En create(array $data): agregar material (permite NULL)
     public function create(array $data): ?int
     {   
-        // Se agregan sku, warranty y `condition`
-        $query = "INSERT INTO products (sku, name, description, ext_description, video_title, video_description, video_url, price, stock, category, brand, warranty, `condition`, certification) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $query = "INSERT INTO products (sku, name, description, ext_description, video_title, video_description, video_url, price, stock, category, brand, material, warranty, `condition`, certification) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         
         $stmt = $this->db->prepare($query);
         
-        // Tipos: 8 strings, 1 double, 3 enteros, 2 strings (Total: ssssssssdiiisss)
-        $stmt->bind_param("sssssssdiiisss", 
+        // Tipos: 7 strings, 1 double, 4 enteros (stock, category, brand, material), 3 strings
+        $stmt->bind_param("sssssssdiiiisss", 
             $data['sku'], $data['name'], $data['description'], $data['ext_description'],
             $data['video_title'], $data['video_description'], $data['video_url'],
-            $data['price'], $data['stock'], $data['category'], $data['brand'],
+            $data['price'], $data['stock'], $data['category'], $data['brand'], $data['material'],
             $data['warranty'], $data['condition'], $data['certification']
         );
-
 
         if ($stmt->execute()) {
             $newId = $this->db->insert_id;
@@ -33,7 +32,7 @@ class Product {
         return null;
     }
     
-
+    // 2. En getById(int $id): corregir coma, alias material_name y JOIN
     public function getById(int $id): ?array
     {
         $query = "SELECT 
@@ -45,15 +44,17 @@ class Product {
                     o.price AS offer_price,
                     np.id_new_product,
                     o.id_offer,
-                    p.category, p.brand,
+                    p.category, p.brand, p.material,
                     p.created_at, p.updated_at,
                     c.name as category_name, c.`hidden` as category_hidden,
-                    b.name as brand_name, b.`hidden` as brand_hidden
+                    b.name as brand_name, b.`hidden` as brand_hidden,
+                    m.name as material_name, m.`hidden` as material_hidden
                 FROM products p
                 LEFT JOIN offers o ON p.id_product = o.product
                 LEFT JOIN new_products np ON p.id_product = np.product
                 LEFT JOIN categories c ON p.category = c.id_category
                 LEFT JOIN brands b ON p.brand = b.id_brand
+                LEFT JOIN materials m ON p.material = m.id_material
                 WHERE p.id_product = ?";
                 
         $stmt = $this->db->prepare($query);
@@ -63,9 +64,7 @@ class Product {
         $data = $result->fetch_assoc();
         $stmt->close();
         return $data;
-    }
-
-    
+    }    
 
     public function getBySku(string $sku): ?array
     {
@@ -83,18 +82,18 @@ class Product {
     }
 
 
+    // 3. En update(int $id, array $data): agregar material = ?
     public function update(int $id, array $data): bool
     {
-        // Se agregan sku, warranty, condition y certification al SET
-        $query = "UPDATE products SET sku = ?, name = ?, description = ?, ext_description = ?, video_title = ?, video_description = ?, video_url = ?, price = ?, stock = ?, brand = ?, category = ?, warranty = ?, `condition` = ?, certification = ? WHERE id_product = ?";
+        $query = "UPDATE products SET sku = ?, name = ?, description = ?, ext_description = ?, video_title = ?, video_description = ?, video_url = ?, price = ?, stock = ?, brand = ?, category = ?, material = ?, warranty = ?, `condition` = ?, certification = ? WHERE id_product = ?";
         
         $stmt = $this->db->prepare($query);
         
-        // Tipos: 8 strings, 1 double, 2 enteros, 2 strings, 1 entero (id) -> ssssssssdiiisssi
-        $stmt->bind_param("sssssssdiiisssi", 
+        // Tipos: 7 strings, 1 double, 4 enteros, 3 strings, 1 entero (id)
+        $stmt->bind_param("sssssssdiiiisssi", 
             $data['sku'], $data['name'], $data['description'], $data['ext_description'],
             $data['video_title'], $data['video_description'], $data['video_url'],
-            $data['price'], $data['stock'], $data['brand'], $data['category'], 
+            $data['price'], $data['stock'], $data['brand'], $data['category'], $data['material'],
             $data['warranty'], $data['condition'], $data['certification'], $id
         );
         
@@ -169,13 +168,15 @@ class Product {
                     p.warranty, p.`condition`, p.`hidden`,
                     c.name AS category_name,
                     b.name AS brand_name,
-                    p.category, p.brand, pi.file_name,
+                    m.name AS material_name,
+                    p.category, p.brand, p.material, pi.file_name,
                     o.price AS offer_price,
                     np.id_new_product, o.id_offer,
                     p.created_at, p.updated_at
                 FROM products p
                 LEFT JOIN categories c ON p.category = c.id_category
                 LEFT JOIN brands b ON p.brand = b.id_brand
+                LEFT JOIN materials m ON p.material = m.id_material
                 LEFT JOIN offers o ON p.id_product = o.product
                 LEFT JOIN new_products np ON p.id_product = np.product
                 LEFT JOIN product_images pi ON p.id_product = pi.product AND pi.display_order = 1";
@@ -208,6 +209,7 @@ class Product {
                     
                     // 1. Filtro base WHERE (Forzando COLLATE para ignorar acentos y mayúsculas)
                     $whereConditions[] = "(
+                        m.name COLLATE utf8mb4_unicode_ci LIKE ? OR
                         p.name COLLATE utf8mb4_unicode_ci LIKE ? OR 
                         p.description COLLATE utf8mb4_unicode_ci LIKE ? OR 
                         c.name COLLATE utf8mb4_unicode_ci LIKE ? OR 
@@ -253,6 +255,11 @@ class Product {
             $whereParams[] = $filters['brand']; 
             $whereTypes .= 'i'; 
         }
+        if (!empty($filters['material'])) { 
+            $conditions[] = "p.material = ?"; 
+            $whereParams[] = $filters['material']; 
+            $whereTypes .= 'i'; 
+        }
         if (!empty($filters['type'])) {
             if ($filters['type'] === 'offer') 
                 $conditions[] = "o.id_offer IS NOT NULL";
@@ -260,7 +267,7 @@ class Product {
                 $conditions[] = "np.id_new_product IS NOT NULL";
         }
 
-        $conditions[] = "p.`hidden` = 0 AND c.`hidden` = 0 AND b.`hidden` = 0";
+        $conditions[] = "p.`hidden` = 0 AND c.`hidden` = 0 AND b.`hidden` = 0 AND m.`hidden` = 0";
         
         if (!empty($conditions)) { 
             $query .= " WHERE " . implode(" AND ", $conditions); 
@@ -301,15 +308,18 @@ class Product {
     {
         $query = "SELECT 
                     p.id_product, p.sku, p.name, 
-                    IF(p.`hidden` = 1 OR c.`hidden` = 1 OR b.`hidden` = 1, 1, 0) as `hidden`,
+                    IF(p.`hidden` = 1 OR c.`hidden` = 1 OR b.`hidden` = 1 OR m.`hidden` = 1) as `hidden`,
+                    m.name AS material_name,
                     p.description, p.ext_description, p.certification,
                     p.video_title, p.video_description, p.video_url,
                     p.price AS original_price, p.stock,
                     p.warranty, p.`condition`,
                     c.name AS category_name,
                     b.name AS brand_name,
+                    m.material AS material_name,
                     p.category,
                     p.brand,
+                    p.material,
                     pi.file_name,
                     o.price AS offer_price,
                     np.id_new_product,
@@ -317,6 +327,7 @@ class Product {
                 FROM products p
                 LEFT JOIN categories c ON p.category = c.id_category
                 LEFT JOIN brands b ON p.brand = b.id_brand
+                LEFT JOIN materials m ON p.material = m.id_material
                 LEFT JOIN offers o ON p.id_product = o.product
                 LEFT JOIN new_products np ON p.id_product = np.product
                 LEFT JOIN product_images pi ON p.id_product = pi.product AND pi.display_order = 1";
@@ -429,6 +440,12 @@ class Product {
         if (!empty($filters['brand'])) {
             $conditions[] = "p.brand = ?"; 
             $params[] = $filters['brand'];
+            $types .= 'i';
+        }
+
+        if (!empty($filters['material'])) {
+            $conditions[] = "p.material = ?"; 
+            $params[] = $filters['material'];
             $types .= 'i';
         }
 
@@ -579,11 +596,70 @@ class Product {
         return $images;
     }
 
-    /**
-     * Obtiene todas las categorías y, para cada una,
-     * una lista de las marcas que tienen productos en esa categoría.
-     * @return array
-     */
+    public function getCategoriesWithFilters(): array
+    {
+        $categories = [];
+
+        // 1. Obtener categorías y sus marcas (todos los productos tienen marca)
+        $sqlBrands = "SELECT
+                        c.id_category, c.name AS category_name,
+                        b.id_brand, b.name AS brand_name
+                    FROM products p
+                    JOIN categories c ON p.category = c.id_category
+                    JOIN brands b ON p.brand = b.id_brand
+                    LEFT JOIN materials m ON p.material = m.id_material
+                    WHERE p.`hidden` = 0 AND c.`hidden` = 0 AND b.`hidden` = 0
+                    AND (m.id_material IS NULL OR m.`hidden` = 0)
+                    GROUP BY c.id_category, b.id_brand
+                    ORDER BY TRIM(LOWER(c.name)) ASC, TRIM(LOWER(b.name)) ASC";
+
+        $resBrands = $this->db->query($sqlBrands);
+        if ($resBrands) {
+            while ($row = $resBrands->fetch_assoc()) {
+                $catId = $row['id_category'];
+                if (!isset($categories[$catId])) {
+                    $categories[$catId] = [
+                        'id_category' => $catId,
+                        'name'        => $row['category_name'],
+                        'materials'   => [],
+                        'brands'      => []
+                    ];
+                }
+                $categories[$catId]['brands'][] = [
+                    'id_brand' => $row['id_brand'],
+                    'name'     => $row['brand_name']
+                ];
+            }
+        }
+
+        // 2. Obtener los materiales usados en cada categoría (solo si el producto tiene material)
+        $sqlMaterials = "SELECT
+                            c.id_category,
+                            m.id_material, m.name AS material_name
+                        FROM products p
+                        JOIN categories c ON p.category = c.id_category
+                        JOIN brands b ON p.brand = b.id_brand
+                        JOIN materials m ON p.material = m.id_material
+                        WHERE p.`hidden` = 0 AND c.`hidden` = 0 AND b.`hidden` = 0 AND m.`hidden` = 0
+                        GROUP BY c.id_category, m.id_material
+                        ORDER BY TRIM(LOWER(m.name)) ASC";
+
+        $resMaterials = $this->db->query($sqlMaterials);
+        if ($resMaterials) {
+            while ($row = $resMaterials->fetch_assoc()) {
+                $catId = $row['id_category'];
+                if (isset($categories[$catId])) {
+                    $categories[$catId]['materials'][] = [
+                        'id_material' => $row['id_material'],
+                        'name'        => $row['material_name']
+                    ];
+                }
+            }
+        }
+
+        return array_values($categories);
+    }
+    
     public function getCategoriesWithBrands(): array
     {
         $sql = "SELECT
@@ -617,6 +693,39 @@ class Product {
         return array_values($categories); // Devolvemos un array limpio
     }
 
+    public function getCategoriesWithMaterials(): array
+    {
+        $sql = "SELECT
+                    c.id_category, c.name AS category_name,
+                    b.id_material, b.name AS material_name
+                FROM products p
+                JOIN categories c ON p.category = c.id_category
+                JOIN materials m ON p.material = m.id_material
+                WHERE p.`hidden` = 0 AND c.`hidden` = 0 AND b.`hidden` = 0
+                GROUP BY c.id_category, b.id_material
+                ORDER BY c.name, b.name";
+
+        $result = $this->db->query($sql);
+        $categories = [];
+
+        while($row = $result->fetch_assoc()) {
+            // Si es la primera vez que vemos esta categoría, la creamos
+            if (!isset($categories[$row['id_category']])) {
+                $categories[$row['id_category']] = [
+                    'id_category' => $row['id_category'],
+                    'name' => $row['category_name'],
+                    'materials' => [] // Preparamos el array para sus marcas
+                ];
+            }
+            // Añadimos la marca a la lista de marcas de esa categoría
+            $categories[$row['id_category']]['materials'][] = [
+                'id_material' => $row['id_material'],
+                'name' => $row['material_name']
+            ];
+        }
+        return array_values($categories); // Devolvemos un array limpio
+    }
+
     public function updateHiddenStatus(int $productId, int $status): bool
     {
         $query = "UPDATE products SET `hidden` = ? WHERE id_product = ?";
@@ -640,6 +749,15 @@ class Product {
         $query = "UPDATE products SET `hidden` = ? WHERE brand = ?";
         $stmt = $this->db->prepare($query);
         $stmt->bind_param("ii", $status, $brandId);
+        $result = $stmt->execute();
+        $stmt->close();
+        return $result;
+    }
+
+    public function updateHiddenStatusByMaterial(int $materialId, int $status): bool {
+        $query = "UPDATE products SET `hidden` = ? WHERE material = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("ii", $status, $materialId);
         $result = $stmt->execute();
         $stmt->close();
         return $result;

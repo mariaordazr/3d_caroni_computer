@@ -6,16 +6,16 @@
         <!-- TOPBAR: Breadcrumb + Título + Badge -->
         <div class="lvr-page-topbar">
             <div class="lvr-breadcrumb">
-                <a href="/admin/brands">Materiales</a>
+                <a href="/admin/brands">Marcas</a>
                 <i class='bx bx-chevron-right'></i>
                 <span class="current">Nueva</span>
             </div>
             <div class="lvr-title-row">
                 <div class="lvr-title-left">
-                    <a href="/admin/brands" class="lvr-back-btn" title="Volver a Materiales">
+                    <a href="/admin/brands" class="lvr-back-btn" title="Volver a Marcas">
                         <i class='bx bx-left-arrow-alt'></i>
                     </a>
-                    <h1 class="lvr-page-title">Agregar Nueva Material</h1>
+                    <h1 class="lvr-page-title">Agregar Nueva Marca</h1>
                 </div>
                 <span class="lvr-draft-badge">MATERIAL-BORRADOR</span>
             </div>
@@ -37,13 +37,13 @@
                             </div>
                             <div class="lvr-step-titles">
                                 <h3>Información básica</h3>
-                                <p>Identifica la material o material de los productos</p>
+                                <p>Identifica la marca o marca de los productos</p>
                             </div>
                         </div>
                     </div>
 
                     <div class="lvr-field-group">
-                        <label class="lvr-field-label" for="name"><i class='bx bx-Label'></i> Nombre de la material</label>
+                        <label class="lvr-field-label" for="name"><i class='bx bx-Label'></i> Nombre de la marca</label>
                         <input type="text" id="name" name="name" class="lvr-input" placeholder="Ej. PLA / PETG / Resina / Asus" required>
                     </div>
                 </div>
@@ -96,7 +96,7 @@
                     </div>
 
                     <div class="lvr-summary-row">
-                        <span>Material</span>
+                        <span>Marca</span>
                         <strong id="summary-brand-name">—</strong>
                     </div>
                     <div class="lvr-summary-row">
@@ -119,7 +119,7 @@
                     </div>
 
                     <button type="submit" class="lvr-btn-save-note">
-                        <i class='bx bx-check'></i> Guardar material
+                        <i class='bx bx-check'></i> Guardar marca
                     </button>
 
                     <a href="/admin/brands" class="lvr-btn-cancel-note">Cancelar</a>
@@ -143,7 +143,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const previewImg = uploadBox ? uploadBox.querySelector('img.image-preview') : null;
         const thumbBox   = document.getElementById('summary-thumb-box');
         if (previewImg && previewImg.src) {
-            thumbBox.innerHTML = `<img src="${previewImg.src}" alt="Material">`;
+            thumbBox.innerHTML = `<img src="${previewImg.src}" alt="Marca">`;
             document.getElementById('summary-brand-image').textContent = 'Sí';
         } else {
             thumbBox.innerHTML = `<i class='bx bx-image'></i>`;

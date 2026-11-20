@@ -72,6 +72,8 @@
         <script src="/assets/admin/js/categories.js" defer></script>
     <?php elseif (isset($active_menu) && $active_menu === 'brands'): ?>
         <script src="/assets/admin/js/brands.js" defer></script>
+    <?php elseif (isset($active_menu) && $active_menu === 'materials'): ?>
+        <script src="/assets/admin/js/materials.js" defer></script>
     <?php elseif (isset($active_menu) && $active_menu == 'blogs'):?>
         <script src="/assets/admin/js/blog-posts.js" defer></script>
     <?php elseif (isset($active_menu) && in_array($active_menu, ['receipts', 'receipts-settings'])):?>

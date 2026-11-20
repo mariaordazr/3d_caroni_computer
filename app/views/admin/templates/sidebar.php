@@ -183,6 +183,12 @@
                                 <span class="lvr-nav-label">Marcas</span>
                             </a>
                         </li>
+                        <li class="nav-item <?php echo (isset($active_menu) && $active_menu == 'materials') ? 'active' : ''; ?>" data-section-item="admin">
+                            <a href="/admin/materials" title="Materiales">
+                                <span class="lvr-nav-icon"><i class='bx bx-buildings'></i></span>
+                                <span class="lvr-nav-label">Materiales</span>
+                            </a>
+                        </li>
                         <li class="nav-item <?php echo (isset($active_menu) && $active_menu == 'users') ? 'active' : ''; ?>" data-section-item="admin">
                             <a href="/admin/users" title="Usuarios">
                                 <span class="lvr-nav-icon"><i class='bx bx-user'></i></span>

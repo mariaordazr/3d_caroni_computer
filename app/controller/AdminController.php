@@ -9,6 +9,7 @@ class AdminController {
     private $db;
     private $categoryModel;
     private $brandModel;
+    private $materialModel;
     private $productModel;
     private $userModel;
     private $offerModel;
@@ -22,6 +23,7 @@ class AdminController {
         require_once ROOT_PATH . 'app/model/Product.php';
         require_once ROOT_PATH . 'app/model/Category.php';
         require_once ROOT_PATH . 'app/model/Brand.php';
+        require_once ROOT_PATH . 'app/model/Material.php';
         require_once ROOT_PATH . 'app/model/User.php';
         require_once ROOT_PATH . 'app/model/Offer.php';
         require_once ROOT_PATH . 'app/model/NewProduct.php';
@@ -32,7 +34,7 @@ class AdminController {
         $this->db = $connection;
         $this->productModel = new Product($this->db);
         $this->categoryModel = new Category($this->db);
-        $this->brandModel = new Brand($this->db);
+        $this->materialModel = new Material($this->db);
         $this->userModel = new User($this->db);
         $this->offerModel = new Offer($this->db);
         $this->newProductModel = new NewProduct($this->db);
@@ -55,6 +57,7 @@ class AdminController {
         $this->ensureDirExists($this->uploadDir . 'blog/banner');
         $this->ensureDirExists($this->uploadDir . 'blog/posts');
         $this->ensureDirExists($this->uploadDir . 'blog/videos');
+        $this->ensureDirExists($this->uploadDir . 'materials');
 
         // Iniciar la sesión si no está iniciada
         if (session_status() == PHP_SESSION_NONE) {
@@ -257,6 +260,7 @@ class AdminController {
             'sort'     => $_GET['sort'] ?? null,
             'category' => $_GET['category'] ?? null,
             'brand'    => $_GET['brand'] ?? null,
+            'material'    => $_GET['material'] ?? null,
             'type'     => $_GET['type'] ?? null,
             'status'   => $_GET['status'] ?? null,
         ];
@@ -264,6 +268,7 @@ class AdminController {
         // Cargar modelos
         $categoryModel = new Category($this->db);
         $brandModel = new Brand($this->db);
+        $materialModel = new Material($this->db);
 
         // Obtener datos, pasando el array de filtros
         $products = $this->productModel->getAll($filters);
@@ -271,6 +276,8 @@ class AdminController {
         $headerCategories = $categoryModel->getAll(['sort' => 'name-asc']);
         $brands = $brandModel->getAll(['sort' => 'name-asc']);
         $headerBrands = $brandModel->getAll(['sort' => 'name-asc']);
+        $materials = $materialModel->getAll(['sort' => 'name-asc']);
+        $headerMaterials = $materialModel->getAll(['sort' => 'name-asc']);
 
         include ROOT_PATH . 'app/views/admin/products.php';
     }
@@ -421,6 +428,7 @@ class AdminController {
         // Obtenemos las categorías y marcas para los menús desplegables
         $categories = $this->categoryModel->getAllSimple();
         $brands = $this->brandModel->getAllSimple();
+        $materials = $this->materialModel->getAllSimple();
 
         // Cargamos la nueva vista que vamos a crear
         include ROOT_PATH . 'app/views/admin/create-product.php';
@@ -475,6 +483,7 @@ class AdminController {
                 'stock'             => (int) ($_POST['stock'] ?? 0),
                 'category'          => (int) ($_POST['category'] ?? 0),
                 'brand'             => (int) ($_POST['brand'] ?? 0),
+                'material'          => !empty($_POST['material']) ? (int) $_POST['material'] : null,
                 'warranty'          => $warranty,
                 'condition'         => $conditionFinal,
                 'certification'     => $_POST['certification'] ?? 'standard', // <-- NUEVO
@@ -602,6 +611,7 @@ class AdminController {
         $images = $this->productModel->getImagesByProductId($productId);
         $categories = $this->categoryModel->getAllSimple();
         $brands = $this->brandModel->getAllSimple();
+        $materials = $this->materialModel->getAllSimple();
 
         if (!$product) {
             header('Location: /admin/products');
@@ -648,6 +658,7 @@ class AdminController {
                 'stock'             => (int) ($_POST['stock'] ?? 0),
                 'category'          => (int) ($_POST['category'] ?? 0),
                 'brand'             => (int) ($_POST['brand'] ?? 0),
+                'material'          => !empty($_POST['material']) ? (int) $_POST['material'] : null,
                 'warranty'          => $warranty,
                 'condition'         => $conditionFinal,
                 'hidden'            => isset($_POST['hidden']) ? 1 : 0,
@@ -1091,6 +1102,7 @@ class AdminController {
             'sort'     => $_GET['sort'] ?? null,
             'category' => $_GET['category'] ?? null,
             'brand'    => $_GET['brand'] ?? null,
+            'material'    => $_GET['material'] ?? null,
         ];
 
         // Cargar modelos
@@ -1098,6 +1110,7 @@ class AdminController {
         $newProductModel = new NewProduct($this->db);
         $categoryModel = new Category($this->db);
         $brandModel = new Brand($this->db);
+        $materialModel = new Material($this->db);
 
         // Obtener datos usando el NUEVO método y guardarlos en la variable $products
         $products = $newProductModel->getAll($filters);
@@ -1105,6 +1118,8 @@ class AdminController {
         $headerCategories = $categoryModel->getAllSimple();
         $headerBrands = $brandModel->getAllSimple();
         $brands = $brandModel->getAll();
+        $headerMaterials = $materialModel->getAllSimple();
+        $materials = $materialModel->getAll();
 
         include ROOT_PATH . 'app/views/admin/products.php';
     }
@@ -1201,13 +1216,14 @@ class AdminController {
             'sort'     => $_GET['sort'] ?? null,
             'category' => $_GET['category'] ?? null,
             'brand'    => $_GET['brand'] ?? null,
+            'material'    => $_GET['material'] ?? null,
         ];
 
         // Cargar modelos
         // Asegúrate de tener los require_once al inicio del archivo
         $offerModel = new Offer($this->db);
         $categoryModel = new Category($this->db);
-        $brandModel = new Brand($this->db);
+        $materialModel = new Material($this->db);
 
         // Obtener datos usando el NUEVO método y guardarlos en la variable $products
         $products = $offerModel->getAll($filters);
@@ -1215,6 +1231,8 @@ class AdminController {
         $headerCategories = $categoryModel->getAllSimple();
         $headerBrands = $brandModel->getAllSimple();
         $brands = $brandModel->getAll();
+        $headerMaterials = $materialModel->getAllSimple();
+        $materials = $materialModel->getAll();
 
         include ROOT_PATH . 'app/views/admin/products.php';
     }
@@ -1690,6 +1708,205 @@ class AdminController {
     }
 
     //-------------------------------------------------------//
+
+
+    //-------------------------MATERIALES------------------------//
+
+    public function materials() {
+        $userInfo = $this->userModel->getById($_SESSION['idUser']);
+        $pageName = $this->siteContentModel->getValue('page_title');
+        $copyrightText = $this->siteContentModel->getValue('copyright');
+        $pageType = 'basic_list'; 
+        $active_menu = 'materials';
+        $pageTitle = 'Gestión de Materiales';
+        $buttonAgg = 'Material';
+
+        // --- CORRECCIÓN: Recoger filtros ---
+        $filters = [
+            'search' => $_GET['search'] ?? null,
+            'sort'   => $_GET['sort'] ?? null,
+        ];
+
+        // --- CORRECCIÓN: Pasar filtros al modelo ---
+        $materials = $this->materialModel->getAll($filters);
+
+        include ROOT_PATH . 'app/views/admin/materials.php';
+    }
+
+    public function createMaterial() {
+        $userInfo = $this->userModel->getById($_SESSION['idUser']);
+        $pageName = $this->siteContentModel->getValue('page_title');
+        $copyrightText = $this->siteContentModel->getValue('copyright');
+        $footerJS = '/assets/admin/js/crud.js';
+        $active_menu = 'materials';
+        $pageTitle = 'Agregar Nuevo Material';
+        $pageType = 'crud';
+
+        include ROOT_PATH . 'app/views/admin/create-material.php';
+    }
+
+    public function storeMaterial() {
+        // Verificamos que se envíe el formulario con un nombre
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['name'])) {
+            
+            // 1. CORRECCIÓN: Pasamos un array, no un string
+            $data = [
+                'name' => $_POST['name'] ?? ''
+            ];
+
+            // 2. Obtenemos el ID del nuevo material
+            $newMaterialId = $this->materialModel->create($data); //
+
+            // 3. Si el material se creó, subir la imagen
+            if ($newMaterialId) {
+                $uploadDir = ROOT_PATH . 'public/assets/uploads/materials/';
+
+                // Verificamos que el archivo de imagen se haya subido
+                if (isset($_FILES["image"]) && $_FILES["image"]['error'] === UPLOAD_ERR_OK) {
+                    $file = $_FILES["image"];
+                    
+                    $baseName = uniqid('material_') . '-' . pathinfo($file['name'], PATHINFO_FILENAME);
+                    $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+                    $fileName = $baseName . '.' . $ext;
+                    $targetFile = $uploadDir . $fileName;
+                    
+                    if (move_uploaded_file($file['tmp_name'], $targetFile)) {
+                        // --- CREAR SMALL ---
+                        $smallFile = $uploadDir . 'small_' . $baseName . '.webp';
+                        $this->resizeToWebP($targetFile, $smallFile, 400);
+                        // -------------------
+                        $this->materialModel->updateImage($newMaterialId, $fileName);
+                    }
+                }
+            }
+
+            $_SESSION['flash_message'] = 'Material agregado con éxito!';
+        }
+
+        // Redirigimos a la lista de materiales
+        header('Location: /admin/materials');
+        exit;
+    }
+
+    public function editMaterial($id) {
+        $userInfo = $this->userModel->getById($_SESSION['idUser']);
+        $pageName = $this->siteContentModel->getValue('page_title');
+        $copyrightText = $this->siteContentModel->getValue('copyright');
+        $footerJS = '/assets/admin/js/crud.js';
+        $active_menu = 'materials';
+        $pageTitle = 'Editar Material';
+        $pageType = 'crud';
+
+        $materialId = (int)$id;
+        $material = $this->materialModel->getById($materialId);
+
+        if (!$material) {
+            header('Location: /admin/materials');
+            exit;
+        }
+
+        include ROOT_PATH . 'app/views/admin/edit-material.php';
+    }
+
+    public function toggleMaterialVisibility() {
+        header('Content-Type: application/json');
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $materialId = (int) ($_POST['material_id'] ?? 0);
+            $newStatus = isset($_POST['hidden_status']) ? (int)$_POST['hidden_status'] : 0;
+
+            if ($materialId > 0) {
+                $success = $this->materialModel->updateHiddenStatus($materialId, $newStatus);
+
+                if ($success) {
+                    $this->productModel->updateHiddenStatusByMaterial($materialId, $newStatus);
+
+                    // ¡AQUÍ ESTÁ EL CAMBIO! Guardamos el mensaje en la sesión PHP
+                    $_SESSION['flash_message'] = $newStatus ? 'Material y sus productos ocultados con éxito' : 'Material y sus productos ya son visibles';
+                    
+                    echo json_encode(['success' => true]);
+                    exit; 
+                }
+            }
+        }
+        
+        echo json_encode(['success' => false, 'message' => 'Error al actualizar visibilidad del material.']);
+        exit; 
+    }
+
+    public function updateMaterial() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $id = (int)$_POST['id_material'] ?? 0;
+            $name = $_POST['name'] ?? '';
+            $deleteImage = $_POST['delete_image'] ?? ''; 
+            
+            $currentMaterial = $this->materialModel->getById($id);
+            if (!$currentMaterial) { header('Location: /admin/materials'); exit; }
+
+            $imageName = $currentMaterial['image']; 
+            $uploadDir = ROOT_PATH . 'public/assets/uploads/materials/';
+
+            if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+                // Nombres nuevos
+                $baseName = uniqid('material_') . '-' . pathinfo($_FILES['image']['name'], PATHINFO_FILENAME);
+                $ext = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
+                $newFileName = $baseName . '.' . $ext;
+                
+                if (move_uploaded_file($_FILES['image']['tmp_name'], $uploadDir . $newFileName)) {
+                    // 1. Crear Small
+                    $smallNewFile = $uploadDir . 'small_' . $baseName . '.webp';
+                    $this->resizeToWebP($uploadDir . $newFileName, $smallNewFile, 400);
+
+                    // 2. Borrar viejas
+                    if (!empty($currentMaterial['image'])) {
+                        $oldPath = $uploadDir . $currentMaterial['image'];
+                        $oldBase = pathinfo($currentMaterial['image'], PATHINFO_FILENAME);
+                        $oldSmall = $uploadDir . 'small_' . $oldBase . '.webp';
+                        
+                        if (file_exists($oldPath)) unlink($oldPath);
+                        if (file_exists($oldSmall)) unlink($oldSmall);
+                    }
+                    $imageName = $newFileName;
+                }
+            }
+            elseif (!empty($deleteImage) && !empty($currentMaterial['image'])) {
+                // Borrar ambas
+                $oldPath = $uploadDir . $currentMaterial['image'];
+                $oldBase = pathinfo($currentMaterial['image'], PATHINFO_FILENAME);
+                $oldSmall = $uploadDir . 'small_' . $oldBase . '.webp';
+
+                if (file_exists($oldPath)) unlink($oldPath);
+                if (file_exists($oldSmall)) unlink($oldSmall);
+                
+                $imageName = '';
+            }
+
+            if ($id > 0 && !empty($name)) {
+                $this->materialModel->update($id, $name); 
+                $this->materialModel->updateImage($id, $imageName); 
+            }
+        }
+        $_SESSION['flash_message'] = '¡Material actualizado con éxito!';
+        header('Location: /admin/materials');
+        exit;
+    }
+
+    public function getMaterialProductCount($id) {
+        header('Content-Type: application/json');
+        $count = $this->materialModel->countProducts((int)$id);
+        echo json_encode(['success' => true, 'count' => $count]);
+        exit;
+    }
+
+    public function deleteMaterial($id) {
+        header('Content-Type: application/json');
+        $success = $this->materialModel->deleteWithProducts((int)$id);
+        echo json_encode(['success' => $success]);
+        exit;
+    }
+
+    //-------------------------------------------------------//
+
 
     //-----------------------USUARIOS------------------------//
 

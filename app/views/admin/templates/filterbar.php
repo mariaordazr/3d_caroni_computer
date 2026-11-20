@@ -73,6 +73,17 @@
                             </option>
                         <?php endforeach; ?>
                     </select>
+
+                    <?php if (!empty($headerMaterials)): ?>
+                        <select name="material" class="filter-bar__select" onchange="this.form.submit()">
+                            <option value="">Material</option>
+                            <?php foreach($headerMaterials as $mat): ?>
+                                <option value="<?php echo $mat['id_material']; ?>" <?php echo (($_GET['material'] ?? '') == $mat['id_material']) ? 'selected' : ''; ?>>
+                                    <?php echo htmlspecialchars(ucfirst(mb_strtolower($mat['name']))); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    <?php endif; ?>
                 <?php endif; ?>
 
                 <?php if (isset($pageType) && $pageType === 'full_list' && $active_menu !== 'blogs'): ?>

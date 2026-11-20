@@ -81,6 +81,19 @@
                             </select>
                         </div>
 
+                        <!-- Material (Opcional) -->
+                        <div class="lvr-field-group">
+                            <label class="lvr-field-label" for="material">Material <small style="color:#64748b; font-weight:400;">(Opcional)</small></label>
+                            <select id="material" name="material" class="lvr-select">
+                                <option value="">Sin material</option>
+                                <?php foreach($materials as $mat): ?>
+                                    <option value="<?php echo $mat['id_material']; ?>">
+                                        <?php echo htmlspecialchars(ucfirst(mb_strtolower($mat['name']))); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+
                         <!-- Características principales (Constructor visual + Textarea oculto sincronizado) -->
                         <div class="lvr-field-group lvr-field-full">
                             <label class="lvr-field-label">

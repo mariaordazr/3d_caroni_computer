@@ -6,6 +6,7 @@ require_once ROOT_PATH . 'app/model/Offer.php';
 require_once ROOT_PATH . 'app/model/NewProduct.php';
 require_once ROOT_PATH . 'app/model/Category.php';
 require_once ROOT_PATH . 'app/model/Brand.php';
+require_once ROOT_PATH . 'app/model/Material.php';
 require_once ROOT_PATH . 'app/model/Product.php';
 require_once ROOT_PATH . 'app/model/SiteContent.php';
 require_once ROOT_PATH . 'app/model/Settings.php';
@@ -17,6 +18,7 @@ class PublicController {
     private $newProductModel;
     private $categoryModel;
     private $brandModel;
+    private $materialModel;
     private $productModel;
     private $siteContentModel;
     private $settingsModel;
@@ -28,6 +30,7 @@ class PublicController {
         $this->categoryModel = new Category($connection); 
         $this->newProductModel = new NewProduct($connection);
         $this->brandModel = new Brand($connection);
+        $this->materialModel = new Material($connection);
         $this->productModel = new Product($connection);
         $this->siteContentModel = new SiteContent($this->db);
         $this->settingsModel = new Settings($this->db);
@@ -59,6 +62,7 @@ class PublicController {
 
         $categoryModel = new Category($this->db);
         $brandModel = new Brand($this->db);
+        $materialModel = new Material($this->db);
         $headerCategories = $this->categoryModel->getAllSimple();
         // --- Fin de Cargar datos para el Header ---
 
@@ -130,9 +134,11 @@ class PublicController {
         $copyrightText = $this->siteContentModel->getValue('copyright');
         //----------------------------------------
         $categoryModel = new Category($this->db);
+        $materialModel = new Material($this->db);
         $brandModel = new Brand($this->db);
         
         $categoriesWithData = $this->productModel->getCategoriesWithBrands();
+        $categoriesWithMat = $this->productModel->getCategoriesWithMaterials();
         $headerCategories = $this->categoryModel->getAllSimple();
         $categories = $this->categoryModel->getAll(); // Lo mantenemos para el resumen, si lo vuelves a activar
 
@@ -141,6 +147,7 @@ class PublicController {
             'search'       => $_GET['search'] ?? null,
             'category'     => null,
             'brand'        => null,
+            'material'        => null,
             'status'       => $_GET['status'] ?? null,
             'type'         => $_GET['type'] ?? null, // <- Lo lee directo de la URL
             'sort'         => $_GET['sort'] ?? 'name-asc',
@@ -151,13 +158,14 @@ class PublicController {
             // Si hay búsqueda por texto, priorizamos eso y limpiamos categoría/marca
             $filters['category'] = null;
             $filters['brand'] = null;
+            $filters['material'] = null;
         } else {
             // Si no hay búsqueda por texto, revisamos los filtros de la barra lateral o del home
             if (isset($_GET['filter_choice']) && !empty($_GET['filter_choice'])) {
                 $choice = $_GET['filter_choice'];
                 
                 // Opción A: Se seleccionó CATEGORÍA y MARCA desde el sidebar (ej: "cat-1-brand-5")
-                if (strpos($choice, 'cat-') === 0 && strpos($choice, '-brand-') !== false) {
+                if (strpos($choice, 'cat-') === 0 && (strpos($choice, '-brand-') ) !== false) {
                     $parts = explode('-brand-', $choice);
                     $filters['category'] = (int) str_replace('cat-', '', $parts[0]);
                     $filters['brand'] = (int) $parts[1];
@@ -205,6 +213,7 @@ class PublicController {
 
         $categoryModel = new Category($this->db);
         $brandModel = new Brand($this->db);
+        $materialModel = new Material($this->db);
         $headerCategories = $this->categoryModel->getAllSimple();
 
         $product = $this->productModel->getById((int)$id);
@@ -261,6 +270,7 @@ class PublicController {
         $copyrightText = $this->siteContentModel->getValue('copyright');
         $categoryModel = new Category($this->db);
         $brandModel = new Brand($this->db);
+        $materialModel = new Material($this->db);
         $headerCategories = $this->categoryModel->getAllSimple();
         $activePage = 'blog'; 
         // ----------------------------------------------------------------

@@ -270,7 +270,34 @@ if ($segments[0] === 'auth') {
 
     if ($section === 'products' && $action === 'toggle-visibility') {
             $controller->toggleProductVisibility(); exit;
-        }
+    }
+    // Dentro de if ($_SERVER['REQUEST_METHOD'] === 'POST'):
+    if ($section === 'materials' && $action === 'toggle-visibility') {
+        $controller->toggleMaterialVisibility(); exit;
+    }
+
+    // Junto a storeCategory / storeBrand:
+    if ($section === 'storeMaterial') { $controller->storeMaterial(); exit; }
+
+    // Junto a create:
+    if ($section === 'materials' && $action === 'create') {
+        $controller->createMaterial(); exit;
+    }
+
+    // Junto a productCount:
+    if ($section === 'materials' && $action === 'productCount' && $id) {
+        $controller->getMaterialProductCount($id); exit;
+    }
+
+    // Junto a edit:
+    if ($section === 'materials' && $action === 'edit' && $id) {
+        $controller->editMaterial($id); exit;
+    }
+
+    // Junto a delete:
+    if ($section === 'materials' && $action === 'delete' && $id) {
+        $controller->deleteMaterial($id); exit;
+    }
     
     
 
