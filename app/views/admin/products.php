@@ -58,6 +58,9 @@
                                 <div class="lvr-code-line">SKU: <?php echo htmlspecialchars($product['sku']); ?></div>
                                 <div class="lvr-date-line">
                                     <?php echo htmlspecialchars($product['category_name']); ?> · <?php echo htmlspecialchars($product['brand_name']); ?>
+                                    <?php if (!empty($product['material_name'])): ?>
+                                        · <?php echo htmlspecialchars($product['material_name']); ?>
+                                    <?php endif; ?>
                                 </div>
                             </div>
                         </a>
@@ -219,6 +222,9 @@
                             <div class="lvr-code-line">SKU: <?php echo htmlspecialchars($product['sku']); ?></div>
                             <div class="lvr-date-line">
                                 <?php echo htmlspecialchars($product['category_name']); ?> · <?php echo htmlspecialchars($product['brand_name']); ?>
+                                <?php if (!empty($product['material_name'])): ?>
+                                    · <?php echo htmlspecialchars($product['material_name']); ?>
+                                <?php endif; ?>
                             </div>
                         </a>
 

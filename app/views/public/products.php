@@ -20,16 +20,19 @@
         $filterSummary['search'] = $chipSearch;                    // texto literal (RF-6)
     }
     if ($chipFilter !== '') {
-        // Resolver "cat-X" / "cat-X-brand-Y" con $categoriesWithData; formateo del sidebar.
         $chipResolved = null;
-        if (preg_match('/^cat-(\d+)(?:-brand-(\d+))?$/', (string) $chipFilter, $_m)) {
+        if (preg_match('/^cat-(\d+)(?:-(brand|material)-(\d+))?$/', (string) $chipFilter, $_m)) {
             foreach ($categoriesWithData as $_cat) {
                 if ((string) $_cat['id_category'] !== $_m[1]) continue;
-                if (($_m[2] ?? '') === '') {
+                if (empty($_m[2])) {
                     $chipResolved = $_cat['name'];
-                } else {
+                } elseif ($_m[2] === 'material') {
+                    foreach ($_cat['materials'] as $_mat) {
+                        if ((string) $_mat['id_material'] === $_m[3]) { $chipResolved = $_mat['name']; break; }
+                    }
+                } elseif ($_m[2] === 'brand') {
                     foreach ($_cat['brands'] as $_br) {
-                        if ((string) $_br['id_brand'] === $_m[2]) { $chipResolved = $_br['name']; break; }
+                        if ((string) $_br['id_brand'] === $_m[3]) { $chipResolved = $_br['name']; break; }
                     }
                 }
                 break;
@@ -81,18 +84,53 @@
                 ?>
 
                 <div class="mobile-select-group">
-                    <label>Categoría:</label>
-                    <select onchange="submitMobileFilter(this.value)" class="mobile-select">
-                        <option value="" <?php echo $current_filter === '' ? 'selected' : ''; ?>>- Seleccionar Categoría -</option>
-                        <?php foreach($categoriesWithData as $category): ?>
+                    <label>Material / Marca:</label>
+                    <select onchange="submitMobileFilter(this.value)" class="mobile-select" <?php echo ($current_cat_id === null) ? 'disabled' : ''; ?>>
+                        <?php if ($current_cat_id === null): ?>
+                            <option value="">Selecciona una categoría primero</option>
+                        <?php else: ?>
+                            <option value="cat-<?php echo $current_cat_id; ?>">Todos</option>
+                            
                             <?php 
-                                $cat_val = "cat-" . $category['id_category']; 
-                                $is_selected = ($current_cat_id == $category['id_category']);
+                            $selectedCategoryData = null;
+                            foreach($categoriesWithData as $cat) {
+                                if ($cat['id_category'] == $current_cat_id) {
+                                    $selectedCategoryData = $cat;
+                                    break;
+                                }
+                            }
                             ?>
-                            <option value="<?php echo $cat_val; ?>" <?php echo $is_selected ? 'selected' : ''; ?>>
-                                <?php echo htmlspecialchars(ucwords(strtolower($category['name']))); ?>
-                            </option>
-                        <?php endforeach; ?>
+
+                            <?php if ($selectedCategoryData): ?>
+                                <?php if (!empty($selectedCategoryData['materials'])): ?>
+                                    <optgroup label="Material">
+                                        <?php foreach($selectedCategoryData['materials'] as $mat): ?>
+                                            <?php 
+                                                $mat_val = "cat-" . $current_cat_id . "-material-" . $mat['id_material'];
+                                                $is_mat_selected = ($current_filter === $mat_val);
+                                            ?>
+                                            <option value="<?php echo $mat_val; ?>" <?php echo $is_mat_selected ? 'selected' : ''; ?>>
+                                                <?php echo htmlspecialchars(ucwords(strtolower($mat['name']))); ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </optgroup>
+                                <?php endif; ?>
+
+                                <?php if (!empty($selectedCategoryData['brands'])): ?>
+                                    <optgroup label="Marca">
+                                        <?php foreach($selectedCategoryData['brands'] as $brand): ?>
+                                            <?php 
+                                                $brand_val = "cat-" . $current_cat_id . "-brand-" . $brand['id_brand'];
+                                                $is_brand_selected = ($current_filter === $brand_val);
+                                            ?>
+                                            <option value="<?php echo $brand_val; ?>" <?php echo $is_brand_selected ? 'selected' : ''; ?>>
+                                                <?php echo htmlspecialchars(ucwords(strtolower($brand['name']))); ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </optgroup>
+                                <?php endif; ?>
+                            <?php endif; ?>
+                        <?php endif; ?>
                     </select>
                 </div>
 
@@ -201,33 +239,54 @@
                                             name="filter_choice" 
                                             value="<?php echo $category_value; ?>" 
                                             id="<?php echo $category_value; ?>-all"
-                                            <?php echo ($current_filter === $category_value) ? 'checked' : ''; ?>
-                                            onchange="submitSidebarFilter()"
-                                        > 
+                                            <?php echo ($current_filter === $category_value) ? 'checked' : ''; ?>> 
                                         <label for="<?php echo $category_value; ?>-all">
-                                            - Todos los materiales -
+                                            - Todos -
                                         </label>
                                     </div>
 
-                                    <?php foreach($category['brands'] as $brand): ?>
-                                        <?php 
-                                            $brand_value = "cat-" . $category['id_category'] . "-brand-" . $brand['id_brand'];
-                                            $is_brand_checked = ($current_filter === $brand_value);
-                                        ?>
-                                        <div class="filter-option">
-                                            <input 
-                                                type="radio" 
-                                                name="filter_choice" 
-                                                value="<?php echo $brand_value; ?>" 
-                                                id="<?php echo $brand_value; ?>"
-                                                <?php echo $is_brand_checked ? 'checked' : ''; ?>
-                                                onchange="submitSidebarFilter()">
-                                            
-                                            <label for="<?php echo $brand_value; ?>">
-                                                <?php echo htmlspecialchars(ucwords(strtolower($brand['name']))); ?>
-                                            </label>
-                                        </div>
-                                    <?php endforeach; ?>
+                                    <?php if (!empty($category['materials'])): ?>
+                                        <span class="filter-sublabel">Material</span>
+                                        <?php foreach($category['materials'] as $material): ?>
+                                            <?php 
+                                                $material_value = "cat-" . $category['id_category'] . "-material-" . $material['id_material'];
+                                                $is_material_checked = ($current_filter === $material_value);
+                                            ?>
+                                            <div class="filter-option">
+                                                <input 
+                                                    type="radio" 
+                                                    name="filter_choice" 
+                                                    value="<?php echo $material_value; ?>" 
+                                                    id="<?php echo $material_value; ?>"
+                                                    <?php echo $is_material_checked ? 'checked' : ''; ?>>
+                                                <label for="<?php echo $material_value; ?>">
+                                                    <?php echo htmlspecialchars(ucwords(strtolower($material['name']))); ?>
+                                                </label>
+                                            </div>
+                                        <?php endforeach; ?>
+                                    <?php endif; ?>
+
+                                    <?php if (!empty($category['brands'])): ?>
+                                        <span class="filter-sublabel">Marca</span>
+                                        <?php foreach($category['brands'] as $brand): ?>
+                                            <?php 
+                                                $brand_value = "cat-" . $category['id_category'] . "-brand-" . $brand['id_brand'];
+                                                $is_brand_checked = ($current_filter === $brand_value);
+                                            ?>
+                                            <div class="filter-option">
+                                                <input 
+                                                    type="radio" 
+                                                    name="filter_choice" 
+                                                    value="<?php echo $brand_value; ?>" 
+                                                    id="<?php echo $brand_value; ?>"
+                                                    <?php echo $is_brand_checked ? 'checked' : ''; ?>>
+                                                <label for="<?php echo $brand_value; ?>">
+                                                    <?php echo htmlspecialchars(ucwords(strtolower($brand['name']))); ?>
+                                                </label>
+                                            </div>
+                                        <?php endforeach; ?>
+                                    <?php endif; ?>
+
                                 </div>
                             </div>
                         </div>

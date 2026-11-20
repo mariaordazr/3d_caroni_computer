@@ -137,8 +137,7 @@ class PublicController {
         $materialModel = new Material($this->db);
         $brandModel = new Brand($this->db);
         
-        $categoriesWithData = $this->productModel->getCategoriesWithBrands();
-        $categoriesWithMat = $this->productModel->getCategoriesWithMaterials();
+        $categoriesWithData = $this->productModel->getCategoriesWithFilters();
         $headerCategories = $this->categoryModel->getAllSimple();
         $categories = $this->categoryModel->getAll(); // Lo mantenemos para el resumen, si lo vuelves a activar
 
@@ -160,24 +159,31 @@ class PublicController {
             $filters['brand'] = null;
             $filters['material'] = null;
         } else {
-            // Si no hay búsqueda por texto, revisamos los filtros de la barra lateral o del home
-            if (isset($_GET['filter_choice']) && !empty($_GET['filter_choice'])) {
-                $choice = $_GET['filter_choice'];
-                
-                // Opción A: Se seleccionó CATEGORÍA y MARCA desde el sidebar (ej: "cat-1-brand-5")
-                if (strpos($choice, 'cat-') === 0 && (strpos($choice, '-brand-') ) !== false) {
-                    $parts = explode('-brand-', $choice);
-                    $filters['category'] = (int) str_replace('cat-', '', $parts[0]);
-                    $filters['brand'] = (int) $parts[1];
-                }
-                // Opción B: Se seleccionó SOLO una MARCA desde el home (ej: "brand-5")
-                else if (strpos($choice, 'brand-') === 0) {
-                    $filters['brand'] = (int) str_replace('brand-', '', $choice);
-                }
-                // Opción C: Se seleccionó SOLO una CATEGORÍA (ej: "cat-1")
-                else if (strpos($choice, 'cat-') === 0) {
-                    $filters['category'] = (int) str_replace('cat-', '', $choice);
-                }
+            $choice = $_GET['filter_choice'];
+
+            // Opción A1: Categoría + Material (ej: "cat-1-material-3")
+            if (strpos($choice, 'cat-') === 0 && strpos($choice, '-material-') !== false) {
+                $parts = explode('-material-', $choice);
+                $filters['category'] = (int) str_replace('cat-', '', $parts[0]);
+                $filters['material'] = (int) $parts[1];
+            }
+            // Opción A2: Categoría + Marca (ej: "cat-1-brand-5")
+            else if (strpos($choice, 'cat-') === 0 && strpos($choice, '-brand-') !== false) {
+                $parts = explode('-brand-', $choice);
+                $filters['category'] = (int) str_replace('cat-', '', $parts[0]);
+                $filters['brand'] = (int) $parts[1];
+            }
+            // Opción B1: Solo Material (ej: "material-3")
+            else if (strpos($choice, 'material-') === 0) {
+                $filters['material'] = (int) str_replace('material-', '', $choice);
+            }
+            // Opción B2: Solo Marca (ej: "brand-5")
+            else if (strpos($choice, 'brand-') === 0) {
+                $filters['brand'] = (int) str_replace('brand-', '', $choice);
+            }
+            // Opción C: Solo Categoría (ej: "cat-1")
+            else if (strpos($choice, 'cat-') === 0) {
+                $filters['category'] = (int) str_replace('cat-', '', $choice);
             }
         }
 
@@ -221,7 +227,7 @@ class PublicController {
 
         // --- NUEVA LÓGICA DE VISIBILIDAD ---
         // Chequeamos si el producto, su categoría o su marca están ocultos
-        if (!$product || $product['product_hidden'] == 1 || $product['category_hidden'] == 1 || $product['brand_hidden'] == 1) {
+        if (!$product || $product['product_hidden'] == 1 || $product['category_hidden'] == 1 || $product['brand_hidden'] == 1 || (!empty($product['material']) && $product['material_hidden'] == 1)) {
             http_response_code(403); // Forbidden
             
             $reason = "";
