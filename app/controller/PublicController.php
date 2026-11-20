@@ -97,7 +97,7 @@ class PublicController {
         if (empty($featuredMaterialIds)) {
              $featuredMaterialIds = [1, 2, 3, 4, 5, 6, 7]; // IDs por defecto
         }
-        $featureMaterials = $this->brandModel->getFeaturedMaterials($featuredMaterialIds);
+        $featuredMaterials = $this->brandModel->getFeaturedMaterials($featuredMaterialIds);
 
         $allOffers = $this->offerModel->getAll();
         $offers = array_slice($allOffers, 0, 10); // Solo los primeros 10
