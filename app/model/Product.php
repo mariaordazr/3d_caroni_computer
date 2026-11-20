@@ -308,7 +308,7 @@ class Product {
     {
         $query = "SELECT 
                     p.id_product, p.sku, p.name, 
-                    IF(p.`hidden` = 1 OR c.`hidden` = 1 OR b.`hidden` = 1 OR m.`hidden` = 1) as `hidden`,
+                    IF(p.`hidden` = 1 OR c.`hidden` = 1 OR b.`hidden` = 1 OR COALESCE(m.`hidden`, 0) = 1, 1, 0) as `hidden`,
                     m.name AS material_name,
                     p.description, p.ext_description, p.certification,
                     p.video_title, p.video_description, p.video_url,
