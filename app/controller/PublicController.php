@@ -91,7 +91,7 @@ class PublicController {
 
         // 4. MARCAS DESTACADAS
         // Usamos el método que obtiene TODOS los IDs ordenados para esta clave
-        $featuredMaterialIds = $this->siteContentModel->getOrderedIdsByKey($featuredMaterialKey);
+        $featuredMaterialIds = $this->siteContentModel->getOrderedIdsByKey($featuredMaterialsKey);
         
         // Usar IDs guardadas o un array por defecto si no se han configurado
         if (empty($featuredMaterialIds)) {
