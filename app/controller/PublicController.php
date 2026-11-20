@@ -61,7 +61,6 @@ class PublicController {
 
 
         $categoryModel = new Category($this->db);
-        $brandModel = new Brand($this->db);
         $materialModel = new Material($this->db);
         $headerCategories = $this->categoryModel->getAllSimple();
         // --- Fin de Cargar datos para el Header ---
@@ -97,7 +96,7 @@ class PublicController {
         if (empty($featuredMaterialIds)) {
              $featuredMaterialIds = [1, 2, 3, 4, 5, 6, 7]; // IDs por defecto
         }
-        $featuredMaterials = $this->brandModel->getFeaturedMaterials($featuredMaterialIds);
+        $featuredMaterials = $this->materialModel->getFeaturedMaterials($featuredMaterialIds);
 
         $allOffers = $this->offerModel->getAll();
         $offers = array_slice($allOffers, 0, 10); // Solo los primeros 10
