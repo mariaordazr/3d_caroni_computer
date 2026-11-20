@@ -34,6 +34,7 @@ class AdminController {
         $this->db = $connection;
         $this->productModel = new Product($this->db);
         $this->categoryModel = new Category($this->db);
+        $this->brandModel = new Brand($this->db);
         $this->materialModel = new Material($this->db);
         $this->userModel = new User($this->db);
         $this->offerModel = new Offer($this->db);
@@ -1223,6 +1224,7 @@ class AdminController {
         // Asegúrate de tener los require_once al inicio del archivo
         $offerModel = new Offer($this->db);
         $categoryModel = new Category($this->db);
+        $brandModel = new Brand($this->db);
         $materialModel = new Material($this->db);
 
         // Obtener datos usando el NUEVO método y guardarlos en la variable $products

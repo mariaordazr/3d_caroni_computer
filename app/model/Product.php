@@ -218,7 +218,7 @@ class Product {
                     )";
                     
                     // Parámetros SOLO para el WHERE
-                    for ($i = 0; $i < 5; $i++) { 
+                    for ($i = 0; $i < 6; $i++) { 
                         $whereParams[] = $likeAnywhere; 
                         $whereTypes .= "s"; 
                     }
@@ -267,7 +267,7 @@ class Product {
                 $conditions[] = "np.id_new_product IS NOT NULL";
         }
 
-        $conditions[] = "p.`hidden` = 0 AND c.`hidden` = 0 AND b.`hidden` = 0 AND m.`hidden` = 0";
+        $conditions[] = "p.`hidden` = 0 AND c.`hidden` = 0 AND b.`hidden` = 0 AND (m.id_material IS NULL OR m.`hidden` = 0)";
         
         if (!empty($conditions)) { 
             $query .= " WHERE " . implode(" AND ", $conditions); 
@@ -307,30 +307,29 @@ class Product {
     public function getAll(array $filters = []): array
     {
         $query = "SELECT 
-                    p.id_product, p.sku, p.name, 
-                    IF(p.`hidden` = 1 OR c.`hidden` = 1 OR b.`hidden` = 1 OR COALESCE(m.`hidden`, 0) = 1, 1, 0) as `hidden`,
-                    m.name AS material_name,
-                    p.description, p.ext_description, p.certification,
-                    p.video_title, p.video_description, p.video_url,
-                    p.price AS original_price, p.stock,
-                    p.warranty, p.`condition`,
-                    c.name AS category_name,
-                    b.name AS brand_name,
-                    m.material AS material_name,
-                    p.category,
-                    p.brand,
-                    p.material,
-                    pi.file_name,
-                    o.price AS offer_price,
-                    np.id_new_product,
-                    p.created_at, p.updated_at
-                FROM products p
-                LEFT JOIN categories c ON p.category = c.id_category
-                LEFT JOIN brands b ON p.brand = b.id_brand
-                LEFT JOIN materials m ON p.material = m.id_material
-                LEFT JOIN offers o ON p.id_product = o.product
-                LEFT JOIN new_products np ON p.id_product = np.product
-                LEFT JOIN product_images pi ON p.id_product = pi.product AND pi.display_order = 1";
+            p.id_product, p.sku, p.name, 
+            IF(p.`hidden` = 1 OR c.`hidden` = 1 OR b.`hidden` = 1 OR COALESCE(m.`hidden`, 0) = 1, 1, 0) as `hidden`,
+            p.description, p.ext_description, p.certification,
+            p.video_title, p.video_description, p.video_url,
+            p.price AS original_price, p.stock,
+            p.warranty, p.`condition`,
+            c.name AS category_name,
+            b.name AS brand_name,
+            m.name AS material_name,
+            p.category,
+            p.brand,
+            p.material,
+            pi.file_name,
+            o.price AS offer_price,
+            np.id_new_product,
+            p.created_at, p.updated_at
+        FROM products p
+        LEFT JOIN categories c ON p.category = c.id_category
+        LEFT JOIN brands b ON p.brand = b.id_brand
+        LEFT JOIN materials m ON p.material = m.id_material
+        LEFT JOIN offers o ON p.id_product = o.product
+        LEFT JOIN new_products np ON p.id_product = np.product
+        LEFT JOIN product_images pi ON p.id_product = pi.product AND pi.display_order = 1";
 
         $conditions = [];
         $params = [];
