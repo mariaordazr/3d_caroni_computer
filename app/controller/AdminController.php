@@ -2373,7 +2373,7 @@ class AdminController {
         $sliderKey = 'home_slider';
         $bannerKey = 'home_banner';
         $featuredCategoriesKey = 'home_category';
-        $featuredBrandsKey = 'home_brand';
+        $featuredBrandsKey = 'home_material';
 
         $categories = $this->categoryModel->getAllSimple();
         $brands = $this->brandModel->getAllSimple();
@@ -2547,20 +2547,20 @@ class AdminController {
         }
 
         // ----------------------------------------------------
-        // C. MARCAS DESTACADAS
+        // C. MATERIALES DESTACADOS
         // ----------------------------------------------------
-        if (isset($_POST['featured_brands'])) { 
-            $featuredBrands = $_POST['featured_brands'] ?? [];
-            $keyBrands = 'home_brand';
+        if (isset($_POST['featured_materials'])) { 
+            $featuredMaterials = $_POST['featured_materials'] ?? [];
+            $keyMaterials = 'home_material';
 
-            if (count($featuredBrands) !== 7) {
+            if (count($featuredMaterials) !== 7) {
                 $success = false; 
                 $error_message .= 'Debe seleccionar exactamente 7 marcas. ';
             } else {
-                $this->siteContentModel->deleteContentByKey($keyBrands);
+                $this->siteContentModel->deleteContentByKey($keyMaterials);
                 $order = 1;
-                foreach ($featuredBrands as $brandId) {
-                    $this->siteContentModel->saveOrUpdateContent($keyBrands, (string)$brandId, $order++);
+                foreach ($featuredMaterials as $materialId) {
+                    $this->siteContentModel->saveOrUpdateContent($keyMaterials, (string)$materialId, $order++);
                 }
             }
         }
