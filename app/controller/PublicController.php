@@ -69,7 +69,7 @@ class PublicController {
         $sliderKey = 'home_slider';
         $bannerKey = 'home_banner';
         $featuredCategoriesKey = 'home_category';
-        $featuredBrandsKey = 'home_brand';
+        $featuredMaterialsKey = 'home_material';
 
         // 1. IMÁGENES DEL SLIDER
         $sliderContent = $this->siteContentModel->getOrderedContentByPrefix($sliderKey);
@@ -91,13 +91,13 @@ class PublicController {
 
         // 4. MARCAS DESTACADAS
         // Usamos el método que obtiene TODOS los IDs ordenados para esta clave
-        $featuredBrandIds = $this->siteContentModel->getOrderedIdsByKey($featuredBrandsKey);
+        $featuredMaterialIds = $this->siteContentModel->getOrderedIdsByKey($featuredMaterialKey);
         
         // Usar IDs guardadas o un array por defecto si no se han configurado
-        if (empty($featuredBrandIds)) {
-             $featuredBrandIds = [1, 2, 3, 4, 5, 6, 7]; // IDs por defecto
+        if (empty($featuredMaterialIds)) {
+             $featuredMaterialIds = [1, 2, 3, 4, 5, 6, 7]; // IDs por defecto
         }
-        $featuredBrands = $this->brandModel->getFeaturedBrands($featuredBrandIds);
+        $featureMaterials = $this->brandModel->getFeaturedMaterials($featuredMaterialIds);
 
         $allOffers = $this->offerModel->getAll();
         $offers = array_slice($allOffers, 0, 10); // Solo los primeros 10
