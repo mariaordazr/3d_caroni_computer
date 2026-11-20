@@ -128,7 +128,7 @@
                                         </picture>
                                     </div>
                                     <div class="product-card__content">
-                                        <p class="info__meta"><?php echo htmlspecialchars($newProduct['category_name']); ?> · <?php echo htmlspecialchars($newProduct['brand_name']); ?></p>
+                                        <p class="info__meta"><?php echo htmlspecialchars($newProduct['category_name']); ?> · <?php echo htmlspecialchars($newProduct['material_name']); ?></p>
                                         <p class="product-card__title"><?php echo htmlspecialchars($newProduct['name']); ?></p>
                                         <div class="product-card__price">
                                             
@@ -157,32 +157,32 @@
     <div class="container overlap-container1">
 
         <div class="brand-grid" tabindex="0" role="region" aria-label="Materiales destacadas">
-            <?php foreach ($featuredBrands as $brand): ?>
-                <a href="/productos?search=&filter_choice=brand-<?php echo $brand['id_brand']; ?>" class="brand-card">
+            <?php foreach ($featuredMaterials as $material): ?>
+                <a href="/productos?search=&filter_choice=material-<?php echo $material['id_material']; ?>" class="brand-card">
                     <div class="brand-card__image">
-                        <?php if (!empty($brand['image']) || $brand['image']!='default.jpg'): ?>
+                        <?php if (!empty($material['image']) || $material['image']!='default.jpg'): ?>
                             <?php 
-                                $originalFile = $brand['image']; // ej: prod_123.jpg
+                                $originalFile = $material['image']; // ej: prod_123.jpg
                                 $nameWithoutExt = pathinfo($originalFile, PATHINFO_FILENAME); // ej: prod_123
                                 $smallFile = 'small_' . $nameWithoutExt . '.webp'; // ej: small_prod_123.webp
                             ?>
                             <picture>
-                                <source srcset="/assets/uploads/brands/<?php echo rawurlencode($smallFile); ?>">
-                                <img src="/assets/uploads/brands/<?php echo rawurlencode($originalFile); ?>"
-                                alt="<?php echo htmlspecialchars($brand['name']); ?>"
+                                <source srcset="/assets/uploads/materials/<?php echo rawurlencode($smallFile); ?>">
+                                <img src="/assets/uploads/materials/<?php echo rawurlencode($originalFile); ?>"
+                                alt="<?php echo htmlspecialchars($material['name']); ?>"
                                 loading="lazy" 
                                 width="300" height="300"
                                 >
                             </picture>
                         <?php else: ?>
-                            <img src="/assets/uploads/brands/default.jpg"
-                            alt="<?php echo htmlspecialchars($brand['name']); ?>"
+                            <img src="/assets/uploads/materials/default.jpg"
+                            alt="<?php echo htmlspecialchars($material['name']); ?>"
                             loading="lazy" 
                             width="300" height="300" 
                             >
                         <?php endif; ?>
                     </div>
-                    <p class="brand-card__title"><?php echo htmlspecialchars(ucwords(strtolower($brand['name']))); ?></p>
+                    <p class="brand-card__title"><?php echo htmlspecialchars(ucwords(strtolower($material['name']))); ?></p>
                 </a>
             <?php endforeach; ?>
         </div>
@@ -236,7 +236,7 @@
                                         </picture>
                                     </div>
                                     <div class="product-card__content">
-                                        <p class="info__meta"><?php echo htmlspecialchars($offer['category_name']); ?> · <?php echo htmlspecialchars($offer['brand_name']); ?></p>
+                                        <p class="info__meta"><?php echo htmlspecialchars($offer['category_name']); ?> · <?php echo htmlspecialchars($offer['material_name']); ?></p>
                                         <p class="product-card__title"><?php echo htmlspecialchars($offer['name']); ?></p>
                                         
                                         <?php if ($showPrice=='1'): ?>
