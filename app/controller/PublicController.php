@@ -151,14 +151,13 @@ class PublicController {
             'sort'         => $_GET['sort'] ?? 'name-asc',
         ];
 
-        // --- LÓGICA DE FILTROS ---
+        /// --- LÓGICA DE FILTROS ---
         if (!empty($filters['search'])) {
-            // Si hay búsqueda por texto, priorizamos eso y limpiamos categoría/marca
             $filters['category'] = null;
             $filters['brand'] = null;
             $filters['material'] = null;
-        } else {
-            $choice = $_GET['filter_choice'];
+        } else if (!empty($_GET['filter_choice'])) {
+            $choice = (string) $_GET['filter_choice'];
 
             // Opción A1: Categoría + Material (ej: "cat-1-material-3")
             if (strpos($choice, 'cat-') === 0 && strpos($choice, '-material-') !== false) {
