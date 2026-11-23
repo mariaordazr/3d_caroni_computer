@@ -376,7 +376,12 @@
                                             </div>
                                             <div class="product-card__content">
                                                 <p class="info__meta">
-                                                    <?php echo htmlspecialchars($product['category_name']); ?> - <?php echo htmlspecialchars($product['brand_name']); ?>
+                                                    <?php echo htmlspecialchars($product['category_name']); ?> ·
+                                                    <?php if (!empty($product['material_name'])): ?>
+                                                        <?php echo htmlspecialchars($product['material_name']); ?>
+                                                    <?php else: ?>
+                                                        <?php echo htmlspecialchars($product['brand_name']); ?>
+                                                    <?php endif; ?>
                                                 </p>
                                                 <p class="product-card__title"><a class="product-card__link" href="/producto/<?php echo $product['id_product']; ?>"><?php echo htmlspecialchars($product['name']); ?></a>
                                                     <?php

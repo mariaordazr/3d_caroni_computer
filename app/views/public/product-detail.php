@@ -138,7 +138,14 @@
                 <!-- Columna Derecha: Información -->
                 <div class="product-info">
                     <div class="lvr-info-header">
-                        <span class="lvr-category-brand"><?php echo mb_strtoupper($product['category_name'] ?? 'CATEGORÍA') . ' · CERTIFICADO'; ?></span>
+                        <span class="lvr-category-brand">
+                            <?php echo mb_strtoupper($product['category_name'] ?? '')?> · 
+                            <?php if (!empty($product['material_name'])): ?> 
+                                <?php echo mb_strtoupper($product['material_name'])?>
+                            <?php else:?>
+                                <?php echo mb_strtoupper($product['brand_name'])?>
+                            <?php endif;?>
+                        </span>
                     </div>
                     
                     <h1 class="product-info__title"><?php echo htmlspecialchars($product['name']); ?></h1>
