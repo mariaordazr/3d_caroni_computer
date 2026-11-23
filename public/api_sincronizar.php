@@ -13,17 +13,10 @@ $db = "";
 $domain = $_SERVER['HTTP_HOST'];
 
 // Lógica condicional
-if (strpos($domain, 'corporaciongruponet.com') !== false) {
-    $user = "corpora6_admin";
-    $pass = "!vz1Y7TouO8F$6";
-    $db = "corpora6_gruponet";
-    date_default_timezone_set("America/Lima");
-} else {
-    $user = "caronico_admin";
-    $pass = "B20s9#Wu-vyJM8";
-    $db = "caronico_3d";
-    date_default_timezone_set("America/Caracas");
-}
+$user = "caronico_admin";
+$pass = "T4sQcjLVx2QWRA3";
+$db = "caronico_3d";
+date_default_timezone_set("America/Caracas");
 
 $TOKEN_SECRETO = "VALERY_A2141_SECURE";
 
