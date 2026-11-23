@@ -71,7 +71,8 @@ class Offer
                 INNER JOIN products p ON o.product = p.id_product
                 LEFT JOIN categories c ON p.category = c.id_category
                 LEFT JOIN brands b ON p.brand = b.id_brand
-                LEFT JOIN product_images pi ON p.id_product = pi.product";
+                LEFT JOIN product_images pi ON p.id_product = pi.product
+                LEFT JOIN product_images pi ON p.id_product = pi.product AND pi.display_order = 1";
 
         $conditions = [];
         $params = [];
@@ -190,7 +191,7 @@ class Offer
               LEFT JOIN categories c ON p.category = c.id_category
               LEFT JOIN brands b ON p.brand = b.id_brand
               LEFT JOIN materials m ON p.material = m.id_material
-              LEFT JOIN product_images pi ON p.id_product = pi.product";
+              LEFT JOIN product_images pi ON p.id_product = pi.product AND pi.display_order = 1";
         
         $conditions = [];
         $params = [];
