@@ -59,7 +59,7 @@
                 </button>
             </form>
 
-            <a class="lvr-header__wa" href="https://wa.me/<?php echo htmlspecialchars(preg_replace('/\D+/', '', $contactPhone)); ?>?text=Hola equipo de <?php echo htmlspecialchars($copyrightText);?>, tengo una consulta" target="_blank" rel="noopener"><i class='bx bxl-whatsapp' aria-hidden="true"></i><span>WhatsApp</span></a>
+            <a class="lvr-header__wa" href="https://wa.me/<?php echo htmlspecialchars(preg_replace('/\D+/', '', $contactPhone)); ?>?text=Hola equipo de Caroni Computer Impresiones 3D, tengo una consulta" target="_blank" rel="noopener"><i class='bx bxl-whatsapp' aria-hidden="true"></i><span>WhatsApp</span></a>
 
             <div class="header-mobile-toggle" id="mobile-menu-button">
                 <i class='bx bx-menu' aria-hidden="true"></i>
