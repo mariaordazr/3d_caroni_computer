@@ -76,7 +76,7 @@ class NewProduct
         $query = "SELECT 
                 p.id_product, p.sku, p.name, p.price AS original_price, p.stock,
                 p.description, p.ext_description, p.warranty, p.`condition`, p.`hidden`,
-                c.name AS category_name,
+                c.name AS category_name, m.name AS material_name,
                 b.name AS brand_name,
                 pi.file_name,
                 o.price AS offer_price,
@@ -86,6 +86,7 @@ class NewProduct
               INNER JOIN products p ON np.product = p.id_product
               LEFT JOIN categories c ON p.category = c.id_category
               LEFT JOIN brands b ON p.brand = b.id_brand
+              LEFT JOIN materials m ON p.material = m.id_material
               LEFT JOIN product_images pi ON p.id_product = pi.product
               LEFT JOIN offers o ON p.id_product = o.product";
         
