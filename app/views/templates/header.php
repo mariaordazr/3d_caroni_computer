@@ -100,7 +100,7 @@
                 <ul class="nav-list">
                     <li class="nav-item"><a href="/blog" class="nav-link">Blog</a></li>
                     <li class="nav-item"><a href="/nosotros" class="nav-link">Nosotros</a></li>
-                    <li class="nav-item"><a href="/servicios" class="nav-link">Servicios</a></li>
+                    <!-- <li class="nav-item"><a href="/servicios" class="nav-link">Servicios</a></li> -->
                     <li class="nav-item"><a href="/envios" class="nav-link">Envíos</a></li>
                 </ul>
             </nav>
