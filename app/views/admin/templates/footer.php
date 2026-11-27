@@ -75,7 +75,7 @@
     <?php elseif (isset($active_menu) && $active_menu === 'materials'): ?>
         <script src="/assets/admin/js/materials.js" defer></script>
     <?php elseif (isset($active_menu) && $active_menu == 'blogs'):?>
-        <script src="/assets/admin/js/blog-posts.js" defer></script>
+        <script src="/assets/admin/js/blog-posts.js?v=2" defer></script>
     <?php elseif (isset($active_menu) && in_array($active_menu, ['receipts', 'receipts-settings'])):?>
         <script src="/assets/admin/js/receipts.js" defer></script>
     <?php elseif (isset($active_menu) && $active_menu === 'users' && $pageType == 'crud'): ?>

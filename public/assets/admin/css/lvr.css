@@ -4326,3 +4326,13 @@ html[data-view="grid"] #btn-view-grid {
         width: auto !important;
     }
 }
+
+.blog-editor-wrapper .ql-editor iframe.ql-video {
+    width: 100%;
+    max-width: 560px;
+    aspect-ratio: 16 / 9;
+    height: auto;
+    border-radius: 10px;
+    display: block;
+    margin: 1rem auto;
+}

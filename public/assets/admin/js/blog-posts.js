@@ -1,8 +1,30 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // 1. INICIALIZAR QUILL.JS (Solo si estamos en la vista de Crear/Editar)
     const editorContainer = document.querySelector('#editor-container');
     
     if (editorContainer) {
+        const Video = Quill.import('formats/video');
+        const originalSanitize = Video.sanitize;
+
+        Video.sanitize = function(url) {
+            const raw = originalSanitize ? originalSanitize.call(this, url) : url;
+            const cleanUrl = String(raw || '').trim();
+            const ytMatch = cleanUrl.match(
+                /(?:youtube\.com\/(?:shorts\/|watch\?v=|embed\/|live\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/
+            );
+            if (ytMatch && ytMatch[1]) {
+                return `https://www.youtube.com/embed/${ytMatch[1]}`;
+            }
+            return cleanUrl;
+        };
+
+        const originalCreate = Video.create;
+        Video.create = function(value) {
+            const node = originalCreate.call(this, value);
+            node.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
+            node.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture');
+            return node;
+        };
+
         var quill = new Quill('#editor-container', {
             theme: 'snow',
             placeholder: 'Empieza a escribir tu genialidad aquí...',
@@ -19,16 +41,23 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
-        // 2. MANEJAR EL ENVÍO DEL FORMULARIO
+        const contentInput = document.getElementById('blog_content');
+        const syncContent = () => {
+            if (contentInput) contentInput.value = quill.root.innerHTML;
+        };
+
+        // Sincronizar al cargar (útil en Editar) y en cada cambio
+        syncContent();
+        quill.on('text-change', syncContent);
+
         const blogForm = document.getElementById('blog-form');
         if (blogForm) {
             blogForm.addEventListener('submit', function(e) {
-                const contentInput = document.getElementById('blog_content');
-                // Extraemos todo el HTML generado
-                contentInput.value = quill.root.innerHTML; 
-                
-                // Validación: evitar enviar artículos vacíos
-                if (quill.getText().trim().length === 0) {
+                syncContent();
+                const hasText  = quill.getText().trim().length > 0;
+                const hasMedia = !!quill.root.querySelector('img, iframe');
+
+                if (!hasText && !hasMedia) {
                     e.preventDefault();
                     alert('El contenido del artículo no puede estar vacío.');
                 }

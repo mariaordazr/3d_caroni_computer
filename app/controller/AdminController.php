@@ -102,7 +102,12 @@ class AdminController {
 
             $params = session_get_cookie_params();
             setcookie(session_name(), session_id(), $cookieLifetime, $params["path"], $params["domain"], $params["secure"], $params["httponly"]);
+
         }
+        header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+        header('Cache-Control: post-check=0, pre-check=0', false);
+        header('Pragma: no-cache');
+        header('Expires: 0');
     }
 
     private function resizeToWebP($sourcePath, $destPath, $maxWidth = 400, $quality = 80) {

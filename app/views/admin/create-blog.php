@@ -47,8 +47,6 @@
             <div id="editor-container" class="blog-editor-wrapper"></div>
             <input type="hidden" name="content" id="blog_content">
         </div>
-        
-</section>
 
 <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
 
