@@ -210,16 +210,16 @@
                 <div class="footer-column">
                     <h3 class="footer-column__title">Servicios</h3>
                     <ul class="footer-column__list">
-                        <li><a href="https://wa.me/<?php echo htmlspecialchars(preg_replace('/\D+/', '', $contactPhone));?>?text=Hola equipo de Caroni Computer Impresiones 3D, me interesa el servicio electrónico" target="_blank">Servicio Electrónico</a></li>
-                        <li><a href="https://wa.me/<?php echo htmlspecialchars(preg_replace('/\D+/', '', $contactPhone));?>?text=Hola equipo de Caroni Computer Impresiones 3D, me interesa el servicio técnico" target="_blank">Servicio Técnico</a></li>
-                        <li><a href="https://wa.me/<?php echo htmlspecialchars(preg_replace('/\D+/', '', $contactPhone));?>?text=Hola equipo de Caroni Computer Impresiones 3D, me interesa la instalación y software" target="_blank">Instalación y Software</a></li>
+                        <li><a href="https://wa.me/<?php echo htmlspecialchars(preg_replace('/\D+/', '', $contactPhone));?>?text=Hola equipo de Caroni 3D, me interesa el servicio electrónico" target="_blank">Servicio Electrónico</a></li>
+                        <li><a href="https://wa.me/<?php echo htmlspecialchars(preg_replace('/\D+/', '', $contactPhone));?>?text=Hola equipo de Caroni 3D, me interesa el servicio técnico" target="_blank">Servicio Técnico</a></li>
+                        <li><a href="https://wa.me/<?php echo htmlspecialchars(preg_replace('/\D+/', '', $contactPhone));?>?text=Hola equipo de Caroni 3D, me interesa la instalación y software" target="_blank">Instalación y Software</a></li>
                     </ul>
                 </div>
                 <div class="footer-column">
                     <h3 class="footer-column__title">Sobre Nosotros</h3>
                     <ul class="footer-column__list">
-                        <li><a href="https://wa.me/<?php echo htmlspecialchars(preg_replace('/\D+/', '', $contactPhone));?>?text=Hola equipo de Caroni Computer Impresiones 3D, tengo una consulta" target="_blank">Centro de Ayuda</a></li>
-                        <li><a href="https://wa.me/<?php echo htmlspecialchars(preg_replace('/\D+/', '', $contactPhone));?>?text=Hola equipo de Caroni Computer Impresiones 3D, tengo una consulta" target="_blank">Atención al Cliente</a></li>
+                        <li><a href="https://wa.me/<?php echo htmlspecialchars(preg_replace('/\D+/', '', $contactPhone));?>?text=Hola equipo de Caroni 3D, tengo una consulta" target="_blank">Centro de Ayuda</a></li>
+                        <li><a href="https://wa.me/<?php echo htmlspecialchars(preg_replace('/\D+/', '', $contactPhone));?>?text=Hola equipo de Caroni 3D, tengo una consulta" target="_blank">Atención al Cliente</a></li>
                         <li><a href="/about-us">Nosotros</a></li>
                     </ul>
                 </div>
@@ -248,7 +248,7 @@
                     <ul class="footer-column__list">
                         <li>
                             <div class="footer-social-icons">
-                                <a href="https://wa.me/<?php echo htmlspecialchars(preg_replace('/\D+/', '', $contactPhone));?>?text=Hola equipo de Caroni Computer Impresiones 3D, tengo una consulta" target="_blank" title="WhatsApp"><i class='bx bxl-whatsapp' aria-hidden="true"></i></a>
+                                <a href="https://wa.me/<?php echo htmlspecialchars(preg_replace('/\D+/', '', $contactPhone));?>?text=Hola equipo de Caroni 3D, tengo una consulta" target="_blank" title="WhatsApp"><i class='bx bxl-whatsapp' aria-hidden="true"></i></a>
                                 <a href="<?php echo htmlspecialchars($facebook); ?>" target="_blank" title="Facebook"><i class='bx bxl-facebook-square' aria-hidden="true"></i></a>
                                 <a href="<?php echo htmlspecialchars($instagram); ?>" target="_blank" title="Instagram"><i class='bx bxl-instagram-alt' aria-hidden="true"></i></a>
                                 <a href="<?php echo htmlspecialchars($youtube); ?>" target="_blank" title="YouTube"><i class='bx bxl-youtube' aria-hidden="true"></i></a>

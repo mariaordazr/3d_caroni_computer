@@ -180,6 +180,12 @@ if ($segments[0] === 'auth') {
         }
         $controller->showShipping(); exit;
     }
+    if ($section === 'pages' && $action === 'blog') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $controller->updateBlog(); exit;
+        }
+        $controller->showBlog(); exit;
+    }
     
     if ($section === 'uploadSiteImage') { $controller->uploadSiteImage(); exit; }
     if ($section === 'deleteSiteImage') { $controller->deleteSiteImage(); exit; }
@@ -215,6 +221,22 @@ if ($segments[0] === 'auth') {
     }
     if ($section === 'new-products' && $action === 'create') {
         $controller->createNewProduct(); exit;
+    }
+    
+    if ($section === 'blogs' && $action === 'create') {
+        $controller->createBlog(); exit;
+    }
+    if ($section === 'blogs' && $action === 'store' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+        $controller->storeBlog(); exit; 
+    }
+    if ($section === 'blogs' && $action === 'edit' && $id) {
+        $controller->editBlog($id); exit;
+    }
+    if ($section === 'blogs' && $action === 'update' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+        $controller->updateBlogPost(); exit; 
+    }
+    if ($section === 'blogs' && $action === 'delete' && $id) {
+        $controller->deleteBlog($id); exit;
     }
     
     if ($section === 'categories' && $action === 'productCount' && $id) {
@@ -332,6 +354,17 @@ if ($segments[0] === 'auth') {
 } elseif ($segments[0] === 'envios') { // <-- AÑADE ESTA RUTA
     $controller = new PublicController($connection);
     $controller->shipping();
+
+} elseif ($segments[0] === 'blog') { 
+    $controller = new PublicController($connection);
+    
+    // Si la URL tiene un slug (ej. /blog/mi-articulo-genial)
+    if (isset($segments[1]) && !empty($segments[1])) {
+        $controller->showBlogPost($segments[1]);
+    } else {
+        // Si solo es /blog, muestra la lista normal
+        $controller->blog();
+    }
 
 } else {
     // Ruta principal (homepage)
