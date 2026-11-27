@@ -210,9 +210,9 @@
                 <div class="footer-column">
                     <h3 class="footer-column__title">Servicios</h3>
                     <ul class="footer-column__list">
-                        <li><a href="https://wa.me/<?php echo htmlspecialchars(preg_replace('/\D+/', '', $contactPhone));?>?text=Hola equipo de Caroni 3D, me interesa el servicio electrónico" target="_blank">Servicio Electrónico</a></li>
-                        <li><a href="https://wa.me/<?php echo htmlspecialchars(preg_replace('/\D+/', '', $contactPhone));?>?text=Hola equipo de Caroni 3D, me interesa el servicio técnico" target="_blank">Servicio Técnico</a></li>
-                        <li><a href="https://wa.me/<?php echo htmlspecialchars(preg_replace('/\D+/', '', $contactPhone));?>?text=Hola equipo de Caroni 3D, me interesa la instalación y software" target="_blank">Instalación y Software</a></li>
+                        <li><a href="#">Impresión 3D</a></li>
+                        <li><a href="#">Venta de filamentos</a></li>
+                        <li><a href="#">Creación de diseños</a></li>
                     </ul>
                 </div>
                 <div class="footer-column">
