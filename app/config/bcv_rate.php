@@ -34,8 +34,9 @@ function getVenezuelaBcvRate(): ?array {
         }
     }
 
-    // 2. Si había una tasa futura guardada y ya llegamos a esa fecha (12:00 AM Caracas), la activamos
-    if (!empty($cache['staged_rate']) && !empty($cache['staged_date']) && $cache['staged_date'] <= $today) {
+    // 2. Si había una tasa futura guardada y ya pasó el día de la tasa activa (o llegamos a la fecha valor), la activamos
+    $activeExpired = empty($cache['active_date']) || $cache['active_date'] < $today;
+    if (!empty($cache['staged_rate']) && !empty($cache['staged_date']) && ($cache['staged_date'] <= $today || $activeExpired)) {
         $cache['active_rate']      = (float)$cache['staged_rate'];
         $cache['active_date']      = $cache['staged_date'];
         $cache['active_date_text'] = date('d/m/Y', strtotime($cache['staged_date']));
@@ -44,11 +45,10 @@ function getVenezuelaBcvRate(): ?array {
         @file_put_contents($cacheFile, json_encode($cache, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
     }
 
-    // 3. Consultar periódicamente (cada 10 min si es día hábil y aún tiene fecha vieja; si no, cada 30 min)
+    // 3. Consultar periódicamente (cada 10 min si aún tiene fecha vieja; si no, cada 30 min)
     $forceRefresh  = isset($_GET['refresh_bcv']) && $_GET['refresh_bcv'] == '1';
     $lastCheckedTs = (int)($cache['last_checked_ts'] ?? 0);
-    $isWeekday     = ((int)date('N') <= 5);
-    $ttl           = ($isWeekday && ($cache['active_date'] ?? '') < $today) ? 600 : 1800;
+    $ttl           = (($cache['active_date'] ?? '') < $today) ? 600 : 1800;
 
     if ($forceRefresh || empty($cache['active_rate']) || ($now - $lastCheckedTs) >= $ttl) {
         $scraped = fetchFromBcvSources();
@@ -56,22 +56,19 @@ function getVenezuelaBcvRate(): ?array {
         if ($scraped && !empty($scraped['rate']) && !empty($scraped['date'])) {
             $bcvDate = $scraped['date']; // YYYY-MM-DD
             $bcvRate = (float)$scraped['rate'];
+            $isActiveExpired = empty($cache['active_date']) || $cache['active_date'] < $today;
 
-            if ($bcvDate <= $today) {
-                // La fecha valor es de hoy o anterior -> Aplicar de inmediato
+            if ($bcvDate <= $today || $isActiveExpired) {
+                // Aplicar de inmediato si es de hoy/anterior, o si la tasa activa ya venció (ej. sábado/domingo/feriado)
                 $cache['active_rate']      = $bcvRate;
                 $cache['active_date']      = $bcvDate;
                 $cache['active_date_text'] = date('d/m/Y', strtotime($bcvDate));
+                $cache['staged_rate']      = null;
+                $cache['staged_date']      = null;
             } else {
-                // La fecha valor es FUTURA (ej. publicada en la tarde para mañana/lunes) -> Dejar en espera
+                // La fecha valor es FUTURA y la tasa de hoy sigue vigente -> Dejar en espera hasta medianoche
                 $cache['staged_rate'] = $bcvRate;
                 $cache['staged_date'] = $bcvDate;
-
-                if (empty($cache['active_rate'])) {
-                    $cache['active_rate']      = $bcvRate;
-                    $cache['active_date']      = $today;
-                    $cache['active_date_text'] = date('d/m/Y', strtotime($today));
-                }
             }
         }
 
@@ -79,16 +76,6 @@ function getVenezuelaBcvRate(): ?array {
         $cache['last_checked_ts'] = $now;
         @file_put_contents($cacheFile, json_encode($cache, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
     }
-
-    $hasRate = !empty($cache['active_rate']) && (float)$cache['active_rate'] > 0;
-
-    return [
-        'raw'        => $hasRate ? (float)$cache['active_rate'] : 0,
-        'formatted'  => $hasRate ? number_format((float)$cache['active_rate'], 2, ',', '.') : '...',
-        'date'       => $cache['active_date'] ?? $today,
-        'date_text'  => !empty($cache['active_date_text']) ? $cache['active_date_text'] : date('d/m/Y'),
-        'needs_ajax' => !$hasRate
-    ];
 }
 
 function fetchUrlContentBcv(string $url, int $timeout = 6): string {
