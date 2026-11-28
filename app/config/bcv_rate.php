@@ -76,6 +76,16 @@ function getVenezuelaBcvRate(): ?array {
         $cache['last_checked_ts'] = $now;
         @file_put_contents($cacheFile, json_encode($cache, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
     }
+
+    $hasRate = !empty($cache['active_rate']) && (float)$cache['active_rate'] > 0;
+
+    return [
+        'raw'        => $hasRate ? (float)$cache['active_rate'] : 0,
+        'formatted'  => $hasRate ? number_format((float)$cache['active_rate'], 2, ',', '.') : '...',
+        'date'       => $cache['active_date'] ?? $today,
+        'date_text'  => !empty($cache['active_date_text']) ? $cache['active_date_text'] : date('d/m/Y'),
+        'needs_ajax' => !$hasRate
+    ];
 }
 
 function fetchUrlContentBcv(string $url, int $timeout = 6): string {
